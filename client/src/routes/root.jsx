@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function Root() {
   return (
     <>
@@ -12,8 +14,8 @@ export default function Root() {
               type="search"
               name="q"
             />
-            <div id="search-spinner" aria-hidden hidden={true} />
-            <div className="sr-only" aria-live="polite"></div>
+            <div id="search-spinner" aria-hidden hidden="true" />
+            <div className="sr-only" aria-live="polite" />
           </form>
           <form method="post">
             <button type="submit">New</button>
@@ -22,15 +24,15 @@ export default function Root() {
         <nav>
           <ul>
             <li>
-              <a href={`login`}>Login</a>
+              <a href="login">Login</a>
             </li>
             <li>
-              <a href={`images`}>Images</a>
+              <a href="images">Images</a>
             </li>
           </ul>
         </nav>
       </div>
-      <div id="detail"></div>
+      <div id="detail" />
     </>
   );
 }

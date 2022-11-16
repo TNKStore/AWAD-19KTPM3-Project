@@ -1,12 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
-import reportWebVitals from "./reportWebVitals";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./routes/root";
 import ErrorPage from "./error-page";
 import ImagePage from "./routes/images";
-import { QueryClient, QueryClientProvider } from "react-query";
+import reportWebVitals from "./reportWebVitals";
+import "./index.css";
 
 const queryClient = new QueryClient();
 
@@ -14,12 +14,12 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
-    errorElement: <ErrorPage />,
+    errorElement: <ErrorPage />
   },
   {
     path: "images/",
-    element: <ImagePage />,
-  },
+    element: <ImagePage />
+  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
