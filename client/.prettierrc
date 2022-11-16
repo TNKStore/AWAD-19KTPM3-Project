@@ -5,6 +5,7 @@
     "semi": true,
     "htmlWhitespaceSensitivity": "css",
     "quoteProps": "as-needed",
+    "endOfLine": "auto",
   "overrides": [
     {
       "files": "*.css",
