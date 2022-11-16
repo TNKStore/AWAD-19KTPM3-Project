@@ -20,7 +20,7 @@
     "lint": "npm run _lint -- ./src/",
     "lint:fix": "npm run _lint -- --fix ./src/",
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,scss,md,json}' --config ./.prettierrc",
-    "prepare": "cd client && husky install client/.husky"
+    "prepare": "cd .. && husky install client/.husky"
   },
   "eslintConfig": {
     "extends": [
