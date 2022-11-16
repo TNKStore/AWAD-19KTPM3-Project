@@ -1,6 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Root() {
+  const navigate = useNavigate();
+  const onSubmit = () => {
+    navigate("/images");
+  };
+
   return (
     <>
       <div id="sidebar">
@@ -14,10 +20,10 @@ export default function Root() {
               type="search"
               name="q"
             />
-            <div id="search-spinner" aria-hidden hidden="true" />
+            <div id="search-spinner" aria-hidden hidden />
             <div className="sr-only" aria-live="polite" />
           </form>
-          <form method="post">
+          <form onSubmit={onSubmit}>
             <button type="submit">New</button>
           </form>
         </div>

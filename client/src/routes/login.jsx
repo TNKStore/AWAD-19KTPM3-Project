@@ -1,10 +1,14 @@
 import React from "react";
 import { Button, TextField } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
-function FormWithoutHookForm() {
+export default function FormWithoutHookForm() {
   const { handleSubmit, reset, control } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const navigate = useNavigate();
+  const onSubmit = () => {
+    navigate("/");
+  };
 
   return (
     <form>
@@ -19,12 +23,12 @@ function FormWithoutHookForm() {
           />
         )}
       />
-      <Button onClick={handleSubmit(onSubmit)}>Submit</Button>
+      <Button onClick={handleSubmit(onSubmit)} variant="outlined">
+        Submit
+      </Button>
       <Button onClick={() => reset()} variant="outlined">
         Reset
       </Button>
     </form>
   );
 }
-
-export default FormWithoutHookForm;

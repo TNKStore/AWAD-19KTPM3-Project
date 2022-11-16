@@ -6,7 +6,7 @@ import Root from "./routes/root";
 import ErrorPage from "./error-page";
 import ImagePage from "./routes/images";
 import reportWebVitals from "./reportWebVitals";
-import "./index.css";
+import FormWithoutHookForm from "./routes/login";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +15,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <Root />,
     errorElement: <ErrorPage />
+  },
+  {
+    path: "login/",
+    element: <FormWithoutHookForm />
   },
   {
     path: "images/",
