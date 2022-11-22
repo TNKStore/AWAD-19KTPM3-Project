@@ -2,18 +2,48 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Root from "./routes/root";
+import {
+  Box,
+  CssBaseline,
+  StyledEngineProvider,
+  Toolbar,
+  Typography
+} from "@mui/material";
 import ErrorPage from "./error-page";
-import ImagePage from "./routes/images";
+import ImagePage from "./pages/images";
 import reportWebVitals from "./reportWebVitals";
-import FormWithoutHookForm from "./routes/login";
+import FormWithoutHookForm from "./pages/login";
+import SideMenu from "./components/menu";
+import TopBar from "./components/appBar";
 
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: (
+      <StyledEngineProvider injectFirst>
+        <Box sx={{ display: "flex" }}>
+          <CssBaseline />
+          <SideMenu />
+          <TopBar />
+          <Box
+            component="main"
+            sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
+          >
+            <Toolbar />
+            <Typography paragraph>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod
+            </Typography>
+            <Typography paragraph>
+              Consequat mauris nunc congue nisi vitae suscipit. Fringilla est
+              ullamcorper
+            </Typography>
+          </Box>
+        </Box>
+      </StyledEngineProvider>
+    ),
     errorElement: <ErrorPage />
   },
   {
