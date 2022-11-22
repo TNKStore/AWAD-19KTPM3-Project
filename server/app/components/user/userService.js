@@ -10,7 +10,9 @@ function hashPassword(password) {
     return bcrypt.hashSync(password, salt);
 }
 
-exports.findByEmail = (email) => User.findOne({ where: { email: email } })
+exports.findByEmail = (email) => User.findOne({ where: { email: email } });
+
+exports.findById = (id) => Group.findByPk(id);
 
 exports.checkActivate = async (user) => {
     return user.activated;

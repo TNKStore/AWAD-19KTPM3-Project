@@ -4,6 +4,10 @@ const sequelize = require("./app/models");
 const session = require("express-session");
 const passport = require("./app/passport")
 const authRouter = require('./app/components/auth');
+const groupRouter = require('./app/components/group');
+const User = require("./app/models/user");
+const Group = require("./app/models/group");
+const Member = require("./app/models/member");
 
 const app = express();
 
@@ -29,6 +33,7 @@ app.get("/", passport.authenticate('jwt', { session: false }), (req, res) => {
 });
 
 app.use("/", authRouter);
+app.use("/group", groupRouter);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 4000;
@@ -40,7 +45,7 @@ sequelize
       console.log(`Server is running on port ${PORT}.`);
     });
 
-    sequelize.sync({ alter: true }).then(() => {
+    sequelize.sync({ force: false }).then(() => {
       console.log("Drop and re-sync db.");
     });
   })
