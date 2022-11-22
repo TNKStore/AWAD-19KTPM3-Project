@@ -18,7 +18,7 @@ exports.postLogIn = (req, res, next) => {
         // Generate jwt token for user, you can also add more data to sign, such as: role, birthday...
         const token = jwt.sign({user}, 'secret-jwt-cat',
         {
-            expiresIn: 20,
+            expiresIn: 300,
         });
         res.status(200).json({user, token});
     })(req, res, next);

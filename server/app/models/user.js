@@ -30,6 +30,8 @@ const User = sequelize.define("user", {
         type: Sequelize.STRING,
         field: 'activation_string'
     }
+}, {
+    freezeTableName: true
 });
 
 module.exports = User
