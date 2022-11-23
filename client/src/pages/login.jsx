@@ -7,7 +7,7 @@ export default function FormWithoutHookForm() {
   const { handleSubmit, reset, control } = useForm();
   const navigate = useNavigate();
   const onSubmit = () => {
-    navigate("/");
+    navigate("/", { state: { username: "Khue", password: "191201" } });
   };
 
   return (
