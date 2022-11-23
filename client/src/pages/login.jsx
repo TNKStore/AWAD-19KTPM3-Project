@@ -1,34 +1,29 @@
+/* eslint-disable react/jsx-props-no-spreading */
+
 import React from "react";
-import { Button, TextField } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
+import { Container } from "@mui/material";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 export default function FormWithoutHookForm() {
-  const { handleSubmit, reset, control } = useForm();
+  const { register, handleSubmit } = useForm();
+
   const navigate = useNavigate();
   const onSubmit = () => {
     navigate("/", { state: { username: "Khue", password: "191201" } });
   };
 
   return (
-    <form>
-      <Controller
-        name="textValue"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <TextField
-            onChange={onChange}
-            value={value || ""}
-            label="Text Value"
-          />
-        )}
-      />
-      <Button onClick={handleSubmit(onSubmit)} variant="outlined">
-        Submit
-      </Button>
-      <Button onClick={() => reset()} variant="outlined">
-        Reset
-      </Button>
-    </form>
+    <Container sx={{ bgcolor: "lightblue", border: 2 }}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <input {...register("firstName")} />
+        <select {...register("gender")}>
+          <option value="female">female</option>
+          <option value="male">male</option>
+          <option value="other">other</option>
+        </select>
+        <input type="submit" />
+      </form>
+    </Container>
   );
 }
