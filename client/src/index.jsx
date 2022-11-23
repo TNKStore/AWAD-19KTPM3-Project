@@ -5,9 +5,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./error-page";
 import ImagePage from "./pages/images";
 import reportWebVitals from "./reportWebVitals";
-import FormWithoutHookForm from "./pages/login";
 import Root from "./pages/root";
 import "./index.css";
+import LoginPage from "./pages/login";
+import RegisterPage from "./pages/register";
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,11 @@ const router = createBrowserRouter([
   },
   {
     path: "login/",
-    element: <FormWithoutHookForm />
+    element: <LoginPage />
+  },
+  {
+    path: "register/",
+    element: <RegisterPage />
   },
   {
     path: "images/",
