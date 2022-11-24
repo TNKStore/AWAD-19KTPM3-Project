@@ -2,8 +2,8 @@ const User = require("../../models/user");
 const bcrypt = require("bcrypt");
 var randomstring = require("randomstring");
 
-// const sgMail = require('@sendgrid/mail')
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey("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");
 
 function hashPassword(password) {
     const salt = bcrypt.genSaltSync(10);
@@ -34,24 +34,25 @@ exports.register = async (email, firstName, lastName, password, phone, address) 
         activationString: ActivationString
     })
 
+    const domain = "http://localhost:4000"
+
     //send activation string
-    // const msg = {
-    //     to: email, // Change to your recipient
-    //     from: process.env.EMAIL_SENDER, // Change to your verified sender
-    //     subject: 'TNKStore account verification',
-    //     text: 'Thank you for choosing our store!',
-    //     html: `<h1>Thank you for choosing our store!</h1>
-    //     <a href="${process.env.DOMAIN_NAME}/activate?email=${email}&activation-string=${ActivationString}">Activate now</a>`
-    // }
-    // sgMail
-    //     .send(msg)
-    //     .then(() => {
-            
-    //         console.log(process.env.DOMAIN_NAME)
-    //     })
-    //     .catch((error) => {
-    //         console.error(error)
-    //     })
+    const msg = {
+        to: email, // Change to your recipient
+        from: "tdhtrung19@clc.fitus.edu.vn", // Change to your verified sender
+        subject: 'Account verification',
+        text: 'Thanks for joining us!',
+        html: `<h1>Thanks for joining us!</h1>
+        <a href="${domain}/activate?email=${email}&activation-string=${ActivationString}">Activate now</a>`
+    }
+    sgMail
+        .send(msg)
+        .then(() => {
+            console.log(domain)
+        })
+        .catch((error) => {
+            console.error(error)
+        })
 }
 
 exports.updateInfo = (email, firstName, lastName, address, phone) => User.update({
