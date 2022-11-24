@@ -1,34 +1,48 @@
-import React from "react";
-import { Button, TextField } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+/* eslint-disable react/jsx-props-no-spreading */
 
-export default function FormWithoutHookForm() {
-  const { handleSubmit, reset, control } = useForm();
+import React from "react";
+import { Box, Typography } from "@mui/material";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+
+export default function LoginPage() {
+  const { register, handleSubmit } = useForm();
+
   const navigate = useNavigate();
-  const onSubmit = () => {
-    navigate("/", { state: { username: "Khue", password: "191201" } });
+  const onSubmit = (data) => {
+    navigate("/", { state: data });
   };
 
   return (
-    <form>
-      <Controller
-        name="textValue"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <TextField
-            onChange={onChange}
-            value={value || ""}
-            label="Text Value"
-          />
-        )}
-      />
-      <Button onClick={handleSubmit(onSubmit)} variant="outlined">
-        Submit
-      </Button>
-      <Button onClick={() => reset()} variant="outlined">
-        Reset
-      </Button>
-    </form>
+    <Box sx={{ maxWidth: "xs" }}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Typography
+          variant="h3"
+          component="div"
+          align="center"
+          sx={{ flexGrow: 1 }}
+        >
+          Login
+        </Typography>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          Username
+        </Typography>
+        <input {...register("username", { required: "Required" })} />
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          Password
+        </Typography>
+        <input {...register("password", { required: "Required" })} />
+        <input type="submit" />
+        <div className="row">
+          <Typography variant="h7" sx={{ flexGrow: 1 }}>
+            If you do not have an account,
+          </Typography>
+          <span> </span>
+          <Link variant="h7" to="/register">
+            click here
+          </Link>
+        </div>
+      </form>
+    </Box>
   );
 }
