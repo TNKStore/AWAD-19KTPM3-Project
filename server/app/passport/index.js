@@ -8,7 +8,7 @@ const opts = {}
 // passport-jwt will look for Authorization header with bearer scheme.
 // Client must use request header as below to send JWT token for backend to verify:
 // Authorization: bearer <jwt-token-here>
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.jwtFromRequest = ExtractJwt.fromHeader("x-access-token");
 // Use the same secret used to sign the jwt token in login api
 opts.secretOrKey = "secret-jwt-cat";
 
