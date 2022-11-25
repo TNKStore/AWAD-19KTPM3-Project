@@ -4,6 +4,7 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function RegisterPage() {
   const {
@@ -12,10 +13,20 @@ export default function RegisterPage() {
     watch,
     formState: { errors }
   } = useForm();
-
   const navigate = useNavigate();
-  const onSubmit = (data) => {
-    navigate("/", { state: data });
+
+  const onSubmit = async (data) => {
+    const dataSent = {
+      email: data.email,
+      firstName: data.username,
+      password: data.password
+    };
+
+    const response = await axios
+      .post("http://localhost:4000/signup", dataSent)
+      .catch((error) => console.error("There was an error!", error));
+
+    if (response.status === 200) navigate("/login");
   };
 
   const watchPassword = watch("password");

@@ -22,7 +22,7 @@ export default function TopBar() {
   React.useEffect(() => {
     if (location.state !== null) {
       setAuth(true);
-      setUser(location.state?.username);
+      setUser(location.state?.user?.firstName);
     }
   }, []);
 
