@@ -9,6 +9,7 @@ import Root from "./pages/root";
 import "./index.css";
 import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register";
+import ActivatePage from "./pages/activate";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: "register/",
     element: <RegisterPage />
+  },
+  {
+    path: "activate/",
+    element: <ActivatePage />
   },
   {
     path: "images/",

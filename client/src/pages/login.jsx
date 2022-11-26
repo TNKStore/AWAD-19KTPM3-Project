@@ -4,13 +4,23 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function LoginPage() {
   const { register, handleSubmit } = useForm();
 
   const navigate = useNavigate();
-  const onSubmit = (data) => {
-    navigate("/", { state: data });
+  const onSubmit = async (data) => {
+    const dataSent = {
+      email: data.email,
+      password: data.password
+    };
+
+    const response = await axios
+      .post("http://localhost:4000/login", dataSent)
+      .catch((error) => console.error("There was an error!", error));
+
+    navigate("/", { state: response.data });
   };
 
   return (
@@ -27,7 +37,7 @@ export default function LoginPage() {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Username
         </Typography>
-        <input {...register("username", { required: "Required" })} />
+        <input {...register("email", { required: "Required" })} />
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Password
         </Typography>
