@@ -3,10 +3,11 @@ const cors = require("cors");
 const sequelize = require("./app/models");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-const passport = require("./app/passport");
-const authRouter = require("./app/components/auth");
-const groupRouter = require("./app/components/group");
-const activateRouter = require("./app/components/activate");
+const passport = require("./app/passport")
+const authRouter = require('./app/components/auth');
+const groupRouter = require('./app/components/group');
+const activateRouter = require('./app/components/activate');
+const memberRouter = require('./app/components/member');
 const User = require("./app/models/user");
 const Group = require("./app/models/group");
 const Member = require("./app/models/member");
@@ -43,7 +44,8 @@ app.get("/", (req, res) => {
 
 app.use("/", authRouter);
 app.use("/group", groupRouter);
-app.use("/activate", activateRouter);
+app.use('/activate', activateRouter);
+app.use('/member', memberRouter);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 4000;
