@@ -14,7 +14,7 @@ exports.logout = (req, res, next) => {
 exports.postLogIn = (req, res, next) => {
     passport.authenticate('local', function(err, user, info) {
         if (err) { return next(err) }
-        if (!user) { return res.json( { message: info.message }) }
+        if (!user) { return res.status(400).json( { message: info.message }) }
         // Generate jwt token for user, you can also add more data to sign, such as: role, birthday...
         const token = jwt.sign({user}, 'secret-jwt-cat',
         {
@@ -29,7 +29,7 @@ exports.postLogIn = (req, res, next) => {
 exports.postSignUp = async (req, res, next) => {
     const {firstName, lastName, email, password, phone, address} = req.body
     if (await userService.findByEmail(email))
-        return res.status(403).send({ error: 'Email is already in use'});
+        return res.status(400).send({ error: 'Email is already in use'});
     const user = await userService.register(email, firstName, lastName, password, phone, address)
     return res.status(200).send({ error: false, message: 'Sign-up successfully!'});
 }
