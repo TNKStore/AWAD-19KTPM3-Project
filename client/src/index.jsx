@@ -10,6 +10,7 @@ import "./index.css";
 import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register";
 import ActivatePage from "./pages/activate";
+import UserProfilePage from "./pages/userProfile";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: "activate/",
     element: <ActivatePage />
+  },
+  {
+    path: "profile/",
+    element: <UserProfilePage />
   },
   {
     path: "images/",
