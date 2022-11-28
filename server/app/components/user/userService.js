@@ -32,7 +32,6 @@ exports.register = async (
   address
 ) => {
   const ActivationString = randomstring.generate();
-  console.log(lastName);
   await User.create({
     email: email,
     firstName: firstName,
@@ -83,7 +82,7 @@ exports.updateInfo = (email, firstName, lastName, address, phone) =>
 exports.updatePassword = (email, pwd) =>
   User.update(
     {
-      pwd: hashPassword(pwd),
+      password: hashPassword(pwd),
     },
     {
       where: {

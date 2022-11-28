@@ -9,6 +9,7 @@ const User = sequelize.define("user", {
     lastName: {
         type: Sequelize.STRING,
         field: 'last_name'
+        
     },
     email: {
         type: Sequelize.STRING,
