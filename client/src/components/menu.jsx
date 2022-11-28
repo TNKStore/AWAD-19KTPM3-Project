@@ -12,9 +12,10 @@ const drawerWidth = 300;
 
 export default function SideMenu() {
   const navigate = useNavigate();
+
   const navigateTo = (page) => {
-    if (page === "Login") navigate("login");
-    else if (page === "Images") navigate("images");
+    if (page === "Login") navigate("/login");
+    else if (page === "Groups") navigate("/groups");
   };
 
   return (
@@ -33,7 +34,7 @@ export default function SideMenu() {
       <Toolbar />
       <Divider />
       <List>
-        {["Login", "Images"].map((text) => (
+        {['Login', 'Groups'].map((text) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={() => navigateTo(text)}>
               <ListItemText primary={text} />

@@ -23,9 +23,9 @@ passport.use('local', new LocalStrategy({
             return done(null, false, { message: 'Incorrect username.'});
         }
         const isActivated = await userService.checkActivate(user);
-        if (!isActivated) {
-            return done(null, false, { message: 'Active needed.' });
-        }
+        // if (!isActivated) {
+        //     return done(null, false, { message: 'Active needed.' });
+        // }
         const isValid = await userService.verifyPassword(password, user);
         if (!isValid) {
             return done(null, false, { message: 'Incorrect password.' });

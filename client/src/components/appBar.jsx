@@ -9,15 +9,18 @@ import {
   Typography
 } from "@mui/material";
 import * as React from "react";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { deleteUser } from "../features/user/userSlice";
+import { useDispatch } from 'react-redux';
 
 const drawerWidth = 300;
 
-export default function TopBar() {
+export default function TopBar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [auth, setAuth] = React.useState(false);
   const [user, setUser] = React.useState(null);
   const location = useLocation();
+  const navigate = useNavigate()
 
   React.useEffect(() => {
     if (location.state !== null) {
@@ -26,15 +29,19 @@ export default function TopBar() {
     }
   }, []);
 
+  const dispath = useDispatch()
+
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleLogout = () => {
-    setAuth(false);
-    setUser(null);
+    dispath(deleteUser())
+    navigate('/login')
   };
 
   return (
