@@ -15,3 +15,10 @@ exports.updateMember = (groupId, memberId, role) => Member.update({
         user_id: memberId
     }
 })
+
+exports.removeMember = (groupId, memberId) => Member.destroy({
+    where: {
+        groupId: groupId,
+        user_id: memberId
+    }
+})
