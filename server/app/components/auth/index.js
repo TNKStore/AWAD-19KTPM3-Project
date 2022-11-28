@@ -3,9 +3,9 @@ const router = express.Router();
 const controller = require('./authController')
 const passport = require("../../passport");
 
-router.post('/login',
-    //passport.authenticate('local'),
-    controller.postLogIn);
+router.post('/login', controller.postLogIn);
+
+router.post('/login-google', controller.postLogInGoogle);
 
 router.post('/signup', controller.postSignUp);
 
