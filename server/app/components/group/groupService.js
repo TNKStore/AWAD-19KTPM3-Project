@@ -22,3 +22,17 @@ exports.findGroupWithMember = (id) => Group.findOne({
         }
     } 
 });
+
+exports.invite = async (groupId, invitationString) => {
+    const group = await Group.findOne({
+        where: {
+            id: groupId,
+            invitationString: invitationString
+        }
+    });
+
+    if (!group) {
+        return false;
+    }
+    return true;
+}
