@@ -15,6 +15,8 @@ export default function RegisterPage() {
   } = useForm();
   const navigate = useNavigate();
 
+  const watchPassword = watch("password");
+
   const onSubmit = async (data) => {
     const dataSent = {
       email: data.email,
@@ -29,11 +31,16 @@ export default function RegisterPage() {
     if (response.status === 200) navigate("/login");
   };
 
-  const watchPassword = watch("password");
-
   return (
-    <Box sx={{ display: 'flex', alignItems:'center', justifyContent: 'center', height: '100vh' }}>
-      <div style={{maxWidth: "600px", width: '100%'}}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh"
+      }}
+    >
+      <div style={{ maxWidth: "600px", width: "100%" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Typography
             variant="h3"

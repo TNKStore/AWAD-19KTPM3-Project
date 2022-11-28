@@ -7,14 +7,20 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { useNavigate } from "react-router-dom";
+import { getLocalStorage } from "../utils/localStorage";
 
 const drawerWidth = 300;
 
 export default function SideMenu() {
   const navigate = useNavigate();
 
+  const token = getLocalStorage("token");
+  const user = getLocalStorage("user");
+  const auth = !!token;
+  const sections = auth ? ["Home", "Groups"] : ["Home"];
+
   const navigateTo = (page) => {
-    if (page === "Login") navigate("/login");
+    if (page === "Home") navigate("/");
     else if (page === "Groups") navigate("/groups");
   };
 
@@ -34,7 +40,7 @@ export default function SideMenu() {
       <Toolbar />
       <Divider />
       <List>
-        {['Login', 'Groups'].map((text) => (
+        {sections.map((text) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={() => navigateTo(text)}>
               <ListItemText primary={text} />

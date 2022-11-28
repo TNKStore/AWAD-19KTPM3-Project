@@ -10,26 +10,22 @@ import {
 } from "@mui/material";
 import * as React from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteUser } from "../features/user/userSlice";
-import { useDispatch } from 'react-redux';
+import { getLocalStorage } from "../utils/localStorage";
 
 const drawerWidth = 300;
 
 export default function TopBar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [auth, setAuth] = React.useState(false);
-  const [user, setUser] = React.useState(null);
-  const location = useLocation();
-  const navigate = useNavigate()
 
-  React.useEffect(() => {
-    if (location.state !== null) {
-      setAuth(true);
-      setUser(location.state?.user?.firstName);
-    }
-  }, []);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const dispath = useDispatch()
+  // const user = useSelector((state) => state.user?.userInfo);
+  const token = getLocalStorage("token");
+  const user = getLocalStorage("user");
+  const auth = !!token;
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -40,8 +36,8 @@ export default function TopBar(props) {
   };
 
   const handleLogout = () => {
-    dispath(deleteUser())
-    navigate('/login')
+    dispatch(deleteUser());
+    navigate("/login");
   };
 
   return (
@@ -51,7 +47,7 @@ export default function TopBar(props) {
     >
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          {user}
+          {user.firstName}
         </Typography>
         {auth && (
           <div>

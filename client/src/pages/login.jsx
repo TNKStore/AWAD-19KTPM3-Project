@@ -10,9 +10,9 @@ import { saveUser } from "../features/user/userSlice";
 
 export default function LoginPage() {
   const { register, handleSubmit } = useForm();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const onSubmit = async (data) => {
     const dataSent = {
       email: data.email,
@@ -23,15 +23,24 @@ export default function LoginPage() {
       .post("http://localhost:4000/login", dataSent)
       .catch((error) => console.error("There was an error!", error));
 
-    if(response.data?.token && response.data?.user) {
-      dispatch(saveUser(response?.data))
+    console.log(response);
+
+    if (response.data?.token && response.data?.user) {
+      dispatch(saveUser(response?.data));
       navigate("/", { state: response.data });
     }
   };
 
   return (
-    <Box sx={{ display: 'flex', alignItems:'center', justifyContent: 'center', height: '100vh' }}>
-      <div style={{maxWidth: "600px", width: '100%'}}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh"
+      }}
+    >
+      <div style={{ maxWidth: "600px", width: "100%" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Typography
             variant="h3"
