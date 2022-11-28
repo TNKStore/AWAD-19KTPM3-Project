@@ -3,9 +3,7 @@ const bcrypt = require("bcrypt");
 var randomstring = require("randomstring");
 
 const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey(
-  "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"
-);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 function hashPassword(password) {
   const salt = bcrypt.genSaltSync(10);
@@ -32,12 +30,11 @@ exports.register = async (
   address
 ) => {
   const ActivationString = randomstring.generate();
-  console.log(lastName);
   await User.create({
     email: email,
     firstName: firstName,
     lastName: lastName,
-    password: hashPassword(password),
+    password: password ? hashPassword(password) : null,
     phone: phone,
     address: address,
     activated: 0,

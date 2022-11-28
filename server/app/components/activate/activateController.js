@@ -4,8 +4,7 @@ const userService = require('../user/userService')
 exports.activate = async (req, res, next) => {
     const {email} = req.query;
     const activationString = req.query['activationString'];
-    console.log(activationString);
-    console.log(email);
+    
     const result = await activateService.activate(email, activationString);
 
     if (result) {

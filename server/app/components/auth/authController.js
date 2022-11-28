@@ -4,11 +4,10 @@ const userService = require("../user/userService");
 const randomstring = require("randomstring");
 const jwt = require('jsonwebtoken');
 const passport = require("../../passport");
+const {OAuth2Client} = require('google-auth-library');
 
 exports.logout = (req, res, next) => {
-    req.logout()
-    req.session.unAuthID = randomstring.generate(16);
-    res.redirect('/')
+    req.logout();
 }
 
 exports.postLogIn = (req, res, next) => {
@@ -37,4 +36,51 @@ exports.postSignUp = async (req, res, next) => {
         return res.status(400).send({ error: 'Email is already in use'});
     const user = await userService.register(email, firstName, lastName, password, phone, address)
     return res.status(200).send({ error: false, message: 'Sign-up successfully!'});
+}
+
+/**
+ *  This function is used verify a google account
+*/
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const client = new OAuth2Client(GOOGLE_CLIENT_ID);
+ 
+async function verifyGoogleToken(token) {
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: GOOGLE_CLIENT_ID,
+    });
+    return { payload: ticket.getPayload() };
+  } catch (error) {
+    return { error: "Invalid user detected. Please try again" };
+  }
+}
+
+exports.postLogInGoogle = async (req, res, next) => {
+  try {
+    if (req.body.credential) {
+      const verificationResponse = await verifyGoogleToken(req.body.credential);
+      if (verificationResponse.error) {
+        return res.status(400).json({
+          message: verificationResponse.error,
+        });
+      }
+
+      const profile = verificationResponse?.payload;
+      let user = await userService.findByEmail(profile?.email);
+      if (!user) {
+        user = await userService.register(profile?.email, profile?.given_name, profile?.family_name, null, null, null)
+      }
+      const token = jwt.sign({user}, process.env.JWT_SECRET,
+      {
+        expiresIn: 300,
+      });
+
+      return res.status(200).json({user, token});
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error?.message || error,
+    });
+  }
 }

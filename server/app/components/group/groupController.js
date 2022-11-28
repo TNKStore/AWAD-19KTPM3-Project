@@ -66,8 +66,6 @@ exports.invite = async (req, res, next) => {
     const groupId = req.query['group'];
     const invitationString = req.query['invitationString'];
     const userId = req.decoded.user.id;
-    console.log(invitationString);
-    console.log(groupId);
 
     const group = await groupService.findById(groupId);
     if (!group) {
