@@ -5,12 +5,23 @@ var randomstring = require("randomstring");
 
 exports.findById = (id) => Group.findByPk(id);
 
-exports.list = async ()=>{
-    return await Group.findAll();
-}
-exports.listMemberOfGroup = async(id) =>{
+exports.listGroupOfUser = (userId)=> Group.findAll({
+    include: {
+        model: User,
+        attributes: ['id'],
+        through: {
+            attributes: ['role']
+        },
+        where: {
+            id: userId
+        }
+    }
+        
+});
+
+exports.listMemberOfGroup = async (id) =>{
     return await Member.findAll({
-        where: { group_id: id}
+        where: { group_id: id }
     })
 }
 exports.create = async (groupName) => {

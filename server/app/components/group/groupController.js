@@ -7,17 +7,21 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey("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");
 
 exports.listGroup = async (req, res, next) =>{
-    const groupList = await groupService.list();
+    const userId = req.decoded.user.id;
+    const groupList = await groupService.listGroupOfUser(userId);
     return res.status(200).json({groupList});
 }
+
 exports.listMemberIdOfGroup = async (req, res) => {
     const groupId = req.body.group_id;
     const memberOfGroup = await groupService.listMemberOfGroup(groupId);
     return res.status(200).json({memberOfGroup});
 }
+
 exports.createGroup = async (req, res, next) => {
     const { groupName } = req.body;
     const group = await groupService.create(groupName);
+    console.log(req.decoded);
     const user = await userService.findById(req.decoded.user.id);
     if (!user) {
         return res.status(404).send({ message: "User not found" });
@@ -25,6 +29,12 @@ exports.createGroup = async (req, res, next) => {
     await group.addUser(user, { through: { role: "Owner" }});
     const result = await groupService.findGroupWithMember(group.id);
     return res.status(200).send({ group: result, message: "Create successfully!" });
+}
+
+exports.getMemberOfGroup = async (req, res, next) => {
+    const groupId = req.body.group_id;
+    const group = await groupService.findGroupWithMember(groupId);
+    return res.status(200).send({group: group});
 }
 
 exports.createInvitationLink = async (req, res, next) => {

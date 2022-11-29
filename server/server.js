@@ -1,4 +1,5 @@
 const express = require("express");
+require('dotenv').config();
 const cors = require("cors");
 const sequelize = require("./app/models");
 const cookieParser = require("cookie-parser");
@@ -12,7 +13,6 @@ const userRouter = require('./app/components/user');
 const User = require("./app/models/user");
 const Group = require("./app/models/group");
 const Member = require("./app/models/member");
-require('dotenv').config();
 
 const app = express();
 
