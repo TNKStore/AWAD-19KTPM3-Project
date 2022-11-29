@@ -1,9 +1,18 @@
 const Group = require("../../models/group");
 const User = require("../../models/user");
+const Member = require("../../models/member");
 var randomstring = require("randomstring");
 
 exports.findById = (id) => Group.findByPk(id);
 
+exports.list = async ()=>{
+    return await Group.findAll();
+}
+exports.listMemberOfGroup = async(id) =>{
+    return await Member.findAll({
+        where: { group_id: id}
+    })
+}
 exports.create = async (groupName) => {
     const invitationString = randomstring.generate();
     return await Group.create({

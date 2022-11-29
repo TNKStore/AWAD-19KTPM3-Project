@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const groupController = require('./groupController');
 const passport = require("../../passport");
-router.use(require('../../middleware/checkToken'));
+
 
 /* GET home page. */
 router.post('/create', passport.authenticate('jwt', { session: false }), groupController.createGroup);
@@ -13,4 +13,6 @@ router.post('/invite/send', passport.authenticate('jwt', { session: false }), gr
 
 router.post('/invite', passport.authenticate('jwt', { session: false }), groupController.invite);
 
+router.get('/list',  groupController.listGroup );
+router.get('/member-of-group', groupController.listMemberIdOfGroup);
 module.exports = router;
