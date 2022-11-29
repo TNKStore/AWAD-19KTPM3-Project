@@ -80,9 +80,9 @@ exports.postLogInGoogle = async (req, res, next) => {
       }
 
       const profile = verificationResponse?.payload;
-      let user = await userService.findByEmail(profile?.email);
+      const user = await userService.findByEmail(profile?.email);
       if (!user) {
-        user = await userService.register(
+        await userService.register(
           profile?.email,
           profile?.given_name,
           profile?.family_name,
@@ -90,6 +90,7 @@ exports.postLogInGoogle = async (req, res, next) => {
           null,
           null
         );
+        return res.status(200).send({ error: false, message: "Sign-up successfully! Please check your email for activation" });
       }
       const token = jwt.sign({ user }, process.env.JWT_SECRET, {
         expiresIn: 300,
