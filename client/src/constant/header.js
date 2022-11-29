@@ -1,25 +1,25 @@
 export const GROUP_HEADER = [
-    {
-        id: 1,
-        name: 'name',
-    },
-    {
-        id: 2,
-        name: 'owner',
-    },
-]
+  {
+    id: 1,
+    name: "Name"
+  },
+  {
+    id: 2,
+    name: "Owner"
+  }
+];
 
 export const GROUP_DETAIL_HEADER = [
-    {
-        id: 1,
-        name: 'email',
-    },
-    {
-        id: 2,
-        name: 'role',
-    },
-    {
-        id: 3,
-        name: 'action',
-    },
-]
+  {
+    id: 1,
+    name: "Email"
+  },
+  {
+    id: 2,
+    name: "Role"
+  },
+  {
+    id: 3,
+    name: "Action"
+  }
+];

@@ -27,17 +27,35 @@ export default function TopBar(props) {
   const user = getLocalStorage("user");
   const auth = !!token;
 
+  let content = "";
+  const currentRoute = window.location.pathname;
+  switch (currentRoute) {
+    case "/":
+      content = `Hi, ${user?.firstName}`;
+      break;
+    case "/groups":
+      content = "Groups";
+      break;
+    case "/profile":
+      content = "Profile";
+      break;
+  }
+
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleProfile = () => {
+    navigate("/profile");
   };
 
   const handleLogout = () => {
     dispatch(deleteUser());
     navigate("/login");
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -47,7 +65,7 @@ export default function TopBar(props) {
     >
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          {user.firstName}
+          {content}
         </Typography>
         {auth && (
           <div>
@@ -76,7 +94,7 @@ export default function TopBar(props) {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
+              <MenuItem onClick={handleProfile}>Profile</MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </div>

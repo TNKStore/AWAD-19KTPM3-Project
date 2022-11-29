@@ -135,7 +135,7 @@ export default function Groups() {
       <Box
         display="flex"
         alignItems="center"
-        justifyContent="start"
+        justifyContent="end"
         padding="10px"
         bgcolor="#f6f6f6"
         borderRadius="5px"

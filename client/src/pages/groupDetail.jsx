@@ -19,6 +19,7 @@ import { GROUP_DETAIL_HEADER, GROUP_HEADER } from "../constant/header";
 export default function GroupDetail() {
   // fakeData
   const link = "https://hehe.com/2341324-134134-341324";
+  const groupName = "Chodien";
   const data = [
     {
       _id: "1",
@@ -107,11 +108,19 @@ export default function GroupDetail() {
       <Box
         display="flex"
         alignItems="center"
-        justifyContent="start"
+        justifyContent="space-between"
         padding="10px"
         bgcolor="#f6f6f6"
         borderRadius="5px"
       >
+        <Box>
+          <Typography>
+            <Typography variant="span" sx={{ fontWeight: "800" }}>
+              {`Group name: `}
+            </Typography>
+            {groupName}
+          </Typography>
+        </Box>
         <Box
           display="flex"
           alignItems="center"
@@ -121,14 +130,6 @@ export default function GroupDetail() {
           <Button onClick={handleAddUser} variant="outlined">
             <AddToPhotosIcon />
           </Button>
-        </Box>
-        <Box>
-          <Typography>
-            <Typography variant="span" sx={{ fontWeight: "800" }}>
-              {`Link here: `}
-            </Typography>
-            {link}
-          </Typography>
         </Box>
       </Box>
       <Box>
