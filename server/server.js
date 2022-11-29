@@ -12,6 +12,7 @@ const userRouter = require('./app/components/user');
 const User = require("./app/models/user");
 const Group = require("./app/models/group");
 const Member = require("./app/models/member");
+require('dotenv').config();
 
 const app = express();
 

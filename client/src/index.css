@@ -14,7 +14,6 @@ code {
 
 form {
   background: lightblue;
-  max-width: 50%;
   margin: 0 auto;
   padding: 5%;
 }
@@ -83,7 +82,6 @@ input[type="submit"] {
 }
 
 .App {
-  max-width: 600px;
   margin: 0 auto;
 }
 

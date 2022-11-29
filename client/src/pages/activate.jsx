@@ -9,9 +9,6 @@ export default function ActivatePage() {
   const email = searchParams.get("email");
   const activationString = searchParams.get("activation-string");
 
-  console.log(email);
-  console.log(activationString);
-
   const navigate = useNavigate();
 
   const onActivate = async () => {

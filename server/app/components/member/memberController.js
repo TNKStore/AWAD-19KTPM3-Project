@@ -36,3 +36,22 @@ exports.updateMember = async (req, res, next) => {
     const group = await groupService.findGroupWithMember(groupId);
     return res.status(200).send({ group: group });
 }
+
+exports.kickMember = async (req, res, next) => {
+    const { groupId, memberId } = req.body;
+    const userId = req.decoded.user.id;
+    const kicker = await memberService.findMemberInGroup(groupId, userId);
+    const member = await memberService.findMemberInGroup(groupId, memberId);
+    if (!member || !kicker) {
+        return res.status(404).send({ message: "Member is not found in group" });
+    }
+    if (getRolePriority(kicker.role) < getRolePriority(member.role) || kicker.role === "Member") {
+        return res.status(400).send({ message: "Cannot kick selected member" });
+    }
+    
+    await memberService.removeMember(groupId, memberId);
+
+    const group = await groupService.findGroupWithMember(groupId);
+    return res.status(200).send({ group: group });
+}
+

@@ -4,23 +4,27 @@ const userService = require("../user/userService");
 const randomstring = require("randomstring");
 const jwt = require('jsonwebtoken');
 const passport = require("../../passport");
+const {OAuth2Client} = require('google-auth-library');
 
 exports.logout = (req, res, next) => {
-    req.logout()
-    req.session.unAuthID = randomstring.generate(16);
-    res.redirect('/')
+    req.logout();
 }
 
 exports.postLogIn = (req, res, next) => {
     passport.authenticate('local', function(err, user, info) {
         if (err) { return next(err) }
         if (!user) { return res.status(400).json( { message: info.message }) }
-        // Generate jwt token for user, you can also add more data to sign, such as: role, birthday...
-        const token = jwt.sign({user}, 'secret-jwt-cat',
-        {
-            expiresIn: 300,
+        req.login(user, async function (err) {
+            if (err) {
+                return next(err);
+            }
+            // Generate jwt token for user, you can also add more data to sign, such as: role, birthday...
+            const token = jwt.sign({user}, 'secret-jwt-cat',
+            {
+                expiresIn: 300,
+            });
+            return res.status(200).json({user, token});
         });
-        res.status(200).json({user, token});
     })(req, res, next);
     // Passport store user info in req.user
     // const user = req.user;
@@ -32,4 +36,51 @@ exports.postSignUp = async (req, res, next) => {
         return res.status(400).send({ error: 'Email is already in use'});
     const user = await userService.register(email, firstName, lastName, password, phone, address)
     return res.status(200).send({ error: false, message: 'Sign-up successfully!'});
+}
+
+/**
+ *  This function is used verify a google account
+*/
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const client = new OAuth2Client(GOOGLE_CLIENT_ID);
+ 
+async function verifyGoogleToken(token) {
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: GOOGLE_CLIENT_ID,
+    });
+    return { payload: ticket.getPayload() };
+  } catch (error) {
+    return { error: "Invalid user detected. Please try again" };
+  }
+}
+
+exports.postLogInGoogle = async (req, res, next) => {
+  try {
+    if (req.body.credential) {
+      const verificationResponse = await verifyGoogleToken(req.body.credential);
+      if (verificationResponse.error) {
+        return res.status(400).json({
+          message: verificationResponse.error,
+        });
+      }
+
+      const profile = verificationResponse?.payload;
+      let user = await userService.findByEmail(profile?.email);
+      if (!user) {
+        user = await userService.register(profile?.email, profile?.given_name, profile?.family_name, null, null, null)
+      }
+      const token = jwt.sign({user}, process.env.JWT_SECRET,
+      {
+        expiresIn: 300,
+      });
+
+      return res.status(200).json({user, token});
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: error?.message || error,
+    });
+  }
 }
