@@ -1,17 +1,43 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { saveUser } from "../features/user/userSlice";
+import useFetch from "../hooks/useFetch";
 
 export default function LoginPage() {
   const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { handleGoogle, loading, error } = useFetch(
+    "http://localhost:4000/login-google"
+  );
+
+  useEffect(() => {
+    /* global google */
+    if (window.google) {
+      google.accounts.id.initialize({
+        client_id:
+          "1013752400475-578slktk1o1tu3k8t47eb6raqc84o9e9.apps.googleusercontent.com",
+        callback: handleGoogle
+      });
+
+      google.accounts.id.renderButton(document.getElementById("signUpDiv"), {
+        // type: "standard",
+        theme: "filled_black",
+        // size: "small",
+        text: "continue_with",
+        shape: "pill"
+      });
+
+      // google.accounts.id.prompt()
+    }
+  }, [handleGoogle]);
 
   const onSubmit = async (data) => {
     const dataSent = {
@@ -59,6 +85,22 @@ export default function LoginPage() {
           </Typography>
           <input {...register("password", { required: "Required" })} />
           <input type="submit" />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
+              margin: 20
+            }}
+          >
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {loading ? (
+              <div>Loading....</div>
+            ) : (
+              <div id="signUpDiv" data-text="signup_with" />
+            )}
+          </div>
           <div className="row">
             <Typography variant="h7" sx={{ flexGrow: 1 }}>
               If you do not have an account,
