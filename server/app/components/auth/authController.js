@@ -22,8 +22,9 @@ exports.postLogIn = (req, res, next) => {
       if (err) {
         return next(err);
       }
+      delete user.password;
       // Generate jwt token for user, you can also add more data to sign, such as: role, birthday...
-      const token = jwt.sign({ user }, "secret-jwt-cat", {
+      const token = jwt.sign({ user }, process.env.JWT_SECRET, {
         expiresIn: 900,
       });
       return res.status(200).json({ user, token });
@@ -98,8 +99,9 @@ exports.postLogInGoogle = async (req, res, next) => {
               "Sign-up successfully! Please check your email for activation",
           });
       }
+      delete user.password;
       const token = jwt.sign({ user }, process.env.JWT_SECRET, {
-        expiresIn: 300,
+        expiresIn: 900,
       });
 
       return res.status(200).json({ user, token });

@@ -5,7 +5,7 @@ const createError = require("http-errors");
 
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(
-  "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"
+  process.env.SENDGRID_API_KEY
 );
 
 exports.listGroup = async (req, res, next) => {
@@ -52,9 +52,8 @@ exports.createInvitationLink = async (req, res, next) => {
   if (!group) {
     return res.status(404).send({ message: "Group not found" });
   }
-  const domain = "http://localhost:3000";
   const invitationLink =
-    domain +
+    process.env.DOMAIN +
     "/group/invite?group=" +
     groupId +
     "&invitationString=" +
@@ -74,7 +73,7 @@ exports.inviteToGroup = async (req, res, next) => {
   if (!user) {
     return res.status(404).send({ message: "User not found" });
   }
-  const domain = "http://localhost:3000";
+  const domain = process.env.DOMAIN;
 
   //send invitation link
   const msg = {

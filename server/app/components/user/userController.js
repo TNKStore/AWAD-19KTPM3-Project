@@ -11,7 +11,9 @@ exports.list = async(req, res)=>{
 exports.update = async(req, res) => {
     const  {email, firstName,lastName, phone, address } = req.body;
     const response = await userService.updateInfo(email, firstName, lastName, phone, address);
-    if(response[0]>0) res.status(200).json({msg: "Update successfully !!"});
+    const user = await userService.findByEmail(email);
+    delete user.password;
+    if(response[0]>0) res.status(200).json({msg: "Update successfully !!", user});
     else res.status(400).json({msg: "Can not update"});
 }
 
