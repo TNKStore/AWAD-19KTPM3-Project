@@ -5,6 +5,10 @@ export const GROUP_HEADER = [
   },
   {
     id: 2,
+    name: "Role"
+  },
+  {
+    id: 3,
     name: "Owner"
   }
 ];

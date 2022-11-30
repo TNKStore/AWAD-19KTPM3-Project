@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Box,
   Button,
@@ -10,48 +11,100 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
+import axios from "axios";
 import { GROUP_DETAIL_HEADER, GROUP_HEADER } from "../constant/header";
+import { getLocalStorage } from "../utils/localStorage";
 
 export default function GroupDetail() {
-  // fakeData
-  const link = "https://hehe.com/2341324-134134-341324";
-  const groupName = "Chodien";
-  const data = [
-    {
-      _id: "1",
-      email: "Ae bet thủ@gmail.com",
-      role: "admin"
-    },
-    {
-      _id: "2",
-      email: "Khue@gmail.com",
-      role: "user"
-    },
-    {
-      _id: "3",
-      email: "Khue@gmail.com",
-      role: "user"
-    },
-    {
-      _id: "3",
-      email: "Khue@gmail.com",
-      role: "user"
-    }
-  ];
-  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [groupID, setGroupID] = useState("");
+  const [groupName, setGroupName] = useState("");
+  const [invitationString, setInvitationString] = useState("");
+  const [groupMembers, setGroupMembers] = useState([]);
   const [inviteEmail, setInviteEmail] = useState("");
+  const [shouldRefetch, setShouldRefetch] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleChooseDetail = (id) => {
-    navigate(`/groups/${id}`);
+  useEffect(() => {
+    if (location.state !== null) {
+      setGroupID(location.state.groupID);
+    }
+  }, [groupID]);
+
+  useEffect(() => {
+    if (groupID !== "" && shouldRefetch) {
+      fetchMembers({});
+      getInvitationLink({});
+    }
+  }, [groupID, shouldRefetch]);
+
+  const token = getLocalStorage("token");
+
+  const fetchMembers = async () => {
+    const headers = {
+      "x-access-token": token
+    };
+
+    const response = await axios
+      .get(`http://localhost:4000/group/${groupID}`, { headers })
+      .catch((error) => console.error("There was an error!", error));
+
+    if (response.status === 200) {
+      const resData = response.data.group;
+      setGroupName(resData.groupName);
+      setGroupMembers(resData.users);
+      setShouldRefetch(false);
+    }
   };
 
-  const handleDelete = (_id) => {};
+  const getInvitationLink = async () => {
+    const headers = {
+      "x-access-token": token
+    };
+
+    const response = await axios
+      .get(`http://localhost:4000/group/invitation-link?group=${groupID}`, {
+        headers
+      })
+      .catch((error) => console.error("There was an error!", error));
+
+    console.log(response.data);
+    if (response.status === 200) {
+      setInvitationString(response.data.link);
+    }
+  };
+
+  const sendInvitationEmail = async () => {
+    const headers = {
+      "x-access-token": token
+    };
+
+    const data = {
+      groupId: groupID,
+      userId: inviteEmail
+    };
+    console.log(data);
+
+    const response = await axios
+      .post("http://localhost:4000/group/invite/send", data, {
+        headers
+      })
+      .catch((error) => console.error("There was an error!", error));
+
+    console.log(response.data);
+    if (response.status === 200) {
+      setInvitationString(response.data.link);
+    }
+  };
+
+  const handleChooseDetail = (id) => {};
+
+  const handleDelete = (id) => {};
 
   const handleClose = () => {
     setIsDialogOpen(false);
@@ -67,26 +120,22 @@ export default function GroupDetail() {
     console.log("value", value);
   };
 
-  const handleInviteUser = () => {
-    console.log("inviteEmail", inviteEmail);
-  };
-
   return (
     <Box component="main">
-      <Dialog open={isDialogOpen} onClose={handleClose}>
+      <Dialog maxWidth="1000px" open={isDialogOpen} onClose={handleClose}>
         <Box
           display="flex"
           alignItems="center"
           justifyContent="center"
           flexDirection="column"
-          width="500px"
+          width="1000px"
           height="300px"
         >
           <Typography>
             <Typography variant="span" sx={{ fontWeight: "800" }}>
               {`Invite link: `}
             </Typography>
-            {link}
+            {invitationString}
           </Typography>
 
           <Typography
@@ -98,7 +147,7 @@ export default function GroupDetail() {
           <TextField onChange={handleChangeInviteEmail} />
           <Button
             sx={{ marginTop: "20px" }}
-            onClick={handleInviteUser}
+            onClick={sendInvitationEmail}
             variant="outlined"
           >
             Send
@@ -142,12 +191,12 @@ export default function GroupDetail() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((da) => (
-              <TableRow onClick={() => handleChooseDetail(da._id)}>
-                <TableCell>{da.email}</TableCell>
-                <TableCell>{da.role}</TableCell>
+            {groupMembers.map((da) => (
+              <TableRow onClick={() => handleChooseDetail(da.id)}>
+                <TableCell>{`${da.firstName} ${da.lastName}`}</TableCell>
+                <TableCell>{da.member.role}</TableCell>
                 <TableCell sx={{ maxWidth: "10px" }}>
-                  <Button onClick={() => handleDelete(_id)}>
+                  <Button onClick={() => handleDelete(da.id)}>
                     <DeleteIcon />
                   </Button>
                 </TableCell>

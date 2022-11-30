@@ -24,7 +24,7 @@ exports.postLogIn = (req, res, next) => {
       }
       // Generate jwt token for user, you can also add more data to sign, such as: role, birthday...
       const token = jwt.sign({ user }, "secret-jwt-cat", {
-        expiresIn: 300,
+        expiresIn: 900,
       });
       return res.status(200).json({ user, token });
     });
@@ -90,7 +90,13 @@ exports.postLogInGoogle = async (req, res, next) => {
           null,
           null
         );
-        return res.status(200).send({ error: false, message: "Sign-up successfully! Please check your email for activation" });
+        return res
+          .status(200)
+          .send({
+            error: false,
+            message:
+              "Sign-up successfully! Please check your email for activation",
+          });
       }
       const token = jwt.sign({ user }, process.env.JWT_SECRET, {
         expiresIn: 300,

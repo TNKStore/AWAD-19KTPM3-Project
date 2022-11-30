@@ -18,44 +18,7 @@ import { GROUP_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
 
 export default function Groups() {
-  // fakeData
-  const data = [
-    {
-      _id: "1",
-      name: "Ae bet thủ",
-      owner: "hehe" // uerName
-    },
-    {
-      _id: "2",
-      name: "Ae bet thủ",
-      owner: "hehe" // uerName
-    },
-    {
-      _id: "3",
-      name: "Ae bet thủ",
-      owner: "hehe" // uerName
-    },
-    {
-      _id: "4",
-      name: "Ae bet thủ",
-      owner: "hehe" // uerName
-    },
-    {
-      _id: "5",
-      name: "Ae bet thủ",
-      owner: "hehe" // uerName
-    },
-    {
-      _id: "6",
-      name: "Ae bet thủ",
-      owner: "hehe" // uerName
-    },
-    {
-      _id: "7",
-      name: "Ae bet thủ",
-      owner: "hehe" // uerName
-    }
-  ];
+  const navigate = useNavigate();
 
   const [groups, setGroups] = useState([]);
   const [groupName, setGroupName] = useState("");
@@ -66,11 +29,7 @@ export default function Groups() {
     if (shouldRefetch) fetchGroup({});
   }, [shouldRefetch]);
 
-  const navigate = useNavigate();
-
   const token = getLocalStorage("token");
-  const user = getLocalStorage("user");
-  const auth = !!token;
 
   const fetchGroup = async () => {
     const headers = {
@@ -110,7 +69,7 @@ export default function Groups() {
   };
 
   const handleChooseDetail = (id) => {
-    navigate(`/groups/${id}`);
+    navigate(`/groups/${id}`, { state: { groupID: id } });
   };
 
   const handleClose = () => {
@@ -183,9 +142,12 @@ export default function Groups() {
         </TableHead>
         <TableBody>
           {groups.map((da) => (
-            <TableRow onClick={() => handleChooseDetail(da._id)}>
+            <TableRow onClick={() => handleChooseDetail(da.id)}>
               <TableCell>{da.groupName}</TableCell>
-              <TableCell>{da.invitationString}</TableCell>
+              <TableCell>{da.users?.member?.role}</TableCell>
+              <TableCell>
+                {`${da.owner?.firstName} ${da.owner?.lastName}`}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
