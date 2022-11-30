@@ -20,9 +20,12 @@ export default function RegisterPage() {
   const onSubmit = async (data) => {
     const dataSent = {
       email: data.email,
-      firstName: data.username,
+      firstName: data.firstName,
+      lastName: data.lastName,
       password: data.password
     };
+
+    console.log(dataSent);
 
     const response = await axios
       .post("http://localhost:4000/signup", dataSent)
@@ -56,10 +59,15 @@ export default function RegisterPage() {
           <input {...register("email", { required: "Required" })} />
           {errors.email && <span>{errors.email.message}</span>}
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Username
+            First name
           </Typography>
-          <input {...register("username", { required: "Required" })} />
-          {errors.username && <span>{errors.username.message}</span>}
+          <input {...register("firstName", { required: "Required" })} />
+          {errors.firstName && <span>{errors.firstName.message}</span>}
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Last name
+          </Typography>
+          <input {...register("lastName", { required: "Required" })} />
+          {errors.lastName && <span>{errors.lastName.message}</span>}
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Password
           </Typography>

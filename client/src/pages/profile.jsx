@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { getLocalStorage } from "../utils/localStorage";
+import { getLocalStorage, saveLocalStorage } from "../utils/localStorage";
 
 export default function ProfilePage() {
   const {
@@ -15,6 +15,10 @@ export default function ProfilePage() {
   } = useForm();
   const navigate = useNavigate();
 
+  const [shouldRefetch, setShouldRefetch] = useState(true);
+
+  useEffect(() => {}, [shouldRefetch]);
+
   // const user = useSelector((state) => state.user?.userInfo);
   const token = getLocalStorage("token");
   const user = getLocalStorage("user");
@@ -24,16 +28,25 @@ export default function ProfilePage() {
   setValue("lastName", user?.lastName);
 
   const onSubmit = async (data) => {
+    const headers = {
+      "x-access-token": token
+    };
+
     const dataSent = {
       email: data.email,
-      firstName: data.username
+      firstName: data.username,
+      lastName: data.lastName
     };
 
     const response = await axios
-      .post("http://localhost:4000/signup", dataSent)
+      .put("http://localhost:4000/user/update", dataSent, { headers })
       .catch((error) => console.error("There was an error!", error));
 
-    if (response.status === 200) navigate("/login");
+    console.log(response.data);
+    if (response.status === 200) {
+      saveLocalStorage("user", response.data.user);
+      setShouldRefetch(!shouldRefetch);
+    }
   };
 
   return (
@@ -42,7 +55,7 @@ export default function ProfilePage() {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Email
         </Typography>
-        <input {...register("email", { required: "Required" })} />
+        <input readOnly {...register("email", { required: "Required" })} />
         {errors.email && <span>{errors.email.message}</span>}
         <Typography
           variant="h6"

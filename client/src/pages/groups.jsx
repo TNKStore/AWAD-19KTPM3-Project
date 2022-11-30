@@ -40,7 +40,6 @@ export default function Groups() {
       .get("http://localhost:4000/group/list", { headers })
       .catch((error) => console.error("There was an error!", error));
 
-    console.log(response.data?.groupList);
     if (response.status === 200) {
       setGroups(response.data?.groupList);
       setShouldRefetch(false);
@@ -64,8 +63,6 @@ export default function Groups() {
       setIsDialogOpen(false);
       setShouldRefetch(true);
     }
-
-    console.log("groupName", groupName);
   };
 
   const handleChooseDetail = (id) => {

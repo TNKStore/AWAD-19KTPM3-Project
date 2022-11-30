@@ -1,5 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { saveLocalStorage, removeLocaStorage, getLocalStorage } from './../../utils/localStorage';
+import {
+  saveLocalStorage,
+  removeLocaStorage,
+  getLocalStorage
+} from "../../utils/localStorage";
 
 export const userSlice = createSlice({
   name: "user",
@@ -9,31 +13,32 @@ export const userSlice = createSlice({
   },
   reducers: {
     saveUser: (state, action) => {
-        saveLocalStorage('user', action.payload.user);
-        saveLocalStorage('token', action.payload.token);
-        state = {
-            userInfo: action.payload.user,
-            token: action.payload.token,
-        }
+      saveLocalStorage("user", action.payload.user);
+      saveLocalStorage("token", action.payload.token);
+      state = {
+        userInfo: action.payload.user,
+        token: action.payload.token
+      };
     },
     deleteUser: (state, action) => {
-        removeLocaStorage('user');
-        removeLocaStorage('token');
-        state = {
-            userInfo: null,
-            token: null
-        };
+      removeLocaStorage("user");
+      removeLocaStorage("token");
+      state = {
+        userInfo: null,
+        token: null
+      };
     },
     loadUserFromLocalStorage: (state) => {
-        state = {
-            userInfo: getLocalStorage('user'),
-            token: getLocalStorage('token'),
-        }
-    },
+      state = {
+        userInfo: getLocalStorage("user"),
+        token: getLocalStorage("token")
+      };
+    }
   }
 });
 
 // Action creators are generated for each case reducer function
-export const { saveUser, deleteUser, loadUserFromLocalStorage } = userSlice.actions;
+export const { saveUser, deleteUser, loadUserFromLocalStorage } =
+  userSlice.actions;
 
 export default userSlice.reducer;
