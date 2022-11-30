@@ -9,7 +9,10 @@ sgMail.setApiKey("SG.b1tH-FxwTIewjLNN5JNjcQ.srECxZUrDjrGiRCEFiviQqWIIucePGjjiH7O
 exports.listGroup = async (req, res, next) =>{
     const userId = req.decoded.user.id;
     const groupList = await groupService.listGroupOfUser(userId);
-    return res.status(200).json({groupList});
+    for (let x in groupList) {
+        groupList[x].owner = await groupService.getGroupOwner(groupList[x].id);
+    }
+    return res.status(200).send({groupList : groupList});
 }
 
 exports.listMemberIdOfGroup = async (req, res) => {
@@ -32,8 +35,10 @@ exports.createGroup = async (req, res, next) => {
 }
 
 exports.getMemberOfGroup = async (req, res, next) => {
-    const groupId = req.body.group_id;
+    const groupId = req.params['id'];
+    console.log(groupId)
     const group = await groupService.findGroupWithMember(groupId);
+    console.log(group)
     return res.status(200).send({group: group});
 }
 

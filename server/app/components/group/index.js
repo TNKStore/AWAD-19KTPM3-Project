@@ -42,7 +42,7 @@ router.get(
 );
 
 router.get(
-  "/member",
+  "/:id",
   passport.authenticate("jwt", { session: false }),
   groupController.getMemberOfGroup
 );
