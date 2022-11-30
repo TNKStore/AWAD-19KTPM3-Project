@@ -80,7 +80,7 @@ exports.updateInfo = (email, firstName, lastName, address, phone) =>
 exports.updatePassword = (email, pwd) =>
   User.update(
     {
-      pwd: hashPassword(pwd),
+      password: hashPassword(pwd),
     },
     {
       where: {
