@@ -98,13 +98,34 @@ export default function GroupDetail() {
 
     console.log(response.data);
     if (response.status === 200) {
-      setInvitationString(response.data.link);
+      setIsDialogOpen(false);
     }
   };
 
   const handleChooseDetail = (id) => {};
 
-  const handleDelete = (id) => {};
+  const handleDelete = async (id) => {
+    const headers = {
+      "x-access-token": token
+    };
+
+    const data = {
+      groupId: groupID,
+      memberId: id
+    };
+    console.log(data);
+
+    const response = await axios
+      .post("http://localhost:4000/member/kick", data, {
+        headers
+      })
+      .catch((error) => console.error("There was an error!", error));
+
+    console.log(response.data);
+    if (response.status === 200) {
+      setShouldRefetch(true);
+    }
+  };
 
   const handleClose = () => {
     setIsDialogOpen(false);
