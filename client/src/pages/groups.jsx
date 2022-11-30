@@ -11,7 +11,7 @@ import {
   Typography
 } from "@mui/material";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { GROUP_HEADER } from "../constant/header";
@@ -57,8 +57,14 @@ export default function Groups() {
     }
   ];
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [groups, setGroups] = useState([]);
   const [groupName, setGroupName] = useState("");
+  const [shouldRefetch, setShouldRefetch] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    if (shouldRefetch) fetchGroup({});
+  }, [shouldRefetch]);
 
   const navigate = useNavigate();
 
@@ -66,22 +72,20 @@ export default function Groups() {
   const user = getLocalStorage("user");
   const auth = !!token;
 
-  const handleChooseDetail = (id) => {
-    navigate(`/groups/${id}`);
-  };
+  const fetchGroup = async () => {
+    const headers = {
+      "x-access-token": token
+    };
 
-  const handleClose = () => {
-    setIsDialogOpen(false);
-  };
+    const response = await axios
+      .get("http://localhost:4000/group/list", { headers })
+      .catch((error) => console.error("There was an error!", error));
 
-  const handleAddUser = () => {
-    setIsDialogOpen(true);
-  };
-
-  const handleChangeGroupName = (e) => {
-    const { value } = e.target;
-    setGroupName(e.target.value);
-    console.log("value", value);
+    console.log(response.data?.groupList);
+    if (response.status === 200) {
+      setGroups(response.data?.groupList);
+      setShouldRefetch(false);
+    }
   };
 
   const handleCreateGroup = async () => {
@@ -99,10 +103,28 @@ export default function Groups() {
 
     if (response.status === 200) {
       setIsDialogOpen(false);
-      navigate("/groups");
+      setShouldRefetch(true);
     }
 
     console.log("groupName", groupName);
+  };
+
+  const handleChooseDetail = (id) => {
+    navigate(`/groups/${id}`);
+  };
+
+  const handleClose = () => {
+    setIsDialogOpen(false);
+  };
+
+  const handleAddUser = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleChangeGroupName = (e) => {
+    const { value } = e.target;
+    setGroupName(e.target.value);
+    console.log("value", value);
   };
 
   return (
@@ -160,10 +182,10 @@ export default function Groups() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((da) => (
+          {groups.map((da) => (
             <TableRow onClick={() => handleChooseDetail(da._id)}>
-              <TableCell>{da.name}</TableCell>
-              <TableCell>{da.owner}</TableCell>
+              <TableCell>{da.groupName}</TableCell>
+              <TableCell>{da.invitationString}</TableCell>
             </TableRow>
           ))}
         </TableBody>
