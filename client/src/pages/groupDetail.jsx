@@ -12,11 +12,11 @@ import {
   Typography
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import axios from "axios";
-import { GROUP_DETAIL_HEADER, GROUP_HEADER } from "../constant/header";
+import { GROUP_DETAIL_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
 
 export default function GroupDetail() {
@@ -30,19 +30,6 @@ export default function GroupDetail() {
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  useEffect(() => {
-    if (location.state !== null) {
-      setGroupID(location.state.groupID);
-    }
-  }, [groupID]);
-
-  useEffect(() => {
-    if (groupID !== "" && shouldRefetch) {
-      fetchMembers({});
-      getInvitationLink({});
-    }
-  }, [groupID, shouldRefetch]);
-
   const token = getLocalStorage("token");
 
   const fetchMembers = async () => {
@@ -51,7 +38,7 @@ export default function GroupDetail() {
     };
 
     const response = await axios
-      .get(`http://localhost:4000/group/${groupID}`, { headers })
+      .get(`${process.env.REACT_APP_DOMAIN}/group/${groupID}`, { headers })
       .catch((error) => console.error("There was an error!", error));
 
     if (response.status === 200) {
@@ -68,16 +55,31 @@ export default function GroupDetail() {
     };
 
     const response = await axios
-      .get(`http://localhost:4000/group/invitation-link?group=${groupID}`, {
-        headers
-      })
+      .get(
+        `${process.env.REACT_APP_DOMAIN}/group/invitation-link?group=${groupID}`,
+        {
+          headers
+        }
+      )
       .catch((error) => console.error("There was an error!", error));
 
-    console.log(response.data);
     if (response.status === 200) {
       setInvitationString(response.data.link);
     }
   };
+
+  useEffect(() => {
+    if (location.state !== null) {
+      setGroupID(location.state.groupID);
+    }
+  }, [groupID]);
+
+  useEffect(() => {
+    if (groupID !== "" && shouldRefetch) {
+      fetchMembers({});
+      getInvitationLink({});
+    }
+  }, [groupID, shouldRefetch]);
 
   const sendInvitationEmail = async () => {
     const headers = {
@@ -88,21 +90,21 @@ export default function GroupDetail() {
       groupId: groupID,
       email: inviteEmail
     };
-    console.log(data);
 
     const response = await axios
-      .post("http://localhost:4000/group/invite/send", data, {
+      .post(`${process.env.REACT_APP_DOMAIN}/group/invite/send`, data, {
         headers
       })
       .catch((error) => console.error("There was an error!", error));
 
-    console.log(response.data);
     if (response.status === 200) {
       setIsDialogOpen(false);
     }
   };
 
-  const handleChooseDetail = (id) => {};
+  const handleChooseDetail = (id) => {
+    console.log(id);
+  };
 
   const handleDelete = async (id) => {
     const headers = {
@@ -113,15 +115,13 @@ export default function GroupDetail() {
       groupId: groupID,
       memberId: id
     };
-    console.log(data);
 
     const response = await axios
-      .post("http://localhost:4000/member/kick", data, {
+      .post(`${process.env.REACT_APP_DOMAIN}/member/kick`, data, {
         headers
       })
       .catch((error) => console.error("There was an error!", error));
 
-    console.log(response.data);
     if (response.status === 200) {
       setShouldRefetch(true);
     }
@@ -136,9 +136,7 @@ export default function GroupDetail() {
   };
 
   const handleChangeInviteEmail = (e) => {
-    const { value } = e.target;
     setInviteEmail(e.target.value);
-    console.log("value", value);
   };
 
   return (

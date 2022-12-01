@@ -14,7 +14,7 @@ export default function ActivatePage() {
   const onActivate = async () => {
     const response = await axios
       .post(
-        "http://localhost:4000/activate",
+        `${process.env.REACT_APP_DOMAIN}/activate`,
         {},
         {
           params: { email, activationString }

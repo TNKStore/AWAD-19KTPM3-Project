@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getLocalStorage, saveLocalStorage } from "../utils/localStorage";
 
@@ -13,7 +13,6 @@ export default function ProfilePage() {
     formState: { errors },
     setValue
   } = useForm();
-  const navigate = useNavigate();
 
   const [shouldRefetch, setShouldRefetch] = useState(true);
 
@@ -39,10 +38,9 @@ export default function ProfilePage() {
     };
 
     const response = await axios
-      .put("http://localhost:4000/user/update", dataSent, { headers })
+      .put(`${process.env.REACT_APP_DOMAIN}/user/update`, dataSent, { headers })
       .catch((error) => console.error("There was an error!", error));
 
-    console.log(response.data);
     if (response.status === 200) {
       saveLocalStorage("user", response.data.user);
       setShouldRefetch(!shouldRefetch);

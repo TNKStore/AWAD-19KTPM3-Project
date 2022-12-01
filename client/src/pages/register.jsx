@@ -25,10 +25,8 @@ export default function RegisterPage() {
       password: data.password
     };
 
-    console.log(dataSent);
-
     const response = await axios
-      .post("http://localhost:4000/signup", dataSent)
+      .post(`${process.env.REACT_APP_DOMAIN}/signup`, dataSent)
       .catch((error) => console.error("There was an error!", error));
 
     if (response.status === 200) navigate("/login");
@@ -72,6 +70,7 @@ export default function RegisterPage() {
             Password
           </Typography>
           <input
+            type="password"
             {...register("password", {
               required: "Required",
               minLength: {
@@ -85,6 +84,7 @@ export default function RegisterPage() {
             Retyped Password
           </Typography>
           <input
+            type="password"
             {...register("passwordRetyped", {
               required: "Required",
               validate: (value) =>

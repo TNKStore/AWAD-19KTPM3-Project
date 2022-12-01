@@ -1,20 +1,12 @@
+/* eslint-disable jsx-a11y/aria-role */
 import React, { useEffect } from "react";
-import FormWithoutHookForm from "./pages/login";
 import "./App.css";
-import { QueryClient, QueryClientProvider } from "react-query";
-import {
-  createBrowserRouter,
-  redirect,
-  Route,
-  RouterProvider,
-  Routes,
-  BrowserRouter as Router
-} from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import Root from "./pages/root";
 import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register";
 import PrivateRoute from "./privateRoute/privateRoute";
-import { useDispatch } from "react-redux";
 import { loadUserFromLocalStorage } from "./features/user/userSlice";
 import GroupsPage from "./pages/groups";
 import GroupDetailPage from "./pages/groupDetail";

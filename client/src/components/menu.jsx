@@ -15,7 +15,6 @@ export default function SideMenu() {
   const navigate = useNavigate();
 
   const token = getLocalStorage("token");
-  const user = getLocalStorage("user");
   const auth = !!token;
   const sections = auth ? ["Home", "Groups"] : ["Home"];
 
