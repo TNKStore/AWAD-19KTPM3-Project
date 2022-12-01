@@ -54,8 +54,7 @@ exports.postSignUp = async (req, res, next) => {
 /**
  *  This function is used verify a google account
  */
-const GOOGLE_CLIENT_ID =
-  "1013752400475-578slktk1o1tu3k8t47eb6raqc84o9e9.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 async function verifyGoogleToken(token) {
@@ -91,13 +90,11 @@ exports.postLogInGoogle = async (req, res, next) => {
           null,
           null
         );
-        return res
-          .status(200)
-          .send({
-            error: false,
-            message:
-              "Sign-up successfully! Please check your email for activation",
-          });
+        return res.status(200).send({
+          error: false,
+          message:
+            "Sign-up successfully! Please check your email for activation",
+        });
       }
       delete user.password;
       const token = jwt.sign({ user }, process.env.JWT_SECRET, {

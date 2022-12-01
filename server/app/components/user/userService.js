@@ -10,10 +10,11 @@ function hashPassword(password) {
   return bcrypt.hashSync(password, salt);
 }
 
-exports.findByEmail = (email) => User.findOne({ 
-  raw: true,
-  where: { email: email } 
-});
+exports.findByEmail = (email) =>
+  User.findOne({
+    raw: true,
+    where: { email: email },
+  });
 
 exports.findById = (id) => User.findByPk(id);
 
@@ -49,7 +50,7 @@ exports.register = async (
   //send activation string
   const msg = {
     to: email, // Change to your recipient
-    from: "tdhtrung19@clc.fitus.edu.vn", // Change to your verified sender
+    from: "ptvkhue19@clc.fitus.edu.vn", // Change to your verified sender
     subject: "Account verification",
     text: "Thanks for joining us!",
     html: `<h1>Thanks for joining us!</h1>
