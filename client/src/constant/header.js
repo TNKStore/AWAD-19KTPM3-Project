@@ -16,7 +16,7 @@ export const GROUP_HEADER = [
 export const GROUP_DETAIL_HEADER = [
   {
     id: 1,
-    name: "Email"
+    name: "Member"
   },
   {
     id: 2,

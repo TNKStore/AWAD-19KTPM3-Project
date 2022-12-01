@@ -19,6 +19,7 @@ export default function InvitePage() {
     };
 
     const data = {};
+    console.log(invitationString);
 
     const response = await axios
       .post("http://localhost:4000/group/invite", data, {

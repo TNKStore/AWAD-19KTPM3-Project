@@ -4,9 +4,7 @@ const { result } = require("lodash");
 const createError = require("http-errors");
 
 const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey(
-  process.env.SENDGRID_API_KEY
-);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 exports.listGroup = async (req, res, next) => {
   const userId = req.decoded.user.id;
@@ -26,7 +24,6 @@ exports.listMemberIdOfGroup = async (req, res) => {
 exports.createGroup = async (req, res, next) => {
   const { groupName } = req.body;
   const group = await groupService.create(groupName);
-  console.log(req.decoded);
   const user = await userService.findById(req.decoded.user.id);
   if (!user) {
     return res.status(404).send({ message: "User not found" });
@@ -40,9 +37,7 @@ exports.createGroup = async (req, res, next) => {
 
 exports.getMemberOfGroup = async (req, res, next) => {
   const groupId = req.params["id"];
-  console.log(groupId);
   const group = await groupService.findGroupWithMember(groupId);
-  console.log(group);
   return res.status(200).send({ group: group });
 };
 
@@ -64,12 +59,12 @@ exports.createInvitationLink = async (req, res, next) => {
 };
 
 exports.inviteToGroup = async (req, res, next) => {
-  const { groupId, userId } = req.body;
+  const { groupId, email } = req.body;
   const group = await groupService.findById(groupId);
   if (!group) {
     return res.status(404).send({ message: "Group not found" });
   }
-  const user = await userService.findById(userId);
+  const user = await userService.findByEmail(email);
   if (!user) {
     return res.status(404).send({ message: "User not found" });
   }
@@ -78,11 +73,11 @@ exports.inviteToGroup = async (req, res, next) => {
   //send invitation link
   const msg = {
     to: user.email, // Change to your recipient
-    from: "tdhtrung19@clc.fitus.edu.vn", // Change to your verified sender
+    from: "ptvkhue19@clc.fitus.edu.vn", // Change to your verified sender
     subject: "Group invitation",
     text: `Thanks for joining ${group.groupName} group!`,
     html: `<h1>Thanks for joining ${group.groupName} group!</h1>
-        <a href="${domain}/group/invite?group=${group.id}&invitationLink=${group.invitationString}">Activate now</a>`,
+        <a href="${domain}/group/invite?group=${group.id}&invitationString=${group.invitationString}">Activate now</a>`,
   };
   sgMail
     .send(msg)
@@ -100,7 +95,7 @@ exports.invite = async (req, res, next) => {
   const groupId = req.query["group"];
   const invitationString = req.query["invitationString"];
   const userId = req.decoded.user.id;
-
+  console.log(invitationString);
   const group = await groupService.findById(groupId);
   if (!group) {
     return res.status(404).send({ message: "Group not found" });

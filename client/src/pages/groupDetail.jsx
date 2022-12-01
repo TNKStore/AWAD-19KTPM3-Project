@@ -86,7 +86,7 @@ export default function GroupDetail() {
 
     const data = {
       groupId: groupID,
-      userId: inviteEmail
+      email: inviteEmail
     };
     console.log(data);
 
@@ -165,7 +165,10 @@ export default function GroupDetail() {
           >
             Email
           </Typography>
-          <TextField onChange={handleChangeInviteEmail} />
+          <TextField
+            sx={{ m: 1, width: "50ch" }}
+            onChange={handleChangeInviteEmail}
+          />
           <Button
             sx={{ marginTop: "20px" }}
             onClick={sendInvitationEmail}
@@ -214,7 +217,10 @@ export default function GroupDetail() {
           <TableBody>
             {groupMembers.map((da) => (
               <TableRow onClick={() => handleChooseDetail(da.id)}>
-                <TableCell>{`${da.firstName} ${da.lastName}`}</TableCell>
+                <TableCell>
+                  {`${da.firstName} ${da.lastName}`}
+                  <div className="italic">{da.email}</div>
+                </TableCell>
                 <TableCell>{da.member.role}</TableCell>
                 <TableCell sx={{ maxWidth: "10px" }}>
                   <Button onClick={() => handleDelete(da.id)}>

@@ -7,7 +7,7 @@ export default function ActivatePage() {
   const [searchParams] = useSearchParams();
 
   const email = searchParams.get("email");
-  const activationString = searchParams.get("activation-string");
+  const activationString = searchParams.get("activationString");
 
   const navigate = useNavigate();
 
@@ -22,6 +22,8 @@ export default function ActivatePage() {
       )
       .catch((error) => console.error("There was an error!", error));
 
+    console.log(email);
+    console.log(activationString);
     console.log(response);
     if (response.status === 200)
       navigate("/login", { state: response.message });
