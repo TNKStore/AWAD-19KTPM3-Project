@@ -10,7 +10,10 @@ function hashPassword(password) {
   return bcrypt.hashSync(password, salt);
 }
 
-exports.findByEmail = (email) => User.findOne({ where: { email: email } });
+exports.findByEmail = (email) => User.findOne({ 
+  raw: true,
+  where: { email: email } 
+});
 
 exports.findById = (id) => User.findByPk(id);
 
@@ -41,7 +44,7 @@ exports.register = async (
     activationString: ActivationString,
   });
 
-  const domain = "http://localhost:3000";
+  const domain = process.env.DOMAIN;
 
   //send activation string
   const msg = {

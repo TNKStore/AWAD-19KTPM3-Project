@@ -15,12 +15,17 @@ export default function RegisterPage() {
   } = useForm();
   const navigate = useNavigate();
 
+  const watchPassword = watch("password");
+
   const onSubmit = async (data) => {
     const dataSent = {
       email: data.email,
-      firstName: data.username,
+      firstName: data.firstName,
+      lastName: data.lastName,
       password: data.password
     };
+
+    console.log(dataSent);
 
     const response = await axios
       .post("http://localhost:4000/signup", dataSent)
@@ -29,11 +34,16 @@ export default function RegisterPage() {
     if (response.status === 200) navigate("/login");
   };
 
-  const watchPassword = watch("password");
-
   return (
-    <Box sx={{ display: 'flex', alignItems:'center', justifyContent: 'center', height: '100vh' }}>
-      <div style={{maxWidth: "600px", width: '100%'}}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh"
+      }}
+    >
+      <div style={{ maxWidth: "600px", width: "100%" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Typography
             variant="h3"
@@ -49,10 +59,15 @@ export default function RegisterPage() {
           <input {...register("email", { required: "Required" })} />
           {errors.email && <span>{errors.email.message}</span>}
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Username
+            First name
           </Typography>
-          <input {...register("username", { required: "Required" })} />
-          {errors.username && <span>{errors.username.message}</span>}
+          <input {...register("firstName", { required: "Required" })} />
+          {errors.firstName && <span>{errors.firstName.message}</span>}
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Last name
+          </Typography>
+          <input {...register("lastName", { required: "Required" })} />
+          {errors.lastName && <span>{errors.lastName.message}</span>}
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Password
           </Typography>

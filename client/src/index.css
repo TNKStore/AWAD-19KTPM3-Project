@@ -18,6 +18,10 @@ form {
   padding: 5%;
 }
 
+.child {
+  background: white;
+}
+
 input {
   display: block;
   box-sizing: border-box;
@@ -42,7 +46,7 @@ label {
 
 button[type="submit"],
 input[type="submit"] {
-  background: #ec5990;
+  background: orange;
   color: white;
   text-transform: uppercase;
   border: none;
@@ -55,7 +59,7 @@ input[type="submit"] {
 
 button[type="submit"]:hover,
 input[type="submit"]:hover {
-  background: #bf1650;
+  background: darkorange;
 }
 
 button[type="submit"]:active,
