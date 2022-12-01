@@ -1,12 +1,12 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable camelcase */
 /* eslint-disable no-else-return */
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
 // AUTH
-import { useSelector } from "react-redux";
-import { useJwt } from "react-jwt";
 import jwt_decode from "jwt-decode";
-import { Box, CssBaseline, StyledEngineProvider } from "@mui/material";
+import { Box, CssBaseline } from "@mui/material";
 import { getLocalStorage } from "../utils/localStorage";
 import SideMenu from "../components/menu";
 import TopBar from "../components/appBar";

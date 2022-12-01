@@ -25,10 +25,6 @@ export default function Groups() {
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  useEffect(() => {
-    if (shouldRefetch) fetchGroup({});
-  }, [shouldRefetch]);
-
   const token = getLocalStorage("token");
 
   const fetchGroup = async () => {
@@ -37,7 +33,7 @@ export default function Groups() {
     };
 
     const response = await axios
-      .get("http://localhost:4000/group/list", { headers })
+      .get(`${process.env.REACT_APP_DOMAIN}/group/list`, { headers })
       .catch((error) => console.error("There was an error!", error));
 
     if (response.status === 200) {
@@ -45,6 +41,10 @@ export default function Groups() {
       setShouldRefetch(false);
     }
   };
+
+  useEffect(() => {
+    if (shouldRefetch) fetchGroup({});
+  }, [shouldRefetch]);
 
   const handleCreateGroup = async () => {
     const headers = {
@@ -56,7 +56,7 @@ export default function Groups() {
     };
 
     const response = await axios
-      .post("http://localhost:4000/group/create", data, { headers })
+      .post(`${process.env.REACT_APP_DOMAIN}/group/create`, data, { headers })
       .catch((error) => console.error("There was an error!", error));
 
     if (response.status === 200) {
@@ -78,9 +78,7 @@ export default function Groups() {
   };
 
   const handleChangeGroupName = (e) => {
-    const { value } = e.target;
     setGroupName(e.target.value);
-    console.log("value", value);
   };
 
   return (

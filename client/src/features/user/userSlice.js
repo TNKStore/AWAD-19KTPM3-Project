@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-param-reassign */
 import { createSlice } from "@reduxjs/toolkit";
 import {
   saveLocalStorage,
@@ -20,7 +23,7 @@ export const userSlice = createSlice({
         token: action.payload.token
       };
     },
-    deleteUser: (state, action) => {
+    deleteUser: (state) => {
       removeLocaStorage("user");
       removeLocaStorage("token");
       state = {

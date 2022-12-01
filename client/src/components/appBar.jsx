@@ -9,14 +9,14 @@ import {
   Typography
 } from "@mui/material";
 import * as React from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { deleteUser } from "../features/user/userSlice";
 import { getLocalStorage } from "../utils/localStorage";
 
 const drawerWidth = 300;
 
-export default function TopBar(props) {
+export default function TopBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const navigate = useNavigate();
@@ -38,6 +38,8 @@ export default function TopBar(props) {
       break;
     case "/profile":
       content = "Profile";
+      break;
+    default:
       break;
   }
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -18,13 +19,11 @@ const useFetch = (url) => {
       body: JSON.stringify({ credential: response.credential })
     })
       .then((res) => {
-        console.log(res);
         setLoading(false);
 
         return res.json();
       })
       .then((data) => {
-        console.log(data);
         if (data?.user) {
           localStorage.setItem("token", JSON.stringify(data?.token));
           localStorage.setItem("user", JSON.stringify(data?.user));

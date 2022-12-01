@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable react/jsx-props-no-spreading */
 
 import React, { useEffect } from "react";
@@ -15,15 +16,14 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const { handleGoogle, loading, error } = useFetch(
-    "http://localhost:4000/login-google"
+    `${process.env.REACT_APP_DOMAIN}/login-google`
   );
 
   useEffect(() => {
     /* global google */
     if (window.google) {
       google.accounts.id.initialize({
-        client_id:
-          "1013752400475-578slktk1o1tu3k8t47eb6raqc84o9e9.apps.googleusercontent.com",
+        client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
         callback: handleGoogle
       });
 
@@ -46,10 +46,8 @@ export default function LoginPage() {
     };
 
     const response = await axios
-      .post("http://localhost:4000/login", dataSent)
+      .post(`${process.env.REACT_APP_DOMAIN}/login`, dataSent)
       .catch((error) => console.error("There was an error!", error));
-
-    console.log(response);
 
     if (response.data?.token && response.data?.user) {
       dispatch(saveUser(response?.data));
@@ -83,7 +81,10 @@ export default function LoginPage() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Password
           </Typography>
-          <input {...register("password", { required: "Required" })} />
+          <input
+            type="password"
+            {...register("password", { required: "Required" })}
+          />
           <input type="submit" />
           <div
             style={{
