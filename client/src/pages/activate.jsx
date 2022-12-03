@@ -5,13 +5,14 @@ import axios from "axios";
 
 export default function ActivatePage() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const email = searchParams.get("email");
   const activationString = searchParams.get("activationString");
 
-  const navigate = useNavigate();
+  // API calls
 
-  const onActivate = async () => {
+  const activateAccount = async () => {
     const response = await axios
       .post(
         `${process.env.REACT_APP_DOMAIN}/activate`,
@@ -22,15 +23,19 @@ export default function ActivatePage() {
       )
       .catch((error) => console.error("There was an error!", error));
 
-    console.log(email);
-    console.log(activationString);
-    console.log(response);
+    return response;
+  };
+
+  // Handle functions
+  const handleActivateAccount = async () => {
+    const response = await activateAccount();
+
     if (response.status === 200)
       navigate("/login", { state: response.message });
   };
 
   useEffect(() => {
-    onActivate();
+    handleActivateAccount();
   }, []);
 
   return (

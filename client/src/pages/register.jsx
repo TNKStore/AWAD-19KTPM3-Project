@@ -17,7 +17,7 @@ export default function RegisterPage() {
 
   const watchPassword = watch("password");
 
-  const onSubmit = async (data) => {
+  const registerAccount = async (data) => {
     const dataSent = {
       email: data.email,
       firstName: data.firstName,
@@ -29,6 +29,11 @@ export default function RegisterPage() {
       .post(`${process.env.REACT_APP_DOMAIN}/signup`, dataSent)
       .catch((error) => console.error("There was an error!", error));
 
+    return response;
+  };
+
+  const handleRegisterAccount = async (data) => {
+    const response = await registerAccount(data);
     if (response.status === 200) navigate("/login");
   };
 
@@ -42,7 +47,7 @@ export default function RegisterPage() {
       }}
     >
       <div style={{ maxWidth: "600px", width: "100%" }}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(handleRegisterAccount)}>
           <Typography
             variant="h3"
             component="div"

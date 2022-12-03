@@ -39,7 +39,7 @@ export default function LoginPage() {
     }
   }, [handleGoogle]);
 
-  const onSubmit = async (data) => {
+  const login = async (data) => {
     const dataSent = {
       email: data.email,
       password: data.password
@@ -48,6 +48,12 @@ export default function LoginPage() {
     const response = await axios
       .post(`${process.env.REACT_APP_DOMAIN}/login`, dataSent)
       .catch((error) => console.error("There was an error!", error));
+
+    return response;
+  };
+
+  const handleLogin = async (data) => {
+    const response = await login(data);
 
     if (response.data?.token && response.data?.user) {
       dispatch(saveUser(response?.data));
@@ -65,7 +71,7 @@ export default function LoginPage() {
       }}
     >
       <div style={{ maxWidth: "600px", width: "100%" }}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(handleLogin)}>
           <Typography
             variant="h3"
             component="div"

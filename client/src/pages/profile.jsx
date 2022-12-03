@@ -7,16 +7,14 @@ import axios from "axios";
 import { getLocalStorage, saveLocalStorage } from "../utils/localStorage";
 
 export default function ProfilePage() {
+  const [shouldRefetch, setShouldRefetch] = useState(true);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue
   } = useForm();
-
-  const [shouldRefetch, setShouldRefetch] = useState(true);
-
-  useEffect(() => {}, [shouldRefetch]);
 
   // const user = useSelector((state) => state.user?.userInfo);
   const token = getLocalStorage("token");
@@ -26,14 +24,14 @@ export default function ProfilePage() {
   setValue("firstName", user?.firstName);
   setValue("lastName", user?.lastName);
 
-  const onSubmit = async (data) => {
+  const updateProfile = async (data) => {
     const headers = {
       "x-access-token": token
     };
 
     const dataSent = {
       email: data.email,
-      firstName: data.username,
+      firstName: data.firstName,
       lastName: data.lastName
     };
 
@@ -41,15 +39,23 @@ export default function ProfilePage() {
       .put(`${process.env.REACT_APP_DOMAIN}/user/update`, dataSent, { headers })
       .catch((error) => console.error("There was an error!", error));
 
+    return response;
+  };
+
+  const handleUpdateProfile = async (data) => {
+    const response = await updateProfile(data);
+
     if (response.status === 200) {
       saveLocalStorage("user", response.data.user);
       setShouldRefetch(!shouldRefetch);
     }
   };
 
+  useEffect(() => {}, [shouldRefetch]);
+
   return (
     <Box>
-      <form className="child" onSubmit={handleSubmit(onSubmit)}>
+      <form className="child" onSubmit={handleSubmit(handleUpdateProfile)}>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Email
         </Typography>
