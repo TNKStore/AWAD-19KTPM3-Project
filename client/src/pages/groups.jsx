@@ -10,6 +10,7 @@ import {
   TextField,
   Typography
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -18,16 +19,18 @@ import { GROUP_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
 
 export default function Groups() {
-  const navigate = useNavigate();
-
   const [groups, setGroups] = useState([]);
   const [groupName, setGroupName] = useState("");
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  const navigate = useNavigate();
+
   const token = getLocalStorage("token");
 
-  const fetchGroup = async () => {
+  // API calls
+
+  const fetchGroups = async () => {
     const headers = {
       "x-access-token": token
     };
@@ -36,17 +39,10 @@ export default function Groups() {
       .get(`${process.env.REACT_APP_DOMAIN}/group/list`, { headers })
       .catch((error) => console.error("There was an error!", error));
 
-    if (response.status === 200) {
-      setGroups(response.data?.groupList);
-      setShouldRefetch(false);
-    }
+    return response;
   };
 
-  useEffect(() => {
-    if (shouldRefetch) fetchGroup({});
-  }, [shouldRefetch]);
-
-  const handleCreateGroup = async () => {
+  const createGroup = async () => {
     const headers = {
       "x-access-token": token
     };
@@ -59,31 +55,58 @@ export default function Groups() {
       .post(`${process.env.REACT_APP_DOMAIN}/group/create`, data, { headers })
       .catch((error) => console.error("There was an error!", error));
 
+    return response;
+  };
+
+  // Handle functions
+
+  const handleFetchGroups = async () => {
+    const response = await fetchGroups();
+
+    if (response.status === 200) {
+      setGroups(response.data?.groupList);
+      setShouldRefetch(false);
+    }
+  };
+
+  const handleCreateGroup = async () => {
+    const response = await createGroup();
+
     if (response.status === 200) {
       setIsDialogOpen(false);
       setShouldRefetch(true);
     }
   };
 
-  const handleChooseDetail = (id) => {
+  const handleChooseGroup = (id) => {
     navigate(`/groups/${id}`, { state: { groupID: id } });
   };
 
-  const handleClose = () => {
-    setIsDialogOpen(false);
+  const handleAddGroup = () => {
+    setIsDialogOpen(true);
   };
 
-  const handleAddUser = () => {
-    setIsDialogOpen(true);
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
   };
 
   const handleChangeGroupName = (e) => {
     setGroupName(e.target.value);
   };
 
+  const handleDeleteGroup = () => {
+    console.log();
+  };
+
+  // Use effect
+
+  useEffect(() => {
+    if (shouldRefetch) handleFetchGroups({});
+  }, [shouldRefetch]);
+
   return (
     <Box component="main">
-      <Dialog open={isDialogOpen} onClose={handleClose}>
+      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
         <Box
           display="flex"
           alignItems="center"
@@ -122,7 +145,7 @@ export default function Groups() {
           justifyContent="center"
           margin="0 15px 0 0"
         >
-          <Button onClick={handleAddUser} variant="outlined">
+          <Button onClick={handleAddGroup} variant="outlined">
             <AddToPhotosIcon />
           </Button>
         </Box>
@@ -137,11 +160,16 @@ export default function Groups() {
         </TableHead>
         <TableBody>
           {groups.map((da) => (
-            <TableRow onClick={() => handleChooseDetail(da.id)}>
+            <TableRow onClick={() => handleChooseGroup(da.id)}>
               <TableCell>{da.groupName}</TableCell>
               <TableCell>{da.users?.member?.role}</TableCell>
               <TableCell>
                 {`${da.owner?.firstName} ${da.owner?.lastName}`}
+              </TableCell>
+              <TableCell sx={{ maxWidth: "10px" }}>
+                <Button onClick={() => handleDeleteGroup(da.id)}>
+                  <DeleteIcon />
+                </Button>
               </TableCell>
             </TableRow>
           ))}

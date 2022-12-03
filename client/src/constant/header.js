@@ -10,6 +10,10 @@ export const GROUP_HEADER = [
   {
     id: 3,
     name: "Owner"
+  },
+  {
+    id: 4,
+    name: "Action"
   }
 ];
 

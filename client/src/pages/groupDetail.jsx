@@ -20,8 +20,6 @@ import { GROUP_DETAIL_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
 
 export default function GroupDetail() {
-  const location = useLocation();
-
   const [groupID, setGroupID] = useState("");
   const [groupName, setGroupName] = useState("");
   const [invitationString, setInvitationString] = useState("");
@@ -30,7 +28,11 @@ export default function GroupDetail() {
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  const location = useLocation();
+
   const token = getLocalStorage("token");
+
+  // API calls
 
   const fetchMembers = async () => {
     const headers = {
@@ -41,12 +43,7 @@ export default function GroupDetail() {
       .get(`${process.env.REACT_APP_DOMAIN}/group/${groupID}`, { headers })
       .catch((error) => console.error("There was an error!", error));
 
-    if (response.status === 200) {
-      const resData = response.data.group;
-      setGroupName(resData.groupName);
-      setGroupMembers(resData.users);
-      setShouldRefetch(false);
-    }
+    return response;
   };
 
   const getInvitationLink = async () => {
@@ -63,23 +60,8 @@ export default function GroupDetail() {
       )
       .catch((error) => console.error("There was an error!", error));
 
-    if (response.status === 200) {
-      setInvitationString(response.data.link);
-    }
+    return response;
   };
-
-  useEffect(() => {
-    if (location.state !== null) {
-      setGroupID(location.state.groupID);
-    }
-  }, [groupID]);
-
-  useEffect(() => {
-    if (groupID !== "" && shouldRefetch) {
-      fetchMembers({});
-      getInvitationLink({});
-    }
-  }, [groupID, shouldRefetch]);
 
   const sendInvitationEmail = async () => {
     const headers = {
@@ -97,16 +79,10 @@ export default function GroupDetail() {
       })
       .catch((error) => console.error("There was an error!", error));
 
-    if (response.status === 200) {
-      setIsDialogOpen(false);
-    }
+    return response;
   };
 
-  const handleChooseDetail = (id) => {
-    console.log(id);
-  };
-
-  const handleDelete = async (id) => {
+  const deleteUser = async (id) => {
     const headers = {
       "x-access-token": token
     };
@@ -122,26 +98,80 @@ export default function GroupDetail() {
       })
       .catch((error) => console.error("There was an error!", error));
 
+    return response;
+  };
+
+  // Handle functions
+
+  const handleFetchMembers = async () => {
+    const response = await fetchMembers();
+
+    if (response.status === 200) {
+      const resData = response.data.group;
+      setGroupName(resData.groupName);
+      setGroupMembers(resData.users);
+      setShouldRefetch(false);
+    }
+  };
+
+  const handleGetInvitationLink = async () => {
+    const response = await getInvitationLink();
+
+    if (response.status === 200) {
+      setInvitationString(response.data.link);
+    }
+  };
+
+  const handleSendInvitationEmail = async () => {
+    const response = await sendInvitationEmail();
+
+    if (response.status === 200) {
+      setIsDialogOpen(false);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    const response = await deleteUser();
+
     if (response.status === 200) {
       setShouldRefetch(true);
     }
   };
 
-  const handleClose = () => {
-    setIsDialogOpen(false);
+  const handleChooseDetail = (id) => {
+    console.log(id);
   };
 
-  const handleAddUser = () => {
+  const handleAddMember = () => {
     setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
   };
 
   const handleChangeInviteEmail = (e) => {
     setInviteEmail(e.target.value);
   };
 
+  // Use effect
+
+  useEffect(() => {
+    if (location.state !== null) {
+      setGroupID(location.state.groupID);
+    }
+  }, [groupID]);
+
+  useEffect(() => {
+    if (groupID !== "" && shouldRefetch) {
+      handleFetchMembers({});
+      handleGetInvitationLink({});
+    }
+  }, [groupID, shouldRefetch]);
+
   return (
     <Box component="main">
-      <Dialog maxWidth="1000px" open={isDialogOpen} onClose={handleClose}>
+      <Dialog maxWidth="1000px" open={isDialogOpen} onClose={handleCloseDialog}>
         <Box
           display="flex"
           alignItems="center"
@@ -169,7 +199,7 @@ export default function GroupDetail() {
           />
           <Button
             sx={{ marginTop: "20px" }}
-            onClick={sendInvitationEmail}
+            onClick={handleSendInvitationEmail}
             variant="outlined"
           >
             Send
@@ -198,7 +228,7 @@ export default function GroupDetail() {
           justifyContent="center"
           margin="0 15px 0 0"
         >
-          <Button onClick={handleAddUser} variant="outlined">
+          <Button onClick={handleAddMember} variant="outlined">
             <AddToPhotosIcon />
           </Button>
         </Box>
@@ -221,7 +251,7 @@ export default function GroupDetail() {
                 </TableCell>
                 <TableCell>{da.member.role}</TableCell>
                 <TableCell sx={{ maxWidth: "10px" }}>
-                  <Button onClick={() => handleDelete(da.id)}>
+                  <Button onClick={() => handleDeleteUser(da.id)}>
                     <DeleteIcon />
                   </Button>
                 </TableCell>

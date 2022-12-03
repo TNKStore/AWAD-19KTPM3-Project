@@ -13,7 +13,7 @@ export default function InvitePage() {
   const invitationString = searchParams.get("invitationString");
   const token = getLocalStorage("token");
 
-  const onActivate = async () => {
+  const inviteUser = async () => {
     const headers = {
       "x-access-token": token
     };
@@ -27,13 +27,18 @@ export default function InvitePage() {
       })
       .catch((error) => console.error("There was an error!", error));
 
-    console.log(response);
+    return response;
+  };
+
+  const handleInviteUser = async () => {
+    const response = await inviteUser();
+
     if (response.status === 200)
       navigate(`/groups/${group}`, { state: { groupID: group } });
   };
 
   useEffect(() => {
-    onActivate();
+    handleInviteUser();
   }, []);
 
   return (
