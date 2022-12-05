@@ -5,15 +5,14 @@ const Option = require("./option");
 const Slide = sequelize.define("slide", {
     question: {
         type: Sequelize.STRING
-    },
-    answer: {
-        type: Sequelize.STRING
     }
 }, {
     freezeTableName: true
 });
 
-Slide.hasMany(Option);
+Slide.hasMany(Option, {
+    onDelete: "CASCADE"
+});
 Option.belongsTo(Slide);
 
 module.exports = Slide

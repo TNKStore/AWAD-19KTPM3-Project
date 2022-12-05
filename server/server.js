@@ -10,6 +10,8 @@ const groupRouter = require('./app/components/group');
 const activateRouter = require('./app/components/activate');
 const memberRouter = require('./app/components/member');
 const userRouter = require('./app/components/user');
+const presentationRouter = require('./app/components/presentation');
+const slideRouter = require('./app/components/slide');
 const User = require("./app/models/user");
 const Group = require("./app/models/group");
 const Member = require("./app/models/member");
@@ -52,6 +54,8 @@ app.use("/group", groupRouter);
 app.use('/activate', activateRouter);
 app.use('/member', memberRouter);
 app.use('/user', userRouter);
+//app.use('/presentation', presentationRouter);
+app.use('/slide', slideRouter);
 // set port, listen for requests
 const PORT = process.env.PORT || 4000;
 sequelize
