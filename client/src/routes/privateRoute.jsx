@@ -6,10 +6,7 @@ import { Navigate, Outlet } from "react-router-dom";
 
 // AUTH
 import jwt_decode from "jwt-decode";
-import { Box, CssBaseline } from "@mui/material";
 import { getLocalStorage } from "../utils/localStorage";
-import SideMenu from "../components/menu";
-import TopBar from "../components/appBar";
 
 function PrivateRoute({ role }) {
   const userTemp = getLocalStorage("user");
@@ -21,16 +18,7 @@ function PrivateRoute({ role }) {
   const user = { role: "admin", ...userTemp };
   //
 
-  const container = (
-    <Box sx={{ display: "flex", paddingTop: "64px" }}>
-      <CssBaseline />
-      <SideMenu />
-      <TopBar />
-      <Box padding="20px" width="100%">
-        <Outlet />
-      </Box>
-    </Box>
-  );
+  const container = <Outlet />;
 
   if (user && !isExpired) {
     if (!role) {

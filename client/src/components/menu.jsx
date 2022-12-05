@@ -9,18 +9,19 @@ import ListItemText from "@mui/material/ListItemText";
 import { useNavigate } from "react-router-dom";
 import { getLocalStorage } from "../utils/localStorage";
 
-const drawerWidth = 300;
+const drawerWidth = 200;
 
 export default function SideMenu() {
   const navigate = useNavigate();
 
   const token = getLocalStorage("token");
   const auth = !!token;
-  const sections = auth ? ["Home", "Groups"] : ["Home"];
+  const sections = auth ? ["Home", "Groups", "Presentations"] : ["Home"];
 
   const navigateTo = (page) => {
     if (page === "Home") navigate("/");
     else if (page === "Groups") navigate("/groups");
+    else if (page === "Presentations") navigate("/presentations");
   };
 
   return (
