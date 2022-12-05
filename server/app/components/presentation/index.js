@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const presentationController = require("./presentationController");
+const slideController = require("../slide/slideController");
 const passport = require("../../passport");
 router.use(require("../../middleware/checkToken"));
 
@@ -8,43 +9,29 @@ router.use(require("../../middleware/checkToken"));
 router.post(
   "/create",
   passport.authenticate("jwt", { session: false }),
-  presentationController.createSlide
+  presentationController.createPresentation
 );
 
 router.get(
   "/list",
   passport.authenticate("jwt", { session: false }),
-  slideController.listSlide
+  presentationController.listPresentation
 );
 
 router.post(
   "/update",
   passport.authenticate("jwt", { session: false }),
-  slideController.updateSlide
+  presentationController.updatePresentation
 );
 
 router.delete(
   "/:id",
   passport.authenticate("jwt", { session: false }),
-  slideController.deleteSlide
-);
-
-router.post(
-  "/add-option",
-  passport.authenticate("jwt", { session: false }),
-  optionController.addOption
-);
-
-router.post(
-  "/update-option",
-  passport.authenticate("jwt", { session: false }),
-  optionController.updateOption
+  presentationController.deletePresentation
 );
 
 router.delete(
-  ":slideId/option/:optionId",
+  ":presentationId/slide/:slideId",
   passport.authenticate("jwt", { session: false }),
-  optionController.deleteOption
+  slideController.deleteSlide
 );
-
-module.exports = router;

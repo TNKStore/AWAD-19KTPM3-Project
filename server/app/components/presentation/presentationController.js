@@ -1,42 +1,41 @@
 const slideService = require("./slideService");
-const optionService = require("../option/optionService");
+const userService = require("../user/userService");
 const presentationService = require("../presentation/presentationService");
 
-exports.listSlide = async (req, res, next) => {
-  const presentationId = req.body.presentationId;
-  const slideList = await slideService.listSlideOfPresentation(presentationId);
-  return res.status(200).send({ slideList: slideList });
+exports.listPresentation = async (req, res, next) => {
+  const userId = req.decoded.user.id;
+  const presentationList = await presentationService.listPresentation(userId);
+  return res.status(200).send({ presentationList: presentationList });
 };
 
-exports.createSlide = async (req, res, next) => {
-  const presentation = await presentationService.findById(req.body.presentationId);
-  if (!presentation) {
+exports.createPresentation = async (req, res, next) => {
+  const { presentationName } = req.body;
+  const presentation = await presentationService.create(presentationName);
+  res.status(200).send({ presentation: presentation, message: "Create successfully!" });
+};
+
+exports.deletePresentation = async (req, res, next) => {
+  const userId = req.decoded.user.id;
+  const user = await userService.findById(userId);
+  const presentationId = req.params["id"];
+  const presentation = await presentationService.findById(presentationId);
+  if (!presentation || !await user.hasPresentation(presentation)) {
     return res.status(404).send({ message: "Presentation not found" });
   }
-  const slide = await slideService.create();
-  await presentation.addSlide(slide);
-  const option1 = await optionService.create();
-  const option2 = await optionService.create();
-  const option3 = await optionService.create();
-  await slide.addOptions([option1, option2, option3]);
-  const result = await slideService.slideWithOptions(slide.id);
-  res.status(200).send({ slide: result, message: "Create successfully!" });
-};
-
-exports.deleteSlide = async (req, res, next) => {
-  const slideId = req.params["id"];
-  await slideService.delete(slideId);
+  await presentationService.delete(presentationId);
   return res.status(200).send({ message: "Delete successfully!" });
 };
 
-exports.updateSlide = async (req, res, next) => {
-  const { slideId, question } = req.body;
-  const slide = await slideService.findById(slideId);
-  if (!slide) {
-    return res.status(404).send({ message: "Slide not found" });
+exports.updatePresentation = async (req, res, next) => {
+  const userId = req.decoded.user.id;
+  const user = await userService.findById(userId);
+  const { presentationId , presentationName } = req.body;
+  const presentation = await presentationService.findById(presentationId);
+  if (!presentation || !await user.hasPresentation(presentation)) {
+    return res.status(404).send({ message: "Presentation not found" });
   }
-  const response = await slideService.update(slideId, question);
-  const result = await slideService.slideWithOptions(slideId);
+  const response = await presentationService.update(presentationId, presentationName);
+  const result = await presentationService.findById(presentationId);
   if(response[0]>0) {
     res.status(200).json({msg: "Update successfully!", result});
   } else {
