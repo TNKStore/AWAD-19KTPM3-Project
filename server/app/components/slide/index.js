@@ -45,7 +45,7 @@ router.post(
 router.delete(
   ":slideId/option/:optionId",
   passport.authenticate("jwt", { session: false }),
-  optionController.updateOption
+  optionController.deleteOption
 );
 
 module.exports = router;
