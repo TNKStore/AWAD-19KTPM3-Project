@@ -2,21 +2,27 @@ const Presentation = require("../../models/presentation");
 
 exports.findById = (id) => Presentation.findByPk(id);
 
+exports.listPresentation = (userId)=> Presentation.findAll({
+    where: {
+        userId: userId
+    }   
+});
+
 exports.create =  (presentationName) => Presentation.create({
     presentationName: presentationName
 });
 
-exports.update =  (slideId, question) => Slide.update({
-    question: question,
+exports.update =  (presentationId, presentationName) => Slide.update({
+    presentationName: presentationName,
     },
     {
         where: {
-            id: slideId,
+            id: presentationId,
         }
 });
 
-exports.delete =  (slideId) => Slide.destroy({
+exports.delete =  (presentationId) => Presentation.destroy({
     where: {
-        id: slideId
+        id: presentationId
     }
 });

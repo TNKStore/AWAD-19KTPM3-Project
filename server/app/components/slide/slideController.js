@@ -24,15 +24,29 @@ exports.createSlide = async (req, res, next) => {
 };
 
 exports.deleteSlide = async (req, res, next) => {
-  const slideId = req.params["id"];
+  const presentationId = req.params["presentationId"];
+  const presentation = await presentationService.findById(presentationId);
+  if (!presentation) {
+    return res.status(404).send({ message: "Presentationpresentation not found" });
+  }
+  const optionId = req.params["optionId"];
+  const option = await optionService.findById(optionId);
+  if (!option || !await slide.hasOption(option)) {
+    return res.status(404).send({ message: "Option not found" });
+  }
+  const slideId = req.params["slideId"];
   await slideService.delete(slideId);
   return res.status(200).send({ message: "Delete successfully!" });
 };
 
 exports.updateSlide = async (req, res, next) => {
-  const { slideId, question } = req.body;
+  const { presentationId, slideId, question } = req.body;
+  const presentation = await presentationService.findById(presentationId);
+  if (!presentation) {
+    return res.status(404).send({ message: "Presentation not found" });
+  }
   const slide = await slideService.findById(slideId);
-  if (!slide) {
+  if (!slide || !await presentation.hasSlide(slide)) {
     return res.status(404).send({ message: "Slide not found" });
   }
   const response = await slideService.update(slideId, question);
