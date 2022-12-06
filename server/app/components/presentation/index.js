@@ -35,3 +35,5 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   slideController.deleteSlide
 );
+
+module.exports = router;

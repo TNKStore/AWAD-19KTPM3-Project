@@ -15,7 +15,7 @@ import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { GROUP_HEADER } from "../constant/header";
+import { PRESENTATION_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
 
 export default function PresentationsPage() {
@@ -36,9 +36,10 @@ export default function PresentationsPage() {
     };
 
     const response = await axios
-      .get(`${process.env.REACT_APP_DOMAIN}/group/list`, { headers })
+      .get(`${process.env.REACT_APP_DOMAIN}/presentation/list`, { headers })
       .catch((error) => console.error("There was an error!", error));
 
+    console.log(response);
     return response;
   };
 
@@ -52,7 +53,24 @@ export default function PresentationsPage() {
     };
 
     const response = await axios
-      .post(`${process.env.REACT_APP_DOMAIN}/group/create`, data, { headers })
+      .post(`${process.env.REACT_APP_DOMAIN}/presentation/create`, data, {
+        headers
+      })
+      .catch((error) => console.error("There was an error!", error));
+
+    console.log(response);
+    return response;
+  };
+
+  const deletePresentation = async (id) => {
+    const headers = {
+      "x-access-token": token
+    };
+
+    const response = await axios
+      .delete(`${process.env.REACT_APP_DOMAIN}/presentation/${id}`, {
+        headers
+      })
       .catch((error) => console.error("There was an error!", error));
 
     return response;
@@ -64,7 +82,7 @@ export default function PresentationsPage() {
     const response = await fetchPresentations();
 
     if (response.status === 200) {
-      setPresentations(response.data?.groupList);
+      setPresentations(response.data?.presentationList);
       setShouldRefetch(false);
     }
   };
@@ -78,8 +96,16 @@ export default function PresentationsPage() {
     }
   };
 
+  const handleDeletePresentation = async (id) => {
+    const response = await deletePresentation(id);
+
+    if (response.status === 200) {
+      setShouldRefetch(true);
+    }
+  };
+
   const handleChoosePresentation = (id) => {
-    navigate(`/groups/${id}`, { state: { groupID: id } });
+    navigate(`/presentations/${id}`, { state: { presentationID: id } });
   };
 
   const handleAddPresentation = () => {
@@ -92,10 +118,6 @@ export default function PresentationsPage() {
 
   const handleChangePresentationName = (e) => {
     setPresentationName(e.target.value);
-  };
-
-  const handleDeletePresentation = () => {
-    console.log();
   };
 
   // Use effect
@@ -119,7 +141,7 @@ export default function PresentationsPage() {
             variant="span"
             sx={{ fontWeight: "800", marginTop: "20px" }}
           >
-            Choose a name for your group
+            Choose a name for your presentation
           </Typography>
           <TextField onChange={handleChangePresentationName} />
           <Button
@@ -153,19 +175,18 @@ export default function PresentationsPage() {
       <Table>
         <TableHead>
           <TableRow>
-            {GROUP_HEADER.map((header) => (
+            {PRESENTATION_HEADER.map((header) => (
               <TableCell sx={{ fontWeight: "900" }}>{header.name}</TableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
           {presentations.map((da) => (
-            <TableRow onClick={() => handleChoosePresentation(da.id)}>
-              <TableCell>{da.groupName}</TableCell>
-              <TableCell>{da.users?.member?.role}</TableCell>
-              <TableCell>
-                {`${da.owner?.firstName} ${da.owner?.lastName}`}
+            <TableRow>
+              <TableCell onClick={() => handleChoosePresentation(da.id)}>
+                {da.presentationName}
               </TableCell>
+              <TableCell>{new Date(da.updatedAt).toString()}</TableCell>
               <TableCell sx={{ maxWidth: "10px" }}>
                 <Button onClick={() => handleDeletePresentation(da.id)}>
                   <DeleteIcon />

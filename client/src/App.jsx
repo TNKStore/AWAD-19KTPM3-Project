@@ -14,8 +14,9 @@ import ProfilePage from "./pages/profile";
 import ActivatePage from "./pages/activate";
 import InvitePage from "./pages/invite";
 import DefaultRoute from "./routes/defaultRoute";
-import SlidesPage from "./pages/slides";
 import PresentationRoute from "./routes/presentationRoute";
+import PresentationsPage from "./pages/presentations";
+import PresentationDetailPage from "./pages/presentationDetail";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,9 +34,13 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/groups" element={<GroupsPage />} />
             <Route path="/groups/:id" element={<GroupDetailPage />} />
+            <Route path="/presentations" element={<PresentationsPage />} />
           </Route>
           <Route element={<PresentationRoute />}>
-            <Route path="/slides" element={<SlidesPage />} />
+            <Route
+              path="/presentations/:id"
+              element={<PresentationDetailPage />}
+            />
           </Route>
         </Route>
 

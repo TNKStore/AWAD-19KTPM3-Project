@@ -21,7 +21,7 @@ export default function SideMenu() {
   const navigateTo = (page) => {
     if (page === "Home") navigate("/");
     else if (page === "Groups") navigate("/groups");
-    else if (page === "Presentations") navigate("/slides");
+    else if (page === "Presentations") navigate("/presentations");
   };
 
   return (
