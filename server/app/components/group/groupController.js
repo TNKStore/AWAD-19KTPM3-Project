@@ -23,11 +23,11 @@ exports.listMemberIdOfGroup = async (req, res) => {
 
 exports.createGroup = async (req, res, next) => {
   const { groupName } = req.body;
-  const group = await groupService.create(groupName);
   const user = await userService.findById(req.decoded.user.id);
   if (!user) {
     return res.status(404).send({ message: "User not found" });
   }
+  const group = await groupService.create(groupName);
   await group.addUser(user, { through: { role: "Owner" } });
   const result = await groupService.findGroupWithMember(group.id);
   return res
