@@ -14,7 +14,7 @@ import ProfilePage from "./pages/profile";
 import ActivatePage from "./pages/activate";
 import InvitePage from "./pages/invite";
 import DefaultRoute from "./routes/defaultRoute";
-import PresentationPage from "./pages/presentation";
+import SlidesPage from "./pages/slides";
 import PresentationRoute from "./routes/presentationRoute";
 
 function App() {
@@ -35,7 +35,7 @@ function App() {
             <Route path="/groups/:id" element={<GroupDetailPage />} />
           </Route>
           <Route element={<PresentationRoute />}>
-            <Route path="/presentations" element={<PresentationPage />} />
+            <Route path="/slides" element={<SlidesPage />} />
           </Route>
         </Route>
 

@@ -18,9 +18,9 @@ import axios from "axios";
 import { GROUP_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
 
-export default function GroupsPage() {
-  const [groups, setGroups] = useState([]);
-  const [groupName, setGroupName] = useState("");
+export default function PresentationsPage() {
+  const [presentations, setPresentations] = useState([]);
+  const [presentationName, setPresentationName] = useState("");
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -30,7 +30,7 @@ export default function GroupsPage() {
 
   // API calls
 
-  const fetchGroups = async () => {
+  const fetchPresentations = async () => {
     const headers = {
       "x-access-token": token
     };
@@ -42,13 +42,13 @@ export default function GroupsPage() {
     return response;
   };
 
-  const createGroup = async () => {
+  const createPresentation = async () => {
     const headers = {
       "x-access-token": token
     };
 
     const data = {
-      groupName
+      presentationName
     };
 
     const response = await axios
@@ -60,17 +60,17 @@ export default function GroupsPage() {
 
   // Handle functions
 
-  const handleFetchGroups = async () => {
-    const response = await fetchGroups();
+  const handleFetchPresentations = async () => {
+    const response = await fetchPresentations();
 
     if (response.status === 200) {
-      setGroups(response.data?.groupList);
+      setPresentations(response.data?.groupList);
       setShouldRefetch(false);
     }
   };
 
-  const handleCreateGroup = async () => {
-    const response = await createGroup();
+  const handleCreatePresentation = async () => {
+    const response = await createPresentation();
 
     if (response.status === 200) {
       setIsDialogOpen(false);
@@ -78,11 +78,11 @@ export default function GroupsPage() {
     }
   };
 
-  const handleChooseGroup = (id) => {
+  const handleChoosePresentation = (id) => {
     navigate(`/groups/${id}`, { state: { groupID: id } });
   };
 
-  const handleAddGroup = () => {
+  const handleAddPresentation = () => {
     setIsDialogOpen(true);
   };
 
@@ -90,18 +90,18 @@ export default function GroupsPage() {
     setIsDialogOpen(false);
   };
 
-  const handleChangeGroupName = (e) => {
-    setGroupName(e.target.value);
+  const handleChangePresentationName = (e) => {
+    setPresentationName(e.target.value);
   };
 
-  const handleDeleteGroup = () => {
+  const handleDeletePresentation = () => {
     console.log();
   };
 
   // Use effect
 
   useEffect(() => {
-    if (shouldRefetch) handleFetchGroups({});
+    if (shouldRefetch) handleFetchPresentations({});
   }, [shouldRefetch]);
 
   return (
@@ -121,10 +121,10 @@ export default function GroupsPage() {
           >
             Choose a name for your group
           </Typography>
-          <TextField onChange={handleChangeGroupName} />
+          <TextField onChange={handleChangePresentationName} />
           <Button
             sx={{ marginTop: "20px" }}
-            onClick={handleCreateGroup}
+            onClick={handleCreatePresentation}
             variant="outlined"
           >
             Create
@@ -145,7 +145,7 @@ export default function GroupsPage() {
           justifyContent="center"
           margin="0 15px 0 0"
         >
-          <Button onClick={handleAddGroup} variant="outlined">
+          <Button onClick={handleAddPresentation} variant="outlined">
             <AddToPhotosIcon />
           </Button>
         </Box>
@@ -159,15 +159,15 @@ export default function GroupsPage() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {groups.map((da) => (
-            <TableRow onClick={() => handleChooseGroup(da.id)}>
+          {presentations.map((da) => (
+            <TableRow onClick={() => handleChoosePresentation(da.id)}>
               <TableCell>{da.groupName}</TableCell>
               <TableCell>{da.users?.member?.role}</TableCell>
               <TableCell>
                 {`${da.owner?.firstName} ${da.owner?.lastName}`}
               </TableCell>
               <TableCell sx={{ maxWidth: "10px" }}>
-                <Button onClick={() => handleDeleteGroup(da.id)}>
+                <Button onClick={() => handleDeletePresentation(da.id)}>
                   <DeleteIcon />
                 </Button>
               </TableCell>
