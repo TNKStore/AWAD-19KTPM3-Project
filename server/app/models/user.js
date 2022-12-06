@@ -1,5 +1,7 @@
 const Sequelize = require('sequelize')
 const sequelize = require("../models");
+const Presentation = require("./presentation");
+
 
 const User = sequelize.define("user", {
     firstName: {
@@ -34,5 +36,8 @@ const User = sequelize.define("user", {
 }, {
     freezeTableName: true
 });
+
+User.hasMany(Presentation);
+Presentation.belongsTo(User);
 
 module.exports = User

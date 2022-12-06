@@ -10,9 +10,14 @@ const groupRouter = require('./app/components/group');
 const activateRouter = require('./app/components/activate');
 const memberRouter = require('./app/components/member');
 const userRouter = require('./app/components/user');
+const presentationRouter = require('./app/components/presentation');
+const slideRouter = require('./app/components/slide');
 const User = require("./app/models/user");
 const Group = require("./app/models/group");
 const Member = require("./app/models/member");
+const Presentation = require("./app/models/presentation");
+const Slide = require("./app/models/slide");
+const Option = require("./app/models/option");
 
 const app = express();
 
@@ -49,6 +54,8 @@ app.use("/group", groupRouter);
 app.use('/activate', activateRouter);
 app.use('/member', memberRouter);
 app.use('/user', userRouter);
+//app.use('/presentation', presentationRouter);
+app.use('/slide', slideRouter);
 // set port, listen for requests
 const PORT = process.env.PORT || 4000;
 sequelize
@@ -59,7 +66,7 @@ sequelize
       console.log(`Server is running on port ${PORT}.`);
     });
 
-    sequelize.sync({ force: false }).then(() => {
+    sequelize.sync({ force: false, alter: true }).then(() => {
       console.log("Drop and re-sync db.");
     });
   })
