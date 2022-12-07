@@ -3,7 +3,7 @@ const optionService = require("../option/optionService");
 const presentationService = require("../presentation/presentationService");
 
 exports.listSlide = async (req, res, next) => {
-  const presentationId = req.body.presentationId;
+  const presentationId = req.query["presentationId"];
   const slideList = await slideService.listSlideOfPresentation(presentationId);
   return res.status(200).send({ slideList: slideList });
 };
