@@ -1,11 +1,15 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { Close, PostAdd } from "@mui/icons-material";
+import axios from "axios";
+import { useLocation } from "react-router";
+import { getLocalStorage } from "../utils/localStorage";
 import OptionsBarChart from "../components/barChart";
 import QuizForm from "../components/quizForm";
 
@@ -50,8 +54,43 @@ function a11yProps(index) {
 }
 
 export default function PresentationDetailPage() {
+  const [presentationID, setPresentationID] = useState("");
   const [slides, setSlides] = useState([{ index: 0, id: 0 }]);
   const [slideValue, setSlideValue] = useState(0);
+  const [shouldRefetch, setShouldRefetch] = useState(true);
+
+  const location = useLocation();
+  const token = getLocalStorage("token");
+
+  // API calls
+
+  const fetchSlides = async () => {
+    const headers = {
+      "x-access-token": token
+    };
+
+    const data = {
+      presentationId: presentationID
+    };
+
+    const response = await axios
+      .get(`${process.env.REACT_APP_DOMAIN}/slide/list`, data, {
+        headers
+      })
+      .catch((error) => console.error("There was an error!", error));
+
+    return response;
+  };
+
+  // Handle functions
+
+  const handleFetchSlides = async () => {
+    const response = await fetchSlides();
+
+    if (response.status === 200) {
+      console.log(response.data);
+    }
+  };
 
   const hanldeAddSlide = () => {
     const index = slides[slides.length - 1].index + 1;
@@ -95,6 +134,20 @@ export default function PresentationDetailPage() {
     setSlides(newSlides);
     setSlideValue(current);
   };
+
+  // Use effects
+
+  useEffect(() => {
+    if (location.state !== null) {
+      setPresentationID(location.state.groupID);
+    }
+  }, [presentationID]);
+
+  useEffect(() => {
+    if (presentationID !== "" && shouldRefetch) {
+      handleFetchSlides({});
+    }
+  }, [presentationID, shouldRefetch]);
 
   return (
     <Box
