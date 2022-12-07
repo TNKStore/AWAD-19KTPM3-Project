@@ -9,7 +9,7 @@ import TopBar from "../components/appBar";
 
 function PresentationRoute() {
   return (
-    <Box sx={{ display: "flex", paddingTop: "64px" }}>
+    <Box sx={{ marginTop: "64px" }}>
       <CssBaseline />
       <TopBar />
       <Outlet />

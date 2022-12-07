@@ -65,7 +65,7 @@ export default function TopBar() {
   return (
     <AppBar
       position="fixed"
-      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, height: "64px" }}
     >
       <Toolbar display="flex">
         <Box sx={{ width: 200 }} />

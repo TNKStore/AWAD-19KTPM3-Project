@@ -30,7 +30,7 @@ function TabPanel(props) {
           alignItems="center"
           justifyContent="center"
           flexDirection="column"
-          width="800px"
+          width="900px"
           height="500px"
         >
           {children}
@@ -152,93 +152,80 @@ export default function PresentationDetailPage() {
   return (
     <Box
       sx={{
-        flexGrow: 1,
-        bgcolor: "background.paper",
         display: "flex",
         width: "100%",
-        height: "100%"
+        alignItems: "start",
+        justifyContent: "space-between"
       }}
     >
-      <Tabs
-        orientation="vertical"
-        variant="scrollable"
-        value={slideValue}
-        onChange={handleChangeTab}
-        aria-label="Vertical tabs example"
+      <Box
         sx={{
+          display: "flex",
+          flexDirection: "column",
+          height: "calc(100vh - 64px)",
+          overflow: "hidden",
+          overflowY: "auto",
+          width: "18%",
           borderRight: 1,
-          borderColor: "divider",
-          width: "200px",
-          height: "100%"
+          borderColor: "divider"
+        }}
+      >
+        <Tabs
+          orientation="vertical"
+          variant="scrollable"
+          value={slideValue}
+          onChange={handleChangeTab}
+          aria-label="Vertical tabs example"
+        >
+          {slides.map((slide) => (
+            <Tab
+              key={slide.index.toString()}
+              value={slide.index}
+              label={
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  flexDirection="column"
+                  width="300px"
+                  height="200px"
+                >
+                  <OptionsBarChart padding={2} />
+                </Box>
+              }
+              icon={<Close id={slide.index} onClick={handleDeleteSlide} />}
+              {...a11yProps(slide.index)}
+              className="mytab"
+            />
+          ))}
+          <Tab icon={<PostAdd />} value="add" />
+        </Tabs>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          width: "50%",
+          height: "calc(100vh - 64px)",
+          alignItems: "center",
+          justifyContent: "center"
         }}
       >
         {slides.map((slide) => (
-          <Tab
-            key={slide.index.toString()}
-            value={slide.index}
-            label={`Slide ${slide.index}`}
-            icon={<Close id={slide.index} onClick={handleDeleteSlide} />}
-            {...a11yProps(slide.index)}
-            className="mytab"
-          />
+          <TabPanel value={slideValue} index={slide.index}>
+            <OptionsBarChart padding={64} />
+          </TabPanel>
         ))}
-        <Tab icon={<PostAdd />} value="add" />
-        {/* <Tab label="Item One" sx={{ height: "100px" }} {...a11yProps(0)} />
-        <Tab label="Item Two" sx={{ height: "100px" }} {...a11yProps(1)} />
-        <Tab label="Item Three" sx={{ height: "100px" }} {...a11yProps(2)} />
-        <Tab label="Item Four" sx={{ height: "100px" }} {...a11yProps(3)} />
-        <Tab label="Item Five" sx={{ height: "100px" }} {...a11yProps(4)} />
-        <Tab label="Item Six" sx={{ height: "100px" }} {...a11yProps(5)} />
-        <Tab label="Item Seven" sx={{ height: "100px" }} {...a11yProps(6)} />
-        <Tab label="Item Eight" sx={{ height: "100px" }} {...a11yProps(7)} /> */}
-      </Tabs>
-      {slides.map((slide) => (
-        <TabPanel value={slideValue} index={slide.index}>
-          <Box
-            width="100%"
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-            flexDirection="row"
-          >
-            <OptionsBarChart />
-            <QuizForm />
-          </Box>
-        </TabPanel>
-      ))}
-      {/* <TabPanel value={slideValue} index={0}>
-        <Box
-          width="100%"
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          flexDirection="row"
-        >
-          <OptionsBarChart />
-          <QuizForm />
-        </Box>
-      </TabPanel>
-      <TabPanel value={slideValue} index={1}>
-        <OptionsBarChart />
-      </TabPanel>
-      <TabPanel value={slideValue} index={2}>
-        <OptionsBarChart />
-      </TabPanel>
-      <TabPanel value={slideValue} index={3}>
-        <OptionsBarChart />
-      </TabPanel>
-      <TabPanel value={slideValue} index={4}>
-        <OptionsBarChart />
-      </TabPanel>
-      <TabPanel value={slideValue} index={5}>
-        <OptionsBarChart />
-      </TabPanel>
-      <TabPanel value={slideValue} index={6}>
-        <OptionsBarChart />
-      </TabPanel>
-      <TabPanel value={slideValue} index={7}>
-        <OptionsBarChart />
-      </TabPanel> */}
+      </Box>
+      <Box
+        sx={{
+          width: "25%",
+          height: "100%",
+          borderColor: "rgba(0, 0, 0, 0.12)",
+          borderLeft: 1
+        }}
+      >
+        <QuizForm />
+      </Box>
     </Box>
   );
 }

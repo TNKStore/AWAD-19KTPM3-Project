@@ -1,4 +1,5 @@
 import React from "react";
+import { PropTypes } from "prop-types";
 import {
   BarChart,
   Bar,
@@ -55,7 +56,8 @@ const data = [
   }
 ];
 
-export default function OptionsBarChart() {
+export default function OptionsBarChart(props) {
+  const { padding } = props;
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart
@@ -63,10 +65,10 @@ export default function OptionsBarChart() {
         height="100%"
         data={data}
         margin={{
-          top: 64,
-          right: 64,
-          left: 64,
-          bottom: 64
+          top: padding,
+          right: padding,
+          left: padding,
+          bottom: padding
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
@@ -79,3 +81,12 @@ export default function OptionsBarChart() {
     </ResponsiveContainer>
   );
 }
+
+OptionsBarChart.propTypes = {
+  padding: PropTypes.number
+};
+
+OptionsBarChart.defaultProps = {
+  pdding: 0
+};
+  

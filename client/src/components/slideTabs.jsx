@@ -25,7 +25,7 @@ function TabPanel(props) {
           alignItems="center"
           justifyContent="center"
           flexDirection="column"
-          width="800px"
+          width="100%"
           height="500px"
         >
           {children}
@@ -75,7 +75,8 @@ export default function VerticalTabs() {
           borderRight: 1,
           borderColor: "divider",
           width: "200px",
-          height: "100%"
+          height: "100vh",
+          overflow: "auto"
         }}
       >
         <Tab label="Item One" sx={{ height: "100px" }} {...a11yProps(0)} />

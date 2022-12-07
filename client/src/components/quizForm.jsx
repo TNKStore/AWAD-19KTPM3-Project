@@ -29,7 +29,15 @@ export default function QuizForm() {
   };
 
   return (
-    <Box>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "calc(100vh - 64px)",
+        overflow: "hidden",
+        overflowY: "auto"
+      }}
+    >
       <form className="child" onSubmit={handleSubmit(handleUpdateQuiz)}>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Your question
