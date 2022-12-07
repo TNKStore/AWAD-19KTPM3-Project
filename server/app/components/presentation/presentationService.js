@@ -8,8 +8,9 @@ exports.listPresentation = (userId)=> Presentation.findAll({
     }   
 });
 
-exports.create =  (presentationName) => Presentation.create({
-    presentationName: presentationName
+exports.create =  (presentationName, code) => Presentation.create({
+    presentationName: presentationName,
+    code: code
 });
 
 exports.update =  (presentationId, presentationName) => Slide.update({

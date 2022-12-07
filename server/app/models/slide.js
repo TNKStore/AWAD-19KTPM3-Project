@@ -5,6 +5,9 @@ const Option = require("./option");
 const Slide = sequelize.define("slide", {
     question: {
         type: Sequelize.STRING
+    },
+    position: {
+        type: Sequelize.SMALLINT
     }
 }, {
     freezeTableName: true
