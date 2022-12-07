@@ -8,6 +8,9 @@ const Option = sequelize.define("option", {
     isCorrect: {
         type: Sequelize.BOOLEAN,
         field: 'is_correct'
+    },
+    position: {
+        type: Sequelize.SMALLINT
     }
 }, {
     freezeTableName: true

@@ -8,7 +8,8 @@ const Presentation = sequelize.define("presentation", {
         field: 'presentation_name'
     },
     code: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING,
+        unique: true
     }
 }, {
     freezeTableName: true

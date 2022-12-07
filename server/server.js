@@ -54,7 +54,7 @@ app.use("/group", groupRouter);
 app.use('/activate', activateRouter);
 app.use('/member', memberRouter);
 app.use('/user', userRouter);
-//app.use('/presentation', presentationRouter);
+app.use('/presentation', presentationRouter);
 app.use('/slide', slideRouter);
 // set port, listen for requests
 const PORT = process.env.PORT || 4000;

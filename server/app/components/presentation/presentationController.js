@@ -1,4 +1,3 @@
-const slideService = require("./slideService");
 const userService = require("../user/userService");
 const presentationService = require("../presentation/presentationService");
 
@@ -9,8 +8,29 @@ exports.listPresentation = async (req, res, next) => {
 };
 
 exports.createPresentation = async (req, res, next) => {
+  const userId = req.decoded.user.id;
+  const user = await userService.findById(userId);
+  const number = "0123456789";
+  let code = [];
+  let allCode = [];
+  const presentationList = await presentationService.listPresentation(userId);
+  presentationList.forEach(value => {
+    allCode.push(value.code);
+  });
+  console.log('All code: ' + allCode);
+  for(let i = 0; i < 6; i++) {
+    let index = Math.floor(Math.random() * 10);
+    code[i] = (number[index]);
+  }
+  while(allCode.indexOf(code.join("")) != -1) {
+    for(let i = 0; i < 6; i++) {
+        let index = Math.floor(Math.random() * 10);
+        code[i] = (number[index]);
+    }
+  }
   const { presentationName } = req.body;
-  const presentation = await presentationService.create(presentationName);
+  const presentation = await presentationService.create(presentationName, code.join(""));
+  await user.addPresentation(presentation);
   res.status(200).send({ presentation: presentation, message: "Create successfully!" });
 };
 
