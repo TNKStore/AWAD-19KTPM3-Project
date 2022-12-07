@@ -19,12 +19,14 @@ exports.slideWithOptions = (slideId)=> Slide.findOne({
     }   
 });
 
-exports.create =  () => Slide.create({
-    question: ""
+exports.create =  (position) => Slide.create({
+    question: "",
+    position: position
 });
 
-exports.update =  (slideId, question) => Slide.update({
+exports.update =  (slideId, question, position) => Slide.update({
     question: question,
+    position: position
     },
     {
         where: {

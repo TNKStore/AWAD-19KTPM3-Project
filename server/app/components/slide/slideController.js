@@ -13,11 +13,11 @@ exports.createSlide = async (req, res, next) => {
   if (!presentation) {
     return res.status(404).send({ message: "Presentation not found" });
   }
-  const slide = await slideService.create();
+  const slide = await slideService.create(req.body.position);
   await presentation.addSlide(slide);
-  const option1 = await optionService.create();
-  const option2 = await optionService.create();
-  const option3 = await optionService.create();
+  const option1 = await optionService.create(1);
+  const option2 = await optionService.create(2);
+  const option3 = await optionService.create(3);
   await slide.addOptions([option1, option2, option3]);
   const result = await slideService.slideWithOptions(slide.id);
   res.status(200).send({ slide: result, message: "Create successfully!" });
@@ -40,7 +40,7 @@ exports.deleteSlide = async (req, res, next) => {
 };
 
 exports.updateSlide = async (req, res, next) => {
-  const { presentationId, slideId, question } = req.body;
+  const { presentationId, slideId, question, position } = req.body;
   const presentation = await presentationService.findById(presentationId);
   if (!presentation) {
     return res.status(404).send({ message: "Presentation not found" });
@@ -49,7 +49,7 @@ exports.updateSlide = async (req, res, next) => {
   if (!slide || !await presentation.hasSlide(slide)) {
     return res.status(404).send({ message: "Slide not found" });
   }
-  const response = await slideService.update(slideId, question);
+  const response = await slideService.update(slideId, question, position);
   const result = await slideService.slideWithOptions(slideId);
   if(response[0]>0) {
     res.status(200).json({msg: "Update successfully!", result});

@@ -3,14 +3,16 @@ const User = require("../../models/user");
 
 exports.findById = (id) => Option.findByPk(id);
 
-exports.create = () => Option.create({
+exports.create = (position) => Option.create({
     content: "",
-    isCorrect: false
+    isCorrect: false,
+    position: position
 });
 
-exports.update =  (optionId, content, isCorrect) => Option.update({
+exports.update =  (optionId, content, isCorrect, position) => Option.update({
     content: content,
     isCorrect: isCorrect,
+    position: position
     },
     {
         where: {
