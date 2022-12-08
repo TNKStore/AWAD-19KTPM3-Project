@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-shadow */
+/* eslint-disable react/forbid-prop-types */
 import React from "react";
 import { PropTypes } from "prop-types";
 import {
@@ -11,29 +14,16 @@ import {
   ResponsiveContainer
 } from "recharts";
 
-const data = [
-  {
-    name: "Page A",
-    pv: 24
-  },
-  {
-    name: "Page B",
-    pv: 30
-  },
-  {
-    name: "Page C",
-    pv: 20
-  }
-];
-
 export default function OptionsBarChart(props) {
-  const { padding } = props;
+  const { padding, question, options } = props;
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart
         width="100%"
         height="100%"
-        data={data}
+        title={question}
+        data={options}
         margin={{
           top: padding,
           right: padding,
@@ -42,20 +32,24 @@ export default function OptionsBarChart(props) {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
+        <XAxis dataKey="content" />
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar dataKey="pv" fill="blue" />
+        <Bar dataKey="upvote" fill="blue" />
       </BarChart>
     </ResponsiveContainer>
   );
 }
 
 OptionsBarChart.propTypes = {
-  padding: PropTypes.number
+  padding: PropTypes.number,
+  question: PropTypes.string,
+  options: PropTypes.array
 };
 
 OptionsBarChart.defaultProps = {
-  padding: 0
+  padding: 0,
+  question: "",
+  options: []
 };

@@ -126,6 +126,7 @@ export default function PresentationDetailPage() {
     if (response.status === 200) {
       const data = response.data.slideList;
       setSlides(data);
+      setShouldRefetch(false);
     }
   };
 
@@ -145,6 +146,7 @@ export default function PresentationDetailPage() {
       setSlideValue(value);
       setCurrentSlide(slides[value]);
     }
+    console.log(currentSlide);
   };
 
   const handleDeleteSlide = async (e, id, position) => {
@@ -239,7 +241,7 @@ export default function PresentationDetailPage() {
                   width="300px"
                   height="200px"
                 >
-                  <OptionsBarChart padding={32} />
+                  <OptionsBarChart padding={32} options={slide.options} />
                 </Box>
               }
               icon={
@@ -268,7 +270,11 @@ export default function PresentationDetailPage() {
       >
         {slides.map((slide) => (
           <TabPanel value={slideValue} index={slide.position}>
-            <OptionsBarChart padding={64} />
+            <OptionsBarChart
+              padding={64}
+              question={slide.question}
+              options={slide.options}
+            />
           </TabPanel>
         ))}
       </Box>
@@ -280,7 +286,10 @@ export default function PresentationDetailPage() {
           borderLeft: 1
         }}
       >
-        <QuizForm />
+        <QuizForm
+          question={currentSlide?.question}
+          options={currentSlide?.options}
+        />
       </Box>
     </Box>
   );

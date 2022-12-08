@@ -29,8 +29,10 @@ export default function QuizForm(props) {
     }
   });
 
+  console.log("qusetion", question);
+
   setValue("question", question);
-  options.forEach((value, index) => {
+  options?.forEach((value, index) => {
     update(index, { content: value.content });
   });
 
