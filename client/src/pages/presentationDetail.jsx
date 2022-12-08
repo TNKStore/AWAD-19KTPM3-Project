@@ -55,8 +55,9 @@ function a11yProps(index) {
 
 export default function PresentationDetailPage() {
   const [presentationID, setPresentationID] = useState("");
-  const [slides, setSlides] = useState([{ index: 0, id: 0 }]);
+  const [slides, setSlides] = useState([]);
   const [slideValue, setSlideValue] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(null);
   const [shouldRefetch, setShouldRefetch] = useState(true);
 
   const location = useLocation();
@@ -69,14 +70,49 @@ export default function PresentationDetailPage() {
       "x-access-token": token
     };
 
+    const response = await axios
+      .get(
+        `${process.env.REACT_APP_DOMAIN}/slide/list?presentationId=${presentationID}`,
+        {
+          headers
+        }
+      )
+      .catch((error) => console.error("There was an error!", error));
+
+    return response;
+  };
+
+  const createSlide = async () => {
+    const headers = {
+      "x-access-token": token
+    };
+
     const data = {
-      presentationId: presentationID
+      presentationId: presentationID,
+      position: slides[slides.length - 1].position + 1
     };
 
     const response = await axios
-      .get(`${process.env.REACT_APP_DOMAIN}/slide/list`, data, {
+      .post(`${process.env.REACT_APP_DOMAIN}/slide/create`, data, {
         headers
       })
+      .catch((error) => console.error("There was an error!", error));
+
+    return response;
+  };
+
+  const deleteSlide = async (id) => {
+    const headers = {
+      "x-access-token": token
+    };
+
+    const response = await axios
+      .delete(
+        `${process.env.REACT_APP_DOMAIN}/presentation/${presentationID}/slide/${id}`,
+        {
+          headers
+        }
+      )
       .catch((error) => console.error("There was an error!", error));
 
     return response;
@@ -88,58 +124,71 @@ export default function PresentationDetailPage() {
     const response = await fetchSlides();
 
     if (response.status === 200) {
-      console.log(response.data);
+      const data = response.data.slideList;
+      setSlides(data);
     }
   };
 
-  const hanldeAddSlide = () => {
-    const index = slides[slides.length - 1].index + 1;
-    console.log(index);
-    setSlides([...slides, { index, id: index }]);
-    console.log(slides);
+  const handleCreateSlide = async () => {
+    const response = await createSlide();
+
+    if (response.status === 200) {
+      const newSlide = response.data.slide;
+      setSlides([...slides, newSlide]);
+    }
   };
 
   const handleChangeTab = (event, value) => {
     if (value === "add") {
-      hanldeAddSlide();
-    } else setSlideValue(value);
+      handleCreateSlide();
+    } else {
+      setSlideValue(value);
+      setCurrentSlide(slides[value]);
+    }
   };
 
-  const handleDeleteSlide = (e) => {
-    e.stopPropagation();
+  const handleDeleteSlide = async (e, id, position) => {
+    if (position === 0) return;
 
-    if (slides.length === 1) {
-      return;
-    }
+    const response = await deleteSlide(id);
 
-    const slideID = parseInt(e.target.id, 10);
-    let deletedIndex = 0;
+    if (response.status === 200) {
+      e.stopPropagation();
 
-    const newSlides = slides.filter((value, index) => {
-      if (value.index === slideID) {
-        deletedIndex = index;
+      if (slides.length === 1) {
+        return;
       }
-      return value.index !== slideID;
-    });
 
-    let current = parseInt(slideValue, 10);
-    if (current === slideID) {
-      if (deletedIndex === 0) {
-        current = slides[deletedIndex + 1].id;
-      } else {
-        current = slides[deletedIndex - 1].id;
+      const slideID = parseInt(e.target.id, 10);
+      let deletedIndex = 0;
+
+      const newSlides = slides.filter((value, index) => {
+        if (value.position === slideID) {
+          deletedIndex = index;
+        }
+        return value.position !== slideID;
+      });
+
+      let current = parseInt(slideValue, 10);
+      if (current === slideID) {
+        if (deletedIndex === 0) {
+          current = slides[deletedIndex + 1].position;
+        } else {
+          current = slides[deletedIndex - 1].position;
+        }
       }
-    }
 
-    setSlides(newSlides);
-    setSlideValue(current);
+      setSlides(newSlides);
+      setSlideValue(current);
+      setCurrentSlide(slides[current]);
+    }
   };
 
   // Use effects
 
   useEffect(() => {
     if (location.state !== null) {
-      setPresentationID(location.state.groupID);
+      setPresentationID(location.state.presentationID);
     }
   }, [presentationID]);
 
@@ -179,8 +228,8 @@ export default function PresentationDetailPage() {
         >
           {slides.map((slide) => (
             <Tab
-              key={slide.index.toString()}
-              value={slide.index}
+              key={slide.position.toString()}
+              value={slide.position}
               label={
                 <Box
                   display="flex"
@@ -190,11 +239,18 @@ export default function PresentationDetailPage() {
                   width="300px"
                   height="200px"
                 >
-                  <OptionsBarChart padding={2} />
+                  <OptionsBarChart padding={32} />
                 </Box>
               }
-              icon={<Close id={slide.index} onClick={handleDeleteSlide} />}
-              {...a11yProps(slide.index)}
+              icon={
+                <Close
+                  id={slide.position}
+                  onClick={(e) =>
+                    handleDeleteSlide(e, slide.id, slide.position)
+                  }
+                />
+              }
+              {...a11yProps(slide.position)}
               className="mytab"
             />
           ))}
@@ -211,7 +267,7 @@ export default function PresentationDetailPage() {
         }}
       >
         {slides.map((slide) => (
-          <TabPanel value={slideValue} index={slide.index}>
+          <TabPanel value={slideValue} index={slide.position}>
             <OptionsBarChart padding={64} />
           </TabPanel>
         ))}

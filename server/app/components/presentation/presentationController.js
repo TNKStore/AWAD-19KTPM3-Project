@@ -36,11 +36,11 @@ exports.createPresentation = async (req, res, next) => {
     code.join("")
   );
   await user.addPresentation(presentation);
-  const slide = await slideService.create(1);
+  const slide = await slideService.create(0);
   await presentation.addSlide(slide);
-  const option1 = await optionService.create(1);
-  const option2 = await optionService.create(2);
-  const option3 = await optionService.create(3);
+  const option1 = await optionService.create(0);
+  const option2 = await optionService.create(1);
+  const option3 = await optionService.create(2);
   await slide.addOptions([option1, option2, option3]);
   res
     .status(200)

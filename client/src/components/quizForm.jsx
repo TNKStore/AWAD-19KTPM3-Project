@@ -1,12 +1,17 @@
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
-import { Box, Typography } from "@mui/material";
 import React from "react";
+import { Box, Typography } from "@mui/material";
+import { PropTypes } from "prop-types";
 import { useFieldArray, useForm } from "react-hook-form";
 
-export default function QuizForm() {
+export default function QuizForm(props) {
+  const { question, options } = props;
+
   const {
     register,
     handleSubmit,
+    setValue,
     control,
     formState: { errors }
   } = useForm({
@@ -16,12 +21,17 @@ export default function QuizForm() {
     mode: "onChange"
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
-    name: "test",
+    name: "options",
     rules: {
       minLength: 4
     }
+  });
+
+  setValue("question", question);
+  options.forEach((value, index) => {
+    update(index, { content: value.content });
   });
 
   const handleUpdateQuiz = async (data) => {
@@ -57,7 +67,7 @@ export default function QuizForm() {
             return (
               <div display="flex" key={item.id}>
                 <input
-                  {...register(`test.${index}.firstName`, { required: true })}
+                  {...register(`options.${index}.content`, { required: true })}
                 />
                 <button type="button" onClick={() => remove(index)}>
                   Delete
@@ -81,3 +91,13 @@ export default function QuizForm() {
     </Box>
   );
 }
+
+QuizForm.propTypes = {
+  question: PropTypes.string,
+  options: PropTypes.array
+};
+
+QuizForm.defaultProps = {
+  question: "",
+  options: []
+};
