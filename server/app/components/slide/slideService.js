@@ -13,7 +13,9 @@ exports.listSlideOfPresentation = (presentationId)=> Slide.findAll({
 });
 
 exports.slideWithOptions = (slideId)=> Slide.findOne({
-    include: ["options"],
+    include: {
+        model: Option
+    },
     where: {
         id: slideId
     }   

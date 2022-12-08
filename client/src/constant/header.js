@@ -31,3 +31,18 @@ export const GROUP_DETAIL_HEADER = [
     name: "Action"
   }
 ];
+
+export const PRESENTATION_HEADER = [
+  {
+    id: 1,
+    name: "Name"
+  },
+  {
+    id: 2,
+    name: "Last modified"
+  },
+  {
+    id: 3,
+    name: "Action"
+  }
+];

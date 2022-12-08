@@ -1,6 +1,7 @@
 import { AccountCircle } from "@mui/icons-material";
 import {
   AppBar,
+  Box,
   Button,
   IconButton,
   Menu,
@@ -13,8 +14,6 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { deleteUser } from "../features/user/userSlice";
 import { getLocalStorage } from "../utils/localStorage";
-
-const drawerWidth = 300;
 
 export default function TopBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -38,6 +37,9 @@ export default function TopBar() {
       break;
     case "/profile":
       content = "Profile";
+      break;
+    case "/presentations":
+      content = "Presentations";
       break;
     default:
       break;
@@ -63,9 +65,10 @@ export default function TopBar() {
   return (
     <AppBar
       position="fixed"
-      sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, height: "64px" }}
     >
-      <Toolbar>
+      <Toolbar display="flex">
+        <Box sx={{ width: 200 }} />
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           {content}
         </Typography>

@@ -11,6 +11,10 @@ const Option = sequelize.define("option", {
     },
     position: {
         type: Sequelize.SMALLINT
+    },
+    upvote: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
     }
 }, {
     freezeTableName: true
