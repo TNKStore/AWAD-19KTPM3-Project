@@ -57,7 +57,7 @@ export default function PresentationDetailPage() {
   const [presentationID, setPresentationID] = useState("");
   const [slides, setSlides] = useState([]);
   const [slideValue, setSlideValue] = useState(0);
-  const [currentSlide, setCurrentSlide] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState({});
   const [shouldRefetch, setShouldRefetch] = useState(true);
 
   const location = useLocation();
@@ -126,6 +126,8 @@ export default function PresentationDetailPage() {
     if (response.status === 200) {
       const data = response.data.slideList;
       setSlides(data);
+      setSlideValue(0);
+      setCurrentSlide(data[0]);
       setShouldRefetch(false);
     }
   };
@@ -184,6 +186,10 @@ export default function PresentationDetailPage() {
       setSlideValue(current);
       setCurrentSlide(slides[current]);
     }
+  };
+
+  const reloadData = () => {
+    setShouldRefetch(true);
   };
 
   // Use effects
@@ -287,8 +293,12 @@ export default function PresentationDetailPage() {
         }}
       >
         <QuizForm
-          question={currentSlide?.question}
-          options={currentSlide?.options}
+          presentationID={presentationID}
+          slideID={currentSlide.id}
+          position={currentSlide.position}
+          question={currentSlide.question}
+          options={currentSlide.options}
+          callback={reloadData}
         />
       </Box>
     </Box>
