@@ -20,6 +20,7 @@ const Presentation = require("./app/models/presentation");
 const Slide = require("./app/models/slide");
 const Option = require("./app/models/option");
 const Collaborator = require("./app/models/collaborator");
+const slideService = require("./app/components/slide/slideService");
 
 const app = express();
 
@@ -65,11 +66,20 @@ const socketIo = require("socket.io")(server, {
   cors: corsOptions
 });
 socketIo.on("connection", (socket) => { ///Handle khi có connect từ client tới
-  console.log("New client connected" + socket.id); 
+  console.log("New client connected" + socket.id);
+  
+  socket.on("presentationStart", function(data) { // Handle khi có sự kiện tên là sendDataClient từ phía client
+    const questions = data.questions;
 
-  socket.on("sendDataClient", function(data) { // Handle khi có sự kiện tên là sendDataClient từ phía client
-    socketIo.emit("sendDataServer", { data });// phát sự kiện  có tên sendDataServer cùng với dữ liệu tin nhắn từ phía server
-  })
+    socket.on("vote", function(data) {
+      const options = questions.options
+      for (let x in options) {
+        if (options[x].id = data.optionId)
+          options[x].upvote++;
+      }
+      socket.emit("sendUpdatedQuestions", { questions });
+    })
+})
 
   socket.on("disconnect", () => {
     console.log("Client disconnected"); // Khi client disconnect thì log ra terminal.
