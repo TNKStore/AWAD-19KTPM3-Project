@@ -4,6 +4,7 @@ const cors = require("cors");
 const sequelize = require("./app/models");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const http = require("http");
 const passport = require("./app/passport");
 const authRouter = require("./app/components/auth");
 const groupRouter = require("./app/components/group");
@@ -56,13 +57,31 @@ app.use("/member", memberRouter);
 app.use("/user", userRouter);
 app.use("/presentation", presentationRouter);
 app.use("/slide", slideRouter);
+
+//socket
+const server = http.createServer(app);
+const socketIo = require("socket.io")(server, {
+  cors: corsOptions
+});
+socketIo.on("connection", (socket) => { ///Handle khi có connect từ client tới
+  console.log("New client connected" + socket.id); 
+
+  socket.on("sendDataClient", function(data) { // Handle khi có sự kiện tên là sendDataClient từ phía client
+    socketIo.emit("sendDataServer", { data });// phát sự kiện  có tên sendDataServer cùng với dữ liệu tin nhắn từ phía server
+  })
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected"); // Khi client disconnect thì log ra terminal.
+  });
+});
+
 // set port, listen for requests
 const PORT = process.env.PORT || 4000;
 sequelize
   .authenticate()
   .then(() => {
     console.log("Connection has been established successfully.");
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}.`);
     });
 
