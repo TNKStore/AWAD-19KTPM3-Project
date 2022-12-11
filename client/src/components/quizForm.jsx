@@ -118,8 +118,8 @@ export default function QuizForm(props) {
 
   const submitVote = async () => {
     await socket.emit("vote", {
-      questionId: 12,
-      optionsId: options[0].id
+      questionId: 4,
+      optionId: options[0].id
     });
   };
 
