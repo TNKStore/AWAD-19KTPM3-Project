@@ -69,7 +69,7 @@ function App() {
           <Route element={<PresentationRoute />}>
             <Route
               path="/presentations/:id"
-              element={<PresentationDetailPage />}
+              element={<PresentationDetailPage socket={socket} />}
             />
           </Route>
         </Route>

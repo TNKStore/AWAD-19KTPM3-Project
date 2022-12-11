@@ -14,8 +14,16 @@ export default function QuizForm(props) {
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [quizID, setQuizID] = useState(-1);
 
-  const { presentationID, slideID, position, question, options, callback } =
-    props;
+  const {
+    socket,
+    presentationID,
+    slides,
+    slideID,
+    position,
+    question,
+    options,
+    callback
+  } = props;
   const token = getLocalStorage("token");
 
   const {
@@ -104,6 +112,17 @@ export default function QuizForm(props) {
     }
   };
 
+  const submitData = async () => {
+    await socket.emit("presentationStart", slides);
+  };
+
+  const submitVote = async () => {
+    await socket.emit("vote", {
+      questionId: 12,
+      optionsId: options[0].id
+    });
+  };
+
   // use initially
   useEffect(() => {
     if (slideID !== -1 && shouldRefetch) {
@@ -171,13 +190,27 @@ export default function QuizForm(props) {
           </button>
         </section>
         <input type="submit" className="child" value="Save" />
+        <input
+          type="button"
+          className="child"
+          value="Submit"
+          onClick={submitData}
+        />
+        <input
+          type="button"
+          className="child"
+          value="Submit"
+          onClick={submitVote}
+        />
       </form>
     </Box>
   );
 }
 
 QuizForm.propTypes = {
+  socket: PropTypes.shape,
   presentationID: PropTypes.number,
+  slides: PropTypes.array,
   slideID: PropTypes.number,
   position: PropTypes.number,
   question: PropTypes.string,
@@ -186,7 +219,9 @@ QuizForm.propTypes = {
 };
 
 QuizForm.defaultProps = {
+  socket: {},
   presentationID: 0,
+  slides: [],
   slideID: -1,
   position: 0,
   question: "",

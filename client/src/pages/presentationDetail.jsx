@@ -53,7 +53,7 @@ function a11yProps(index) {
   };
 }
 
-export default function PresentationDetailPage() {
+export default function PresentationDetailPage(props) {
   const [presentationID, setPresentationID] = useState("");
   const [slides, setSlides] = useState([]);
   const [slideValue, setSlideValue] = useState(0);
@@ -61,6 +61,7 @@ export default function PresentationDetailPage() {
 
   const location = useLocation();
   const token = getLocalStorage("token");
+  const { socket } = props;
 
   // API calls
 
@@ -277,7 +278,9 @@ export default function PresentationDetailPage() {
               options={slide.options}
             />
             <QuizForm
+              socket={socket}
               presentationID={presentationID}
+              slides={slides}
               slideID={slide.id}
               position={slide.position}
               question={slide.question}
@@ -290,3 +293,11 @@ export default function PresentationDetailPage() {
     </Box>
   );
 }
+
+PresentationDetailPage.propTypes = {
+  socket: PropTypes.shape
+};
+
+PresentationDetailPage.defaultProps = {
+  socket: {}
+};
