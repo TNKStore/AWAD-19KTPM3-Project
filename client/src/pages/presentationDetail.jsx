@@ -29,9 +29,9 @@ function TabPanel(props) {
           display="flex"
           alignItems="center"
           justifyContent="center"
-          flexDirection="column"
-          width="900px"
-          height="500px"
+          flexDirection="row"
+          width="100%"
+          height="calc(100vh - 64px)"
         >
           {children}
         </Box>
@@ -57,7 +57,6 @@ export default function PresentationDetailPage() {
   const [presentationID, setPresentationID] = useState("");
   const [slides, setSlides] = useState([]);
   const [slideValue, setSlideValue] = useState(0);
-  const [currentSlide, setCurrentSlide] = useState({});
   const [shouldRefetch, setShouldRefetch] = useState(true);
 
   const location = useLocation();
@@ -126,8 +125,6 @@ export default function PresentationDetailPage() {
     if (response.status === 200) {
       const data = response.data.slideList;
       setSlides(data);
-      setSlideValue(0);
-      setCurrentSlide(data[0]);
       setShouldRefetch(false);
     }
   };
@@ -146,9 +143,7 @@ export default function PresentationDetailPage() {
       handleCreateSlide();
     } else {
       setSlideValue(value);
-      setCurrentSlide(slides[value]);
     }
-    console.log(currentSlide);
   };
 
   const handleDeleteSlide = async (e, id, position) => {
@@ -184,7 +179,6 @@ export default function PresentationDetailPage() {
 
       setSlides(newSlides);
       setSlideValue(current);
-      setCurrentSlide(slides[current]);
     }
   };
 
@@ -211,6 +205,7 @@ export default function PresentationDetailPage() {
       sx={{
         display: "flex",
         width: "100%",
+        height: "calc(100vh - 64px)",
         alignItems: "start",
         justifyContent: "space-between"
       }}
@@ -218,11 +213,11 @@ export default function PresentationDetailPage() {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column",
+          flexDirection: "row",
           height: "calc(100vh - 64px)",
           overflow: "hidden",
           overflowY: "auto",
-          width: "18%",
+          width: "20%",
           borderRight: 1,
           borderColor: "divider"
         }}
@@ -268,7 +263,7 @@ export default function PresentationDetailPage() {
       <Box
         sx={{
           display: "flex",
-          width: "50%",
+          width: "80%",
           height: "calc(100vh - 64px)",
           alignItems: "center",
           justifyContent: "center"
@@ -281,25 +276,16 @@ export default function PresentationDetailPage() {
               question={slide.question}
               options={slide.options}
             />
+            <QuizForm
+              presentationID={presentationID}
+              slideID={slide.id}
+              position={slide.position}
+              question={slide.question}
+              options={slide.options}
+              callback={reloadData}
+            />
           </TabPanel>
         ))}
-      </Box>
-      <Box
-        sx={{
-          width: "25%",
-          height: "100%",
-          borderColor: "rgba(0, 0, 0, 0.12)",
-          borderLeft: 1
-        }}
-      >
-        <QuizForm
-          presentationID={presentationID}
-          slideID={currentSlide.id}
-          position={currentSlide.position}
-          question={currentSlide.question}
-          options={currentSlide.options}
-          callback={reloadData}
-        />
       </Box>
     </Box>
   );

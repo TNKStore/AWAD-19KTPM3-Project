@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/aria-role */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import "./App.css";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -17,12 +18,41 @@ import DefaultRoute from "./routes/defaultRoute";
 import PresentationRoute from "./routes/presentationRoute";
 import PresentationsPage from "./pages/presentations";
 import PresentationDetailPage from "./pages/presentationDetail";
+import { getLocalStorage } from "./utils/localStorage";
 
 function App() {
+  const [socket, setSocket] = useState(null);
+
   const dispatch = useDispatch();
+
+  const user = getLocalStorage("user");
+  const token = getLocalStorage("token");
+
   useEffect(() => {
     dispatch(loadUserFromLocalStorage());
   }, []);
+
+  useEffect(() => {
+    const connectSocket = async () => {
+      if (!user) return;
+
+      if (!socket) {
+        const newSocket = io(process.env.REACT_APP_DOMAIN, {
+          extraHeaders: {
+            token
+          }
+        });
+        setSocket(newSocket);
+      }
+    };
+
+    connectSocket();
+
+    return () => {
+      if (!user) return;
+      socket?.disconnect();
+    };
+  }, [user]);
 
   return (
     <Router>
