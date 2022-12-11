@@ -62,23 +62,31 @@ app.use("/slide", slideRouter);
 //socket
 const server = http.createServer(app);
 const socketIo = require("socket.io")(server, {
-  cors: corsOptions
+  cors: corsOptions,
 });
-socketIo.on("connection", (socket) => { ///Handle khi có connect từ client tới
+socketIo.on("connection", (socket) => {
+  ///Handle khi có connect từ client tới
   console.log("New client connected" + socket.id);
-  
-  socket.on("presentationStart", function(data) { // Handle khi có sự kiện tên là sendDataClient từ phía client
-    const questions = data.questions;
 
-    socket.on("vote", function(data) {
-      const options = questions.options
+  socket.on("presentationStart", function (data) {
+    // Handle khi có sự kiện tên là sendDataClient từ phía client
+    const questions = data;
+
+    console.log(data);
+
+    socket.on("vote", function (data) {
+      const questionIndex = questions.findIndex(
+        (qs) => qs.id === data.questionId
+      );
+      const options = questions[questionIndex].options;
       for (let x in options) {
-        if (options[x].id = data.optionId)
-          options[x].upvote++;
+        if ((options[x].id = data.optionId)) options[x].upvote++;
       }
+
+      console.log(questions[questionIndex].options);
       socket.emit("sendUpdatedQuestions", { questions });
-    })
-})
+    });
+  });
 
   socket.on("disconnect", () => {
     console.log("Client disconnected"); // Khi client disconnect thì log ra terminal.
