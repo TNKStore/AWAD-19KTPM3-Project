@@ -124,9 +124,12 @@ export default function QuizForm(props) {
       sx={{
         display: "flex",
         flexDirection: "column",
+        width: "40%",
         height: "calc(100vh - 64px)",
         overflow: "hidden",
-        overflowY: "auto"
+        overflowY: "auto",
+        borderColor: "rgba(0, 0, 0, 0.12)",
+        borderLeft: 1
       }}
     >
       <form className="child" onSubmit={handleSubmit(handleUpdateQuiz)}>
