@@ -156,7 +156,7 @@ export default function QuizForm(props) {
           Your question
         </Typography>
         <input {...register("question", { required: "Required" })} />
-        {errors.question && <span>{errors.quesion.message}</span>}
+        {errors.question && <span>{errors.question.message}</span>}
         <Typography
           variant="h6"
           component="div"
@@ -183,7 +183,7 @@ export default function QuizForm(props) {
           <button
             type="button"
             onClick={() => {
-              append({ firstName: "" });
+              append({ content: "" });
             }}
           >
             append
