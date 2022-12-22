@@ -20,7 +20,7 @@ services:
     container_name: nodejs_server
     build: ./server
     volumes:
-      - ./server/:/app
+      - ./server:/app
     restart: unless-stopped
     env_file: ./.env
     environment:
