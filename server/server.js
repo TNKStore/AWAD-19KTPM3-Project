@@ -68,23 +68,28 @@ socketIo.on("connection", (socket) => {
   ///Handle khi có connect từ client tới
   console.log("New client connected" + socket.id);
 
-  socket.on("presentationStart", function (data) {
-    // Handle khi có sự kiện tên là sendDataClient từ phía client
-    const questions = data;
+  socket.on("presentationStart", function (presentationData) {
+    socket.join(presentationData.presentationId);
+    const questions = presentationData.questions;
+    
+
+    socket.on("changeSlide", function (slidePosition) {
+      socketIo.emit("sendUpdatedSlidePosition", { slidePosition });
+    });
 
     //console.log(data);
-    socket.on("vote", function (data) {
+    socket.on("vote", function (questionData) {
       const questionIndex = questions.findIndex(
-        (q) => q.id === data.questionId
+        (q) => q.id === questionData.questionId
       );
       const options = questions[questionIndex].options;
       for (let x in options) {
-        if ((options[x].id === data.optionId)) {
+        if ((options[x].id === questionData.optionId)) {
           options[x].upvote++;
         }
       }
       console.log(questions[questionIndex].options);
-      socket.emit("sendUpdatedQuestions", { questions });
+      socketIo.to(presentationData.presentationId).emit("sendUpdatedQuestions", { questions });
     });
   });
 

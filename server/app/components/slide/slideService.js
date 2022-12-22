@@ -9,7 +9,10 @@ exports.listSlideOfPresentation = (presentationId)=> Slide.findAll({
     },
     where: {
         presentationId: presentationId
-    }   
+    },
+    order: [
+        [Option, "id", "ASC"]
+    ]
 });
 
 exports.slideWithOptions = (slideId)=> Slide.findOne({
