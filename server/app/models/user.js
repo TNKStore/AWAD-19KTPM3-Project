@@ -37,4 +37,9 @@ const User = sequelize.define("user", {
     freezeTableName: true
 });
 
+User.hasMany(Presentation, {
+    onDelete: "CASCADE"
+});
+Presentation.belongsTo(User);
+
 module.exports = User
