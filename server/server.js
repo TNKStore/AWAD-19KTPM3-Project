@@ -74,7 +74,7 @@ socketIo.on("connection", (socket) => {
     
 
     socket.on("changeSlide", function (slidePosition) {
-      socketIo.emit("sendUpdatedSlidePosition", { slidePosition });
+      socketIo.to(presentationData.presentationId).emit("sendUpdatedSlidePosition", { slidePosition });
     });
 
     //console.log(data);
