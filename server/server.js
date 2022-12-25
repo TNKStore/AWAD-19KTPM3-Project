@@ -19,8 +19,7 @@ const Member = require("./app/models/member");
 const Presentation = require("./app/models/presentation");
 const Slide = require("./app/models/slide");
 const Option = require("./app/models/option");
-const slideService = require("./app/components/slide/slideService");
-
+const Collaborator = require("./app/models/collaborator");
 const app = express();
 
 const corsOptions = {
