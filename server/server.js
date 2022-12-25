@@ -18,6 +18,7 @@ const Member = require("./app/models/member");
 const Presentation = require("./app/models/presentation");
 const Slide = require("./app/models/slide");
 const Option = require("./app/models/option");
+const Collaborator = require("./app/models/collaborator");
 
 const app = express();
 

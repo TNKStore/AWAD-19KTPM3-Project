@@ -37,7 +37,4 @@ const User = sequelize.define("user", {
     freezeTableName: true
 });
 
-User.hasMany(Presentation);
-Presentation.belongsTo(User);
-
 module.exports = User
