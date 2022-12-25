@@ -47,4 +47,10 @@ router.get(
   groupController.getMemberOfGroup
 );
 
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  groupController.deleteGroup
+);
+
 module.exports = router;
