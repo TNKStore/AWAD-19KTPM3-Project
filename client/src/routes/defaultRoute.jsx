@@ -8,6 +8,7 @@ import { Outlet } from "react-router-dom";
 import { Box, CssBaseline } from "@mui/material";
 import SideMenu from "../components/menu";
 import TopBar from "../components/appBar";
+import QuickChat from "../components/QuickChat";
 
 function DefaultRoute() {
   return (
@@ -18,6 +19,7 @@ function DefaultRoute() {
       <Box padding="20px" width="100%">
         <Outlet />
       </Box>
+      <QuickChat />
     </Box>
   );
 }

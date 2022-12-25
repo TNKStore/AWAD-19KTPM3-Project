@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "sass": "^1.57.1"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/lab": "^4.0.0-alpha.61",
+    "@mui/lab": "^5.0.0-alpha.113"
+  }
+}

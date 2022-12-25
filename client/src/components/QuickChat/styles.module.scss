@@ -1,0 +1,125 @@
+$primary-color: #0084ff;
+
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+};
+
+
+.container {
+    position: fixed;
+    bottom: 5%;
+    right: 2%;
+}
+
+.chatBtn {
+    @include flex-center;
+
+    background-color: $primary-color;
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.chatIcon {
+    color: white;
+}
+
+.chatBoxContainer {
+    position: relative;
+    width: 400px;
+    height: 70vh;
+    background: #fff;
+    position: fixed;
+    bottom: 15%;
+    right: 2%;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px 0 rgb(0 0 0 / 15%);
+}
+
+.msg {
+    position: absolute;
+    bottom: 0;
+    border-top: 1px solid #ccc;
+    left: 0;
+    width: 100%;
+    
+    input {
+        width: 92%;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+}
+
+.closeIcon {
+    @include flex-center;
+
+    position: absolute;
+    z-index: 99;
+    right: 10px;
+    top: 10px;
+    color: black;
+    background-color: rgb(223, 223, 223);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.chatContainer {
+    max-height: 547px;
+    overflow-y: auto;
+    border-top: 1px solid #ccc;
+    padding: 0 12px;
+}
+
+.msgContent {
+    display: flex;
+    align-items: flex-end;
+    
+    img {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    p {
+        margin-top: 8px;
+        margin-bottom: 0;    
+        padding: 7px 12px;
+        border-radius: 22px;
+        font-size: 14px;
+        max-width: 280px;
+    }
+}
+
+.viewer {
+    text-align: left;
+
+    p {
+        background: #ccc;
+    }
+}
+
+.owner {
+    text-align: right;
+    flex-direction: row-reverse;
+
+    img {
+        margin-right: 0;
+        margin-left: 10px;
+    }
+    
+    p {
+        background: $primary-color;
+        color: white;
+    }
+}
