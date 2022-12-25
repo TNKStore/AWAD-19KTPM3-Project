@@ -54,6 +54,12 @@ exports.create = async (groupName) => {
     })
 }
 
+exports.delete = (groupId) => Group.destroy({
+    where: {
+        id: groupId
+    }
+});
+
 exports.findGroupWithMember = (id) => Group.findOne({ 
     where: { id: id },
     include: {
