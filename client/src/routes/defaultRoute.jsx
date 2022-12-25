@@ -9,6 +9,7 @@ import PropTypes from "prop-types";
 import { Box, CssBaseline } from "@mui/material";
 import SideMenu from "../components/menu";
 import TopBar from "../components/appBar";
+import QuickChat from "../components/QuickChat";
 
 function DefaultRoute(props) {
   const { socket } = props;
@@ -21,6 +22,7 @@ function DefaultRoute(props) {
       <Box padding="20px" width="100%">
         <Outlet />
       </Box>
+      <QuickChat />
     </Box>
   );
 }
