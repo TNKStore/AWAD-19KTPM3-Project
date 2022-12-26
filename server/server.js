@@ -67,10 +67,16 @@ socketIo.on("connection", (socket) => {
   ///Handle khi có connect từ client tới
   console.log("New client connected" + socket.id);
 
+  socket.emit("getId", socket.id);
+
   socket.on("presentationStart", function (presentationData) {
     socket.join(presentationData.presentationId);
     const questions = presentationData.questions;
-    
+
+    socket.on("sendMessageClient", function(messageData) {
+      socketIo.to(presentationData.presentationId)
+        .emit("sendMessageServer", { userId: messageData.userId, message: messageData.message });
+    })  
 
     socket.on("changeSlide", function (slidePosition) {
       socketIo.to(presentationData.presentationId).emit("sendUpdatedSlidePosition", { slidePosition });
