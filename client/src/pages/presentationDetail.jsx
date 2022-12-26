@@ -17,6 +17,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getLocalStorage } from "../utils/localStorage";
 import OptionsBarChart from "../components/barChart";
 import QuizForm from "../components/quizForm";
+import QuickChat from "../components/QuickChat";
 import { socketListener } from "./presentationView";
 import ResultList from "../components/resultView";
 
@@ -308,99 +309,85 @@ export default function PresentationDetailPage(props) {
       <Box
         sx={{
           display: "flex",
-          width: "100%",
+          flexDirection: "row",
           height: "calc(100vh - 64px)",
-          alignItems: "start",
-          justifyContent: "space-between"
+          overflow: "hidden",
+          overflowY: "auto",
+          width: "20%",
+          borderRight: 1,
+          borderColor: "divider"
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            height: "calc(100vh - 64px)",
-            overflow: "hidden",
-            overflowY: "auto",
-            width: "20%",
-            borderRight: 1,
-            borderColor: "divider"
-          }}
-        >
-          <Tabs
-            orientation="vertical"
-            variant="scrollable"
-            value={slideValue}
-            onChange={handleChangeTab}
-            aria-label="Vertical tabs example"
-          >
-            {slides.map((slide) => (
-              <Tab
-                key={slide.position.toString()}
-                value={slide.position}
-                label={
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    flexDirection="column"
-                    width="300px"
-                    height="200px"
-                  >
-                    <OptionsBarChart
-                      padding={32}
-                      options={slide.options}
-                      editorMode
-                    />
-                  </Box>
-                }
-                icon={
-                  <Close
-                    id={slide.position}
-                    onClick={(e) =>
-                      handleDeleteSlide(e, slide.id, slide.position)
-                    }
-                  />
-                }
-                {...a11yProps(slide.position)}
-                className="mytab"
-              />
-            ))}
-            <Tab icon={<PostAdd />} value="add" />
-          </Tabs>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            width: "80%",
-            height: "calc(100vh - 64px)",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
+        <Tabs
+          orientation="vertical"
+          variant="scrollable"
+          value={slideValue}
+          onChange={handleChangeTab}
+          aria-label="Vertical tabs example"
         >
           {slides.map((slide) => (
-            <TabPanel value={slideValue} index={slide.position}>
-              <OptionsBarChart
-                padding={64}
-                question={slide.question}
-                options={slide.options}
-                editorMode
-              />
-              <QuizForm
-                socket={socket}
-                presentationID={presentationID}
-                slides={slides}
-                slideID={slide.id}
-                position={slide.position}
-                question={slide.question}
-                options={slide.options}
-                callback={reloadData}
-                viewResult={handleViewResult}
-              />
-            </TabPanel>
+            <Tab
+              key={slide.position.toString()}
+              value={slide.position}
+              label={
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  flexDirection="column"
+                  width="300px"
+                  height="200px"
+                >
+                  <OptionsBarChart padding={32} options={slide.options} />
+                </Box>
+              }
+              icon={
+                <Close
+                  id={slide.position}
+                  onClick={(e) =>
+                    handleDeleteSlide(e, slide.id, slide.position)
+                  }
+                />
+              }
+              {...a11yProps(slide.position)}
+              className="mytab"
+            />
           ))}
-        </Box>
+          <Tab icon={<PostAdd />} value="add" />
+        </Tabs>
       </Box>
-    </div>
+      <Box
+        sx={{
+          display: "flex",
+          width: "80%",
+          height: "calc(100vh - 64px)",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        {slides.map((slide) => (
+          <TabPanel value={slideValue} index={slide.position}>
+            <OptionsBarChart
+              padding={64}
+              question={slide.question}
+              options={slide.options}
+              editorMode
+            />
+            <QuizForm
+              socket={socket}
+              presentationID={presentationID}
+              slides={slides}
+              slideID={slide.id}
+              position={slide.position}
+              question={slide.question}
+              options={slide.options}
+              callback={reloadData}
+            />
+          </TabPanel>
+        ))}
+      </Box>
+      <QuickChat />
+    </Box>
   );
 }
 

@@ -1,6 +1,8 @@
 import { PropTypes } from "prop-types";
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import styles from "./styles.module.scss";
+import { getLocalStorage } from "../../utils/localStorage";
+import InputMsg from "./InputMsg";
 
 function ChatContent(props) {
   const { isOwner, content } = props;
@@ -25,39 +27,42 @@ function ChatContent(props) {
 }
 
 function ClientChatMsg(props) {
-  const { isOwner } = props;
+  const { data, handleInputMsgChange, onEnter, handleSendMsg } = props;
+
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const user = getLocalStorage("user");
+
+  useEffect(() => {
+    scrollToBottom();
+    console.log("end");
+  }, [data]);
+
   return (
-    <div className={styles.chatContainer}>
-      <ChatContent
-        isOwner={isOwner}
-        content="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus quis officiis ut pariatur culpa dolorem consequatur voluptatibus provident accusantium vero numquam quasi est, inventore a qui aspernatur minima eligendi. Ducimus."
-      />
-      <ChatContent
-        isOwner={false}
-        content="Lorem ipsum dolor sit amet consectetur adipisicing elit."
-      />
-      <ChatContent
-        isOwner={isOwner}
-        content="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus quis officiis ut pariatur culpa dolorem consequatur voluptatibus provident accusantium vero numquam quasi est, inventore a qui aspernatur minima eligendi. Ducimus."
-      />
-      <ChatContent
-        isOwner={isOwner}
-        content="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus quis officiis ut pariatur culpa dolorem consequatur voluptatibus provident accusantium vero numquam quasi est, inventore a qui aspernatur minima eligendi. Ducimus."
-      />
-      <ChatContent
-        isOwner={false}
-        content="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus quis officiis ut pariatur culpa dolorem consequatur voluptatibus provident accusantium vero numquam quasi est, inventore a qui aspernatur minima eligendi. Ducimus."
-      />
-      <ChatContent
-        isOwner={isOwner}
-        content="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus quis officiis ut pariatur culpa dolorem consequatur voluptatibus provident accusantium vero numquam quasi est, inventore a qui aspernatur minima eligendi. Ducimus."
+    <div className={styles.chatContainer} ref={messagesEndRef}>
+      <div className={styles.chatContent}>
+        {data.map((value) => (
+          <ChatContent isOwner={user.id === value.owner} content={value.msg} />
+        ))}
+      </div>
+      <InputMsg
+        handleInputMsgChange={handleInputMsgChange}
+        onEnter={onEnter}
+        handleSendMsg={handleSendMsg}
       />
     </div>
   );
 }
 
 ClientChatMsg.propTypes = {
-  isOwner: PropTypes.bool.isRequired
+  data: PropTypes.instanceOf(Array).isRequired,
+  handleInputMsgChange: PropTypes.func.isRequired,
+  onEnter: PropTypes.func.isRequired,
+  handleSendMsg: PropTypes.func.isRequired
 };
 
 ChatContent.propTypes = {
@@ -65,4 +70,4 @@ ChatContent.propTypes = {
   content: PropTypes.string.isRequired
 };
 
-export default ClientChatMsg;
+export default React.memo(ClientChatMsg);

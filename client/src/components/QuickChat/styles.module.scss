@@ -42,20 +42,37 @@ $primary-color: #0084ff;
     box-shadow: 0 4px 12px 0 rgb(0 0 0 / 15%);
 }
 
-.msg {
+.msgInput {
     position: absolute;
     bottom: 0;
-    border-top: 1px solid #ccc;
     left: 0;
     width: 100%;
+    display: flex;
+    align-items: flex-end;
     
-    input {
-        width: 92%;
+    textarea {
+        font-family: inherit;
+        width: 100%;
         border: none;
         outline: none;
+        background: rgba(0, 0, 0, 0.06);
         font-size: 16px;
-        margin-top: 10px;
+        resize: none;
+        appearance: none;
+        padding: 10px;
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+        overflow-y: hidden;
+        height: 60px;
     }
+}
+
+.msgInputIcon {
+    color: $primary-color;
+    cursor: pointer;
+    position: absolute;
+    right: 2%;
+    bottom: 10px;
 }
 
 .closeIcon {
@@ -74,10 +91,12 @@ $primary-color: #0084ff;
 }
 
 .chatContainer {
-    max-height: 547px;
     overflow-y: auto;
-    border-top: 1px solid #ccc;
-    padding: 0 12px;
+}
+
+.chatContent {
+    max-height: 535px;
+    overflow-y: auto;
 }
 
 .msgContent {
@@ -97,7 +116,7 @@ $primary-color: #0084ff;
         padding: 7px 12px;
         border-radius: 22px;
         font-size: 14px;
-        max-width: 280px;
+        max-width: 285px;
     }
 }
 
