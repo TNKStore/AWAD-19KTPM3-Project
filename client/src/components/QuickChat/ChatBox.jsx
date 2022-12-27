@@ -7,7 +7,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import Tab from "@mui/material/Tab";
 import { PropTypes } from "prop-types";
 import React, { useState } from "react";
-import { chatData } from "../../mockData/chat";
+import { chatData } from "../../mockData/quickChat";
 import ClientChatMsg from "./ClientChatMsg";
 import Question from "./Question";
 import styles from "./styles.module.scss";

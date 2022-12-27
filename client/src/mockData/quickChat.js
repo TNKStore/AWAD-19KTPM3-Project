@@ -25,3 +25,41 @@ export const chatData = [
     msg: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
   }
 ];
+
+export const questions = [
+  {
+    id: 1,
+    question: "How do you feel to day?",
+    totalVote: 10,
+    timeAsked: new Date(),
+    status: "UN_ANSWER"
+  },
+  {
+    id: 2,
+    question: "Where are you from?",
+    totalVote: 1,
+    timeAsked: new Date(),
+    status: "UN_ANSWER"
+  },
+  {
+    id: 3,
+    question: "Hey, Do you wan't vote this question?",
+    totalVote: 12,
+    timeAsked: new Date(),
+    status: "ANSWERED"
+  },
+  {
+    id: 4,
+    question: "Where is your hometown?",
+    totalVote: 5,
+    timeAsked: new Date(),
+    status: "UN_ANSWER"
+  },
+  {
+    id: 5,
+    question: "How to join a presentation group?",
+    totalVote: 15,
+    timeAsked: new Date(),
+    status: "ANSWERED"
+  }
+];

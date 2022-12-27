@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import styles from "./styles.module.scss";
 import ChatBox from "./ChatBox";
 import ChatButton from "./ChatButton";
-import "./overwrite.css";
+import "./overwrite.scss";
 
 function QuickChat() {
   const [isShowChatBox, setIsShowChatBox] = useState(false);

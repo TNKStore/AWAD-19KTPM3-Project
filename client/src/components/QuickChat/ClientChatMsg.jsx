@@ -1,8 +1,8 @@
 import { PropTypes } from "prop-types";
-import React, { useRef, useEffect } from "react";
-import styles from "./styles.module.scss";
+import React, { useRef } from "react";
 import { getLocalStorage } from "../../utils/localStorage";
 import InputMsg from "./InputMsg";
+import styles from "./styles.module.scss";
 
 function ChatContent(props) {
   const { isOwner, content } = props;
@@ -31,16 +31,7 @@ function ClientChatMsg(props) {
 
   const messagesEndRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   const user = getLocalStorage("user");
-
-  useEffect(() => {
-    scrollToBottom();
-    console.log("end");
-  }, [data]);
 
   return (
     <div className={styles.chatContainer} ref={messagesEndRef}>

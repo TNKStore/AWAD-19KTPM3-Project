@@ -254,7 +254,10 @@ export default function PresentationsPage() {
         <TableBody>
           {presentations.map((da) => (
             <TableRow>
-              <TableCell onClick={() => handleChoosePresentation(da.id)}>
+              <TableCell
+                style={{ cursor: "pointer" }}
+                onClick={() => handleChoosePresentation(da.id)}
+              >
                 {da.presentationName}
               </TableCell>
               <TableCell>{new Date(da.updatedAt).toString()}</TableCell>
