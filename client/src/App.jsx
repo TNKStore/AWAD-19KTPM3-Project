@@ -18,6 +18,7 @@ import DefaultRoute from "./routes/defaultRoute";
 import PresentationRoute from "./routes/presentationRoute";
 import PresentationsPage from "./pages/presentations";
 import PresentationDetailPage from "./pages/presentationDetail";
+import PresentationViewPage from "./pages/presentationView";
 import { getLocalStorage } from "./utils/localStorage";
 
 function App() {
@@ -64,12 +65,17 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/groups" element={<GroupsPage />} />
             <Route path="/groups/:id" element={<GroupDetailPage />} />
+            <Route path="/group/invite" element={<InvitePage />} />
             <Route path="/presentations" element={<PresentationsPage />} />
           </Route>
           <Route element={<PresentationRoute />}>
             <Route
-              path="/presentations/:id"
+              path="/presentations/:id/edit"
               element={<PresentationDetailPage socket={socket} />}
+            />
+            <Route
+              path="/presentations/:id/view"
+              element={<PresentationViewPage socket={socket} />}
             />
           </Route>
         </Route>
@@ -77,7 +83,6 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/activate" element={<ActivatePage />} />
-        <Route path="/group/invite" element={<InvitePage />} />
       </Routes>
     </Router>
   );

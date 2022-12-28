@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-shadow */
 /* eslint-disable react/forbid-prop-types */
@@ -15,7 +16,15 @@ import {
 } from "recharts";
 
 export default function OptionsBarChart(props) {
-  const { padding, question, options } = props;
+  const { padding, question, options, shouldShowResult } = props;
+
+  const fakeOptions = JSON.parse(JSON.stringify(options));
+  fakeOptions.forEach((item) => {
+    item.upvote = 0;
+  });
+
+  console.log(options);
+  console.log(fakeOptions);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -23,7 +32,7 @@ export default function OptionsBarChart(props) {
         width="100%"
         height="100%"
         title={question}
-        data={options}
+        data={shouldShowResult ? options : fakeOptions}
         margin={{
           top: padding,
           right: padding,
@@ -45,11 +54,13 @@ export default function OptionsBarChart(props) {
 OptionsBarChart.propTypes = {
   padding: PropTypes.number,
   question: PropTypes.string,
-  options: PropTypes.array
+  options: PropTypes.array,
+  shouldShowResult: PropTypes.bool
 };
 
 OptionsBarChart.defaultProps = {
   padding: 0,
   question: "",
-  options: []
+  options: [],
+  shouldShowResult: false
 };
