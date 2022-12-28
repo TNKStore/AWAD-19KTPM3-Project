@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { AccountCircle } from "@mui/icons-material";
 import {
   AppBar,
@@ -12,6 +13,7 @@ import {
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { deleteUser } from "../features/user/userSlice";
 import { getLocalStorage } from "../utils/localStorage";
 
@@ -27,19 +29,24 @@ export default function TopBar() {
   const auth = !!token;
 
   let content = "";
+  let shouldShowBackButton = true;
   const currentRoute = window.location.pathname;
   switch (currentRoute) {
     case "/":
       content = `Hi, ${user?.firstName}`;
+      shouldShowBackButton = false;
       break;
     case "/groups":
       content = "Groups";
+      shouldShowBackButton = false;
       break;
     case "/profile":
       content = "Profile";
+      shouldShowBackButton = false;
       break;
     case "/presentations":
       content = "Presentations";
+      shouldShowBackButton = false;
       break;
     default:
       break;
@@ -62,13 +69,22 @@ export default function TopBar() {
     setAnchorEl(null);
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
     <AppBar
       position="fixed"
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, height: "64px" }}
     >
       <Toolbar display="flex">
-        <Box sx={{ width: 200 }} />
+        {shouldShowBackButton && <ArrowBackIcon onClick={handleBack} />}
+        {!shouldShowBackButton && (
+          <ArrowBackIcon sx={{ display: "none" }} onClick={handleBack} />
+        )}
+        {shouldShowBackButton && <Box sx={{ width: 176 }} />}
+        {!shouldShowBackButton && <Box sx={{ width: 200 }} />}
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           {content}
         </Typography>

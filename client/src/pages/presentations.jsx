@@ -105,7 +105,7 @@ export default function PresentationsPage() {
   };
 
   const handleChoosePresentation = (id) => {
-    navigate(`/presentations/${id}`, { state: { presentationID: id } });
+    navigate(`/presentations/${id}/view`, { state: { presentationID: id } });
   };
 
   const handleAddPresentation = () => {
