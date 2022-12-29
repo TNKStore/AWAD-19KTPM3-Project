@@ -65,16 +65,15 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/groups" element={<GroupsPage />} />
             <Route path="/groups/:id" element={<GroupDetailPage />} />
-            <Route path="/group/invite" element={<InvitePage />} />
             <Route path="/presentations" element={<PresentationsPage />} />
           </Route>
           <Route element={<PresentationRoute />}>
             <Route
-              path="/presentations/:id/edit"
+              path="/presentations/edit/:id"
               element={<PresentationDetailPage socket={socket} />}
             />
             <Route
-              path="/presentations/:id/view"
+              path="/presentations/view"
               element={<PresentationViewPage socket={socket} />}
             />
           </Route>
@@ -83,6 +82,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/activate" element={<ActivatePage />} />
+        <Route path="/group/invite" element={<InvitePage />} />
       </Routes>
     </Router>
   );

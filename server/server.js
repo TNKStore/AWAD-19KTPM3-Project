@@ -95,7 +95,8 @@ socketIo.on("connection", (socket) => {
     });
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", (reason) => {
+    console.log(reason);
     console.log("Client disconnected"); // Khi client disconnect thì log ra terminal.
   });
 });
