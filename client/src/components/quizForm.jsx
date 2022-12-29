@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { PropTypes } from "prop-types";
 import { useFieldArray, useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import axios from "axios";
 import { getLocalStorage } from "../utils/localStorage";
 
@@ -25,6 +26,7 @@ export default function QuizForm(props) {
     callback
   } = props;
   const token = getLocalStorage("token");
+  const navigate = useNavigate();
 
   const {
     register,
@@ -113,7 +115,7 @@ export default function QuizForm(props) {
   };
 
   const submitData = async () => {
-    await socket.emit("presentationStart", slides);
+    navigate(`/presentations/view?id=${presentationID}`);
   };
 
   const submitVote = async () => {

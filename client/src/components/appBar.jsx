@@ -11,17 +11,20 @@ import {
   Typography
 } from "@mui/material";
 import * as React from "react";
+import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { deleteUser } from "../features/user/userSlice";
 import { getLocalStorage } from "../utils/localStorage";
 
-export default function TopBar() {
+export default function TopBar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const { socket } = props;
 
   // const user = useSelector((state) => state.user?.userInfo);
   const token = getLocalStorage("token");
@@ -131,3 +134,11 @@ export default function TopBar() {
     </AppBar>
   );
 }
+
+TopBar.propTypes = {
+  socket: PropTypes.shape
+};
+
+TopBar.defaultProps = {
+  socket: {}
+};

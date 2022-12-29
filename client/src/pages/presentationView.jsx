@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import axios from "axios";
-import { useLocation } from "react-router";
+import { useSearchParams } from "react-router-dom";
 import { getLocalStorage } from "../utils/localStorage";
 import OptionsBarChart from "../components/barChart";
 import QuizView from "../components/quizView";
@@ -44,16 +44,26 @@ TabPanel.propTypes = {
 };
 
 export default function PresentationViewPage(props) {
-  const [presentationID, setPresentationID] = useState(null);
   const [slides, setSlides] = useState([]);
   const [slideValue, setSlideValue] = useState(0);
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [shouldShowResult, setShouldShowResult] = useState(false);
   const [optionsClickable, setOptionsClickable] = useState(true);
 
-  const location = useLocation();
+  const [searchParams] = useSearchParams();
+
   const token = getLocalStorage("token");
+  const presentationID = searchParams.get("id");
+  console.log(presentationID);
+
   const { socket } = props;
+
+  const socketListener = async () => {
+    socket.on("sendUpdatedQuestions", function (response) {
+      setSlides(response.questions);
+    });
+  };
+  socketListener();
 
   // API calls
 
@@ -93,21 +103,12 @@ export default function PresentationViewPage(props) {
     }
   };
 
-  const socketListener = async () => {
-    socket.on("sendUpdatedQuestions", function (response) {
-      setSlides(response.questions);
-      setOptionsClickable(false);
-      setShouldShowResult(true);
-    });
+  const handleSubmit = () => {
+    setOptionsClickable(false);
+    setShouldShowResult(true);
   };
 
   // Use effects
-
-  useEffect(() => {
-    if (location.state !== null) {
-      setPresentationID(location.state.presentationID);
-    }
-  }, [presentationID]);
 
   useEffect(() => {
     if (presentationID !== null && shouldRefetch) {
@@ -116,7 +117,7 @@ export default function PresentationViewPage(props) {
   }, [presentationID, shouldRefetch]);
 
   useEffect(() => {
-    if (presentationID !== null && slides !== []) {
+    if (presentationID !== null && slides.length !== 0) {
       socket.emit("presentationStart", {
         presentationId: presentationID,
         questions: slides
@@ -153,7 +154,7 @@ export default function PresentationViewPage(props) {
             question={slides[slideValue]?.question}
             options={slides[slideValue]?.options}
             optionsClickable={optionsClickable}
-            callback={socketListener}
+            callback={handleSubmit}
           />
           <OptionsBarChart
             padding={64}
