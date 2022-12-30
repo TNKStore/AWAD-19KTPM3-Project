@@ -19,7 +19,7 @@ const Member = require("./app/models/member");
 const Presentation = require("./app/models/presentation");
 const Slide = require("./app/models/slide");
 const Option = require("./app/models/option");
-const slideService = require("./app/components/slide/slideService");
+const optionService = require("./app/components/option/optionService");
 
 const app = express();
 
@@ -70,29 +70,31 @@ socketIo.on("connection", (socket) => {
 
   socket.on("presentationStart", function (presentationData) {
     socket.join(presentationData.presentationId);
-    const questions = presentationData.questions;
+    //const questions = presentationData.questions;
+  });
 
-    socket.on("changeSlide", function (slidePosition) {
-      socketIo
-        .to(presentationData.presentationId)
-        .emit("sendUpdatedSlidePosition", { slidePosition });
-    });
+  socket.on("changeSlide", function (changeSlideData) {
+    socketIo
+      .to(changeSlideData.presentationId)
+      .emit("sendUpdatedSlidePosition", { slidePosition: changeSlideData.currentSlide });
+  });
 
-    socket.on("vote", function (questionData) {
-      const questionIndex = questions.findIndex(
-        (q) => q.id === questionData.questionId
-      );
-      const options = questions[questionIndex].options;
-      for (let x in options) {
-        if (options[x].id === questionData.optionId) {
-          options[x].upvote++;
-        }
+  socket.on("vote", async function (voteData) {
+    const questions = voteData.questions;
+    const questionIndex = questions.findIndex(
+      (q) => q.id === voteData.questionId
+    );
+    const options = questions[questionIndex].options;
+    for (let x in options) {
+      if (options[x].id === voteData.optionId) {
+        options[x].upvote++;
       }
-      console.log(questions[questionIndex].options);
-      socketIo
-        .to(presentationData.presentationId)
-        .emit("sendUpdatedQuestions", { questions });
-    });
+    }
+    //console.log(questions[questionIndex].options);
+    socketIo
+      .to(presentationData.presentationId)
+      .emit("sendUpdatedQuestions", { questions });
+    await optionService.upvote(questionData.optionId);
   });
 
   socket.on("disconnect", (reason) => {

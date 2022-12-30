@@ -20,6 +20,14 @@ exports.update =  (optionId, content, isCorrect, position) => Option.update({
         }
 });
 
+exports.upvote = (optionId) => Option.increment('upvote',
+    {
+        by: 1,
+        where: {
+            id: optionId,
+        }
+});
+
 exports.delete =  (optionId) => Option.destroy({
     where: {
         id: optionId
