@@ -1,5 +1,6 @@
 const groupService = require("./groupService");
 const userService = require("../user/userService");
+const memberService = require("../member/memberService");
 const { result } = require("lodash");
 const createError = require("http-errors");
 
@@ -33,6 +34,20 @@ exports.createGroup = async (req, res, next) => {
   return res
     .status(200)
     .send({ group: result, message: "Create successfully!" });
+};
+
+exports.deleteGroup = async (req, res, next) => {
+  const userId = req.decoded.user.id;
+  const groupId = req.params["id"];
+  const member = await memberService.findMemberInGroup(groupId, userId);
+  if (!member) {
+    return res.status(404).send({ message: "Member not found" });
+  }
+  if (!member.role === "Owner") {
+    return res.status(400).send({ message: "Cannot delete group" });
+  }
+  await groupService.delete(groupId);
+  return res.status(200).send({ message: "Delete successfully!" });
 };
 
 exports.getMemberOfGroup = async (req, res, next) => {

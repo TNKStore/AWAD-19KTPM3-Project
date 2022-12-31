@@ -36,4 +36,17 @@ router.delete(
   slideController.deleteSlide
 );
 
+router.get(
+  "/:id/collaborator",
+  passport.authenticate("jwt", { session: false }),
+  presentationController.getCollaboratorOfPresentation
+);
+
+router.post(
+  "/add-collaborator",
+  passport.authenticate("jwt", { session: false }),
+  presentationController.addCollaborator
+);
+
+
 module.exports = router;
