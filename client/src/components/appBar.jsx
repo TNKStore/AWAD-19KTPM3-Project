@@ -136,9 +136,9 @@ export default function TopBar(props) {
 }
 
 TopBar.propTypes = {
-  socket: PropTypes.shape
+  socket: PropTypes.objectOf(PropTypes.shape)
 };
 
 TopBar.defaultProps = {
-  socket: {}
+  socket: null
 };

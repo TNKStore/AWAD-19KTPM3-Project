@@ -43,10 +43,17 @@ TabPanel.propTypes = {
   value: PropTypes.number
 };
 
+export const socketListener = async (socket, func) => {
+  socket.on("sendUpdatedQuestions", function (response) {
+    func(response.questions);
+  });
+};
+
 export default function PresentationViewPage(props) {
   const [slides, setSlides] = useState([]);
   const [slideValue, setSlideValue] = useState(0);
   const [shouldRefetch, setShouldRefetch] = useState(true);
+  const [presentationStart, setPresentationStart] = useState(false);
   const [shouldShowResult, setShouldShowResult] = useState(false);
   const [optionsClickable, setOptionsClickable] = useState(true);
 
@@ -58,12 +65,14 @@ export default function PresentationViewPage(props) {
 
   const { socket } = props;
 
-  const socketListener = async () => {
-    socket.on("sendUpdatedQuestions", function (response) {
-      setSlides(response.questions);
-    });
-  };
-  socketListener();
+  //   const socketListener = async () => {
+  //     socket.on("sendUpdatedQuestions", function (response) {
+  //       setSlides(response.questions);
+  //     });
+  //   };
+  //   socketListener();
+
+  socketListener(socket, setSlides);
 
   // API calls
 
@@ -117,11 +126,13 @@ export default function PresentationViewPage(props) {
   }, [presentationID, shouldRefetch]);
 
   useEffect(() => {
-    if (presentationID !== null && slides.length !== 0) {
+    if (presentationID !== null && slides.length !== 0 && !presentationStart) {
       socket.emit("presentationStart", {
         presentationId: presentationID,
         questions: slides
       });
+      setPresentationStart(true);
+      console.log("presentationStart");
     }
   }, [slides]);
 
@@ -169,9 +180,9 @@ export default function PresentationViewPage(props) {
 }
 
 PresentationViewPage.propTypes = {
-  socket: PropTypes.shape
+  socket: PropTypes.objectOf(PropTypes.shape)
 };
 
 PresentationViewPage.defaultProps = {
-  socket: {}
+  socket: null
 };

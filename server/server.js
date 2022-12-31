@@ -70,13 +70,16 @@ socketIo.on("connection", (socket) => {
 
   socket.on("presentationStart", function (presentationData) {
     socket.join(presentationData.presentationId);
-    //const questions = presentationData.questions;
+    console.log("Joined" + presentationData.presentationId);
+    const questions = presentationData.questions;
   });
 
   socket.on("changeSlide", function (changeSlideData) {
     socketIo
       .to(changeSlideData.presentationId)
-      .emit("sendUpdatedSlidePosition", { slidePosition: changeSlideData.currentSlide });
+      .emit("sendUpdatedSlidePosition", {
+        slidePosition: changeSlideData.currentSlide,
+      });
   });
 
   socket.on("vote", async function (voteData) {
@@ -92,9 +95,9 @@ socketIo.on("connection", (socket) => {
     }
     //console.log(questions[questionIndex].options);
     socketIo
-      .to(presentationData.presentationId)
+      .to(voteData.presentationId)
       .emit("sendUpdatedQuestions", { questions });
-    await optionService.upvote(questionData.optionId);
+    await optionService.upvote(voteData.optionId);
   });
 
   socket.on("disconnect", (reason) => {

@@ -16,7 +16,7 @@ import {
 } from "recharts";
 
 export default function OptionsBarChart(props) {
-  const { padding, question, options, shouldShowResult } = props;
+  const { padding, question, options, editorMode, shouldShowResult } = props;
 
   const fakeOptions = JSON.parse(JSON.stringify(options));
   fakeOptions.forEach((item) => {
@@ -24,7 +24,6 @@ export default function OptionsBarChart(props) {
   });
 
   console.log(options);
-  console.log(fakeOptions);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -32,7 +31,7 @@ export default function OptionsBarChart(props) {
         width="100%"
         height="100%"
         title={question}
-        data={shouldShowResult ? options : fakeOptions}
+        data={editorMode || shouldShowResult ? options : options}
         margin={{
           top: padding,
           right: padding,
@@ -55,6 +54,7 @@ OptionsBarChart.propTypes = {
   padding: PropTypes.number,
   question: PropTypes.string,
   options: PropTypes.array,
+  editorMode: PropTypes.bool,
   shouldShowResult: PropTypes.bool
 };
 
@@ -62,5 +62,6 @@ OptionsBarChart.defaultProps = {
   padding: 0,
   question: "",
   options: [],
+  editorMode: false,
   shouldShowResult: false
 };

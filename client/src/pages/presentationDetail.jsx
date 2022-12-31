@@ -12,6 +12,7 @@ import { useLocation } from "react-router";
 import { getLocalStorage } from "../utils/localStorage";
 import OptionsBarChart from "../components/barChart";
 import QuizForm from "../components/quizForm";
+import { socketListener } from "./presentationView";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -54,14 +55,26 @@ function a11yProps(index) {
 }
 
 export default function PresentationDetailPage(props) {
-  const [presentationID, setPresentationID] = useState("");
+  const [presentationID, setPresentationID] = useState(null);
   const [slides, setSlides] = useState([]);
   const [slideValue, setSlideValue] = useState(0);
   const [shouldRefetch, setShouldRefetch] = useState(true);
+  const [presentationStart, setPresentationStart] = useState(false);
 
   const location = useLocation();
   const token = getLocalStorage("token");
   const { socket } = props;
+
+  // const socketListener = async () => {
+  //   socket.on("sendUpdatedQuestions", function (response) {
+  //     setSlides(response.questions);
+  //     console.log("Receive");
+  //   });
+  //   console.log("Run");
+  // };
+  // socketListener();
+
+  socketListener(socket, setSlides);
 
   // API calls
 
@@ -193,13 +206,27 @@ export default function PresentationDetailPage(props) {
     if (location.state !== null) {
       setPresentationID(location.state.presentationID);
     }
+    console.log("PresentationID change");
   }, [presentationID]);
 
   useEffect(() => {
-    if (presentationID !== "" && shouldRefetch) {
+    if (presentationID !== null && shouldRefetch) {
       handleFetchSlides({});
     }
+    console.log("Fetch slide");
   }, [presentationID, shouldRefetch]);
+
+  useEffect(() => {
+    if (presentationID !== null && slides.length !== 0 && !presentationStart) {
+      socket.emit("presentationStart", {
+        presentationId: presentationID,
+        questions: slides
+      });
+      setPresentationStart(true);
+      console.log("PresentationStart");
+      console.log(slides);
+    }
+  }, [slides]);
 
   return (
     <Box
@@ -276,6 +303,7 @@ export default function PresentationDetailPage(props) {
               padding={64}
               question={slide.question}
               options={slide.options}
+              editorMode
             />
             <QuizForm
               socket={socket}
@@ -295,9 +323,9 @@ export default function PresentationDetailPage(props) {
 }
 
 PresentationDetailPage.propTypes = {
-  socket: PropTypes.shape
+  socket: PropTypes.objectOf(PropTypes.shape)
 };
 
 PresentationDetailPage.defaultProps = {
-  socket: {}
+  socket: null
 };
