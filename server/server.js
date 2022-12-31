@@ -92,9 +92,9 @@ socketIo.on("connection", (socket) => {
     }
     //console.log(questions[questionIndex].options);
     socketIo
-      .to(presentationData.presentationId)
+      .to(voteData.presentationId)
       .emit("sendUpdatedQuestions", { questions });
-    await optionService.upvote(questionData.optionId);
+    await optionService.upvote(voteData.optionId);
   });
 
   socket.on("disconnect", (reason) => {
