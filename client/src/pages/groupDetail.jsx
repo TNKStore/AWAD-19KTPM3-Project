@@ -130,8 +130,8 @@ export default function GroupDetail() {
     }
   };
 
-  const handleDeleteUser = async () => {
-    const response = await deleteUser();
+  const handleDeleteUser = async (id) => {
+    const response = await deleteUser(id);
 
     if (response.status === 200) {
       setShouldRefetch(true);

@@ -18,6 +18,7 @@ import DefaultRoute from "./routes/defaultRoute";
 import PresentationRoute from "./routes/presentationRoute";
 import PresentationsPage from "./pages/presentations";
 import PresentationDetailPage from "./pages/presentationDetail";
+import PresentationViewPage from "./pages/presentationView";
 import { getLocalStorage } from "./utils/localStorage";
 
 function App() {
@@ -68,8 +69,12 @@ function App() {
           </Route>
           <Route element={<PresentationRoute />}>
             <Route
-              path="/presentations/:id"
-              element={<PresentationDetailPage />}
+              path="/presentations/edit/:id"
+              element={<PresentationDetailPage socket={socket} />}
+            />
+            <Route
+              path="/presentations/view"
+              element={<PresentationViewPage socket={socket} />}
             />
           </Route>
         </Route>

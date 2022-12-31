@@ -4,6 +4,7 @@ const cors = require("cors");
 const sequelize = require("./app/models");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const http = require("http");
 const passport = require("./app/passport");
 const authRouter = require("./app/components/auth");
 const groupRouter = require("./app/components/group");
@@ -19,6 +20,8 @@ const Presentation = require("./app/models/presentation");
 const Slide = require("./app/models/slide");
 const Option = require("./app/models/option");
 const Collaborator = require("./app/models/collaborator");
+const slideService = require("./app/components/slide/slideService");
+const optionService = require("./app/components/option/optionService");
 
 const app = express();
 
@@ -57,13 +60,61 @@ app.use("/member", memberRouter);
 app.use("/user", userRouter);
 app.use("/presentation", presentationRouter);
 app.use("/slide", slideRouter);
+
+//socket
+const server = http.createServer(app);
+const socketIo = require("socket.io")(server, {
+  cors: corsOptions,
+});
+socketIo.on("connection", (socket) => {
+  ///Handle khi có connect từ client tới
+  console.log("New client connected" + socket.id);
+
+  socket.on("presentationStart", function (presentationData) {
+    socket.join(presentationData.presentationId);
+    console.log("Joined" + presentationData.presentationId);
+    const questions = presentationData.questions;
+  });
+
+  socket.on("changeSlide", function (changeSlideData) {
+    socketIo
+      .to(changeSlideData.presentationId)
+      .emit("sendUpdatedSlidePosition", {
+        slidePosition: changeSlideData.currentSlide,
+      });
+  });
+
+  socket.on("vote", async function (voteData) {
+    const questions = voteData.questions;
+    const questionIndex = questions.findIndex(
+      (q) => q.id === voteData.questionId
+    );
+    const options = questions[questionIndex].options;
+    for (let x in options) {
+      if (options[x].id === voteData.optionId) {
+        options[x].upvote++;
+      }
+    }
+    //console.log(questions[questionIndex].options);
+    socketIo
+      .to(voteData.presentationId)
+      .emit("sendUpdatedQuestions", { questions });
+    await optionService.upvote(voteData.optionId);
+  });
+
+  socket.on("disconnect", (reason) => {
+    console.log(reason);
+    console.log("Client disconnected"); // Khi client disconnect thì log ra terminal.
+  });
+});
+
 // set port, listen for requests
 const PORT = process.env.PORT || 4000;
 sequelize
   .authenticate()
   .then(() => {
     console.log("Connection has been established successfully.");
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}.`);
     });
 

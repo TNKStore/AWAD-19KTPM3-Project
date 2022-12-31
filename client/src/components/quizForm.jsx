@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { PropTypes } from "prop-types";
 import { useFieldArray, useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import axios from "axios";
 import { getLocalStorage } from "../utils/localStorage";
 
@@ -14,9 +15,18 @@ export default function QuizForm(props) {
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [quizID, setQuizID] = useState(-1);
 
-  const { presentationID, slideID, position, question, options, callback } =
-    props;
+  const {
+    socket,
+    presentationID,
+    slides,
+    slideID,
+    position,
+    question,
+    options,
+    callback
+  } = props;
   const token = getLocalStorage("token");
+  const navigate = useNavigate();
 
   const {
     register,
@@ -104,6 +114,17 @@ export default function QuizForm(props) {
     }
   };
 
+  const submitData = async () => {
+    navigate(`/presentations/view?id=${presentationID}`);
+  };
+
+  const submitVote = async () => {
+    await socket.emit("vote", {
+      questionId: 4,
+      optionId: options[0].id
+    });
+  };
+
   // use initially
   useEffect(() => {
     if (slideID !== -1 && shouldRefetch) {
@@ -124,7 +145,7 @@ export default function QuizForm(props) {
       sx={{
         display: "flex",
         flexDirection: "column",
-        width: "40%",
+        width: "70%",
         height: "calc(100vh - 64px)",
         overflow: "hidden",
         overflowY: "auto",
@@ -137,7 +158,7 @@ export default function QuizForm(props) {
           Your question
         </Typography>
         <input {...register("question", { required: "Required" })} />
-        {errors.question && <span>{errors.quesion.message}</span>}
+        {errors.question && <span>{errors.question.message}</span>}
         <Typography
           variant="h6"
           component="div"
@@ -151,6 +172,7 @@ export default function QuizForm(props) {
             return (
               <div display="flex" key={item.id}>
                 <input
+                  type="textarea"
                   {...register(`options.${index}.content`, { required: true })}
                 />
                 <button type="button" onClick={() => remove(index)}>
@@ -164,20 +186,34 @@ export default function QuizForm(props) {
           <button
             type="button"
             onClick={() => {
-              append({ firstName: "" });
+              append({ content: "" });
             }}
           >
             append
           </button>
         </section>
         <input type="submit" className="child" value="Save" />
+        <input
+          type="button"
+          className="child"
+          value="Submit"
+          onClick={submitData}
+        />
+        <input
+          type="button"
+          className="child"
+          value="Submit"
+          onClick={submitVote}
+        />
       </form>
     </Box>
   );
 }
 
 QuizForm.propTypes = {
+  socket: PropTypes.objectOf(PropTypes.shape),
   presentationID: PropTypes.number,
+  slides: PropTypes.array,
   slideID: PropTypes.number,
   position: PropTypes.number,
   question: PropTypes.string,
@@ -186,7 +222,9 @@ QuizForm.propTypes = {
 };
 
 QuizForm.defaultProps = {
+  socket: null,
   presentationID: 0,
+  slides: [],
   slideID: -1,
   position: 0,
   question: "",

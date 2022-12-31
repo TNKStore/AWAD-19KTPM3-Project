@@ -50,7 +50,7 @@ exports.register = async (
   //send activation string
   const msg = {
     to: email, // Change to your recipient
-    from: "ptvkhue19@clc.fitus.edu.vn", // Change to your verified sender
+    from: "tdhtrung19@clc.fitus.edu.vn", // Change to your verified sender
     subject: "Account verification",
     text: "Thanks for joining us!",
     html: `<h1>Thanks for joining us!</h1>
