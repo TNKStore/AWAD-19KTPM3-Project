@@ -34,6 +34,8 @@ export default function QuizView(props) {
 
   const handleSubmitVote = async (id) => {
     await socket.emit("vote", {
+      presentationId: presentationID,
+      questions: slides,
       questionId: slideID,
       optionId: id
     });
@@ -81,7 +83,7 @@ export default function QuizView(props) {
         return (
           <Button
             variant="outlined"
-            justifyContent="center"
+            justifycontent="center"
             sx={{ height: "64px", width: "80%", marginBottom: "32px" }}
             onClick={() => handleSubmitVote(item.id)}
             disabled={!optionsClickable}
@@ -95,8 +97,8 @@ export default function QuizView(props) {
 }
 
 QuizView.propTypes = {
-  socket: PropTypes.shape,
-  presentationID: PropTypes.number,
+  socket: PropTypes.objectOf(PropTypes.shape),
+  presentationID: PropTypes.string,
   slides: PropTypes.array,
   slideID: PropTypes.number,
   position: PropTypes.number,
@@ -107,8 +109,8 @@ QuizView.propTypes = {
 };
 
 QuizView.defaultProps = {
-  socket: {},
-  presentationID: 0,
+  socket: null,
+  presentationID: "",
   slides: [],
   slideID: -1,
   position: 0,

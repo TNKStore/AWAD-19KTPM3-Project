@@ -145,7 +145,7 @@ export default function QuizForm(props) {
       sx={{
         display: "flex",
         flexDirection: "column",
-        width: "40%",
+        width: "70%",
         height: "calc(100vh - 64px)",
         overflow: "hidden",
         overflowY: "auto",
@@ -172,6 +172,7 @@ export default function QuizForm(props) {
             return (
               <div display="flex" key={item.id}>
                 <input
+                  type="textarea"
                   {...register(`options.${index}.content`, { required: true })}
                 />
                 <button type="button" onClick={() => remove(index)}>
@@ -210,7 +211,7 @@ export default function QuizForm(props) {
 }
 
 QuizForm.propTypes = {
-  socket: PropTypes.shape,
+  socket: PropTypes.objectOf(PropTypes.shape),
   presentationID: PropTypes.number,
   slides: PropTypes.array,
   slideID: PropTypes.number,
@@ -221,7 +222,7 @@ QuizForm.propTypes = {
 };
 
 QuizForm.defaultProps = {
-  socket: {},
+  socket: null,
   presentationID: 0,
   slides: [],
   slideID: -1,

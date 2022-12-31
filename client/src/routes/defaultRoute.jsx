@@ -26,11 +26,11 @@ function DefaultRoute(props) {
 }
 
 DefaultRoute.propTypes = {
-  socket: PropTypes.shape
+  socket: PropTypes.objectOf(PropTypes.shape)
 };
 
 DefaultRoute.defaultProps = {
-  socket: {}
+  socket: null
 };
 
 export default DefaultRoute;

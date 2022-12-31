@@ -21,11 +21,11 @@ function PresentationRoute(props) {
 }
 
 PresentationRoute.propTypes = {
-  socket: PropTypes.shape
+  socket: PropTypes.objectOf(PropTypes.shape)
 };
 
 PresentationRoute.defaultProps = {
-  socket: {}
+  socket: null
 };
 
 export default PresentationRoute;
