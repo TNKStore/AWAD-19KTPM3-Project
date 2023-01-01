@@ -79,7 +79,6 @@ socketIo.on("connection", (socket) => {
   socket.on("presentationStart", function (presentationData) {
     socket.join(presentationData.presentationId);
     console.log("Joined" + presentationData.presentationId);
-    const questions = presentationData.questions;
   });
 
   socket.on("changeSlide", async function (changeSlideData) {
@@ -110,9 +109,9 @@ socketIo.on("connection", (socket) => {
       .to(voteData.presentationId)
       .emit("sendUpdatedQuestions", { questions });
     await optionService.upvote(voteData.optionId);
-    const user = voteData.user;
-    await historyVoteService.create(user.firstName, user.lastName,user.email, 
-      voteData.presentationId, voteData.questionId, questions[questionIndex].question, option);
+    // const user = voteData.user;
+    // await historyVoteService.create(user.firstName, user.lastName,user.email, 
+    //   voteData.presentationId, voteData.questionId, questions[questionIndex].question, option);
   });
 
   socket.on("sendMessageClient", async function(messageData) {
