@@ -28,6 +28,7 @@ const optionService = require("./app/components/option/optionService");
 const historyVoteService = require("./app/components/historyVote/historyVoteService");
 const historyChatService = require("./app/components/historyChat/historyChatService");
 const questionService = require("./app/components/question/questionService");
+const collaboratorRouter = require("./app/components/collaborator");
 
 const app = express();
 
@@ -66,6 +67,7 @@ app.use("/member", memberRouter);
 app.use("/user", userRouter);
 app.use("/presentation", presentationRouter);
 app.use("/slide", slideRouter);
+app.use("/collaborator", collaboratorRouter);
 
 //socket
 const server = http.createServer(app);

@@ -1,8 +1,11 @@
-/* eslint-disable prettier/prettier */
+/* eslint-disable react/no-unstable-nested-components */
 import {
   Box,
   Button,
   Dialog,
+  IconButton,
+  Menu,
+  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -13,8 +16,9 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import DeleteIcon from "@mui/icons-material/Delete";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { PropTypes } from "prop-types";
 import axios from "axios";
 import { GROUP_DETAIL_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
@@ -169,6 +173,58 @@ export default function GroupDetail() {
     }
   }, [groupID, shouldRefetch]);
 
+  // Components
+
+  function GroupDetailMenu(props) {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const { id } = props;
+
+    const handleMenu = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    return (
+      <>
+        <IconButton
+          size="large"
+          aria-haspopup="true"
+          onClick={(e) => handleMenu(e, id)}
+          color="inherit"
+        >
+          <MoreVertIcon />
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right"
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right"
+          }}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={() => handleDeleteUser(id)}>Delete</MenuItem>
+        </Menu>
+      </>
+    );
+  }
+
+  GroupDetailMenu.propTypes = {
+    id: PropTypes.string
+  };
+
+  GroupDetailMenu.defaultProps = {
+    id: null
+  };
+
   return (
     <Box component="main">
       <Dialog maxWidth="1000px" open={isDialogOpen} onClose={handleCloseDialog}>
@@ -251,9 +307,7 @@ export default function GroupDetail() {
                 </TableCell>
                 <TableCell>{da.member.role}</TableCell>
                 <TableCell sx={{ maxWidth: "10px" }}>
-                  <Button onClick={() => handleDeleteUser(da.id)}>
-                    <DeleteIcon />
-                  </Button>
+                  <GroupDetailMenu id={da.id} />
                 </TableCell>
               </TableRow>
             ))}

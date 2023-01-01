@@ -1,8 +1,11 @@
-/* eslint-disable prettier/prettier */
+/* eslint-disable react/no-unstable-nested-components */
 import {
   Box,
   Button,
   Dialog,
+  IconButton,
+  Menu,
+  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -13,15 +16,17 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import DeleteIcon from "@mui/icons-material/Delete";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { PropTypes } from "prop-types";
 import axios from "axios";
-import { GROUP_DETAIL_HEADER } from "../constant/header";
+import { PRESENTATION_COLLABORATOR_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
 
 export default function PresentationCollaboratePage() {
   const [presentationID, setPresentationID] = useState(null);
   const [collaborators, setCollaborators] = useState([]);
+  const [presentationCode, setPresentationCode] = useState(null);
   const [inviteEmail, setInviteEmail] = useState("");
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -83,6 +88,8 @@ export default function PresentationCollaboratePage() {
       collaboratorId: id
     };
 
+    console.log(data);
+
     const response = await axios
       .post(`${process.env.REACT_APP_DOMAIN}/collaborator/remove`, data, {
         headers
@@ -98,8 +105,10 @@ export default function PresentationCollaboratePage() {
     const response = await fetchCollaborators();
 
     if (response.status === 200) {
-      const resData = response.data.group;
+      const resData = response.data.presentation;
+      console.log(response.data);
       setCollaborators(resData.users);
+      setPresentationCode(resData.code);
       setShouldRefetch(false);
     }
   };
@@ -109,6 +118,7 @@ export default function PresentationCollaboratePage() {
 
     if (response.status === 200) {
       setIsDialogOpen(false);
+      setShouldRefetch(true);
     }
   };
 
@@ -150,6 +160,60 @@ export default function PresentationCollaboratePage() {
     }
   }, [presentationID, shouldRefetch]);
 
+  // Components
+
+  function PresentationCollaborateMenu(props) {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const { id } = props;
+
+    const handleMenu = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    return (
+      <>
+        <IconButton
+          size="large"
+          aria-haspopup="true"
+          onClick={(e) => handleMenu(e, id)}
+          color="inherit"
+        >
+          <MoreVertIcon />
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right"
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right"
+          }}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={() => handleDeleteCollaborator(id)}>
+            Delete
+          </MenuItem>
+        </Menu>
+      </>
+    );
+  }
+
+  PresentationCollaborateMenu.propTypes = {
+    id: PropTypes.string
+  };
+
+  PresentationCollaborateMenu.defaultProps = {
+    id: null
+  };
+
   return (
     <Box component="main">
       <Dialog maxWidth="1000px" open={isDialogOpen} onClose={handleCloseDialog}>
@@ -161,17 +225,11 @@ export default function PresentationCollaboratePage() {
           width="1000px"
           height="300px"
         >
-          <Typography>
-            <Typography variant="span" sx={{ fontWeight: "800" }}>
-              {`Invite link: `}
-            </Typography>
-          </Typography>
-
           <Typography
             variant="span"
             sx={{ fontWeight: "800", marginTop: "20px" }}
           >
-            Email
+            Enter Collaborator email
           </Typography>
           <TextField
             sx={{ m: 1, width: "50ch" }}
@@ -197,9 +255,9 @@ export default function PresentationCollaboratePage() {
         <Box>
           <Typography>
             <Typography variant="span" sx={{ fontWeight: "800" }}>
-              {`Group name: `}
+              {`Presentation Code: `}
             </Typography>
-            {presentationID}
+            {presentationCode}
           </Typography>
         </Box>
         <Box
@@ -217,7 +275,7 @@ export default function PresentationCollaboratePage() {
         <Table>
           <TableHead>
             <TableRow>
-              {GROUP_DETAIL_HEADER.map((header) => (
+              {PRESENTATION_COLLABORATOR_HEADER.map((header) => (
                 <TableCell sx={{ fontWeight: "900" }}>{header.name}</TableCell>
               ))}
             </TableRow>
@@ -229,11 +287,9 @@ export default function PresentationCollaboratePage() {
                   {`${da.firstName} ${da.lastName}`}
                   <div className="italic">{da.email}</div>
                 </TableCell>
-                <TableCell>{da.member.role}</TableCell>
+                <TableCell>{da.collaborator?.role}</TableCell>
                 <TableCell sx={{ maxWidth: "10px" }}>
-                  <Button onClick={() => handleDeleteCollaborator(da.id)}>
-                    <DeleteIcon />
-                  </Button>
+                  <PresentationCollaborateMenu id={da.id} />
                 </TableCell>
               </TableRow>
             ))}
