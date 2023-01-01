@@ -28,6 +28,7 @@ const optionService = require("./app/components/option/optionService");
 const historyVoteService = require("./app/components/historyVote/historyVoteService");
 const historyChatService = require("./app/components/historyChat/historyChatService");
 const questionService = require("./app/components/question/questionService");
+const collaboratorRouter = require("./app/components/collaborator");
 
 const app = express();
 
@@ -66,6 +67,7 @@ app.use("/member", memberRouter);
 app.use("/user", userRouter);
 app.use("/presentation", presentationRouter);
 app.use("/slide", slideRouter);
+app.use("/collaborator", collaboratorRouter);
 
 //socket
 const server = http.createServer(app);
@@ -88,12 +90,14 @@ socketIo.on("connection", (socket) => {
   });
 
   socket.on("changeSlide", async function (changeSlideData) {
-    const historyVote = await historyVoteService.historyVoteOfPresentation(changeSlideData.presentationId);
+    const historyVote = await historyVoteService.historyVoteOfPresentation(
+      changeSlideData.presentationId
+    );
     socketIo
       .to(changeSlideData.presentationId)
       .emit("sendUpdatedSlidePosition", {
         slidePosition: changeSlideData.currentSlide,
-        historyVote: historyVote
+        historyVote: historyVote,
       });
   });
 
@@ -121,26 +125,41 @@ socketIo.on("connection", (socket) => {
       .emit("sendUpdatedQuestions", { questions });
     await optionService.upvote(voteData.optionId);
     // const user = voteData.user;
-    // await historyVoteService.create(user.firstName, user.lastName,user.email, 
+    // await historyVoteService.create(user.firstName, user.lastName,user.email,
     //   voteData.presentationId, voteData.questionId, questions[questionIndex].question, option);
   });
 
-  socket.on("sendMessageClient", async function(messageData) {
+  socket.on("sendMessageClient", async function (messageData) {
     const message = messageData.message;
-    const presentation = await presentationService.findById(messageData.presentationId);
-    const historyChat = await historyChatService.create(message.firstName, message.lastName, message.email, message.content);
+    const presentation = await presentationService.findById(
+      messageData.presentationId
+    );
+    const historyChat = await historyChatService.create(
+      message.firstName,
+      message.lastName,
+      message.email,
+      message.content
+    );
     await presentation.addHistoryChat(historyChat);
-    socketIo.to(messageData.presentationId)
+    socketIo
+      .to(messageData.presentationId)
       .emit("sendMessageServer", { sender: sender, message: historyChat });
-    
   });
 
-  socket.on("postQuestion", async function(questionData) {
+  socket.on("postQuestion", async function (questionData) {
     const question = questionData.question;
-    const newQuestion = await questionService.create(question.firstName, question.lastName, question.email, question.content);
-    const presentation = await presentationService.findById(messageData.presentationId);
+    const newQuestion = await questionService.create(
+      question.firstName,
+      question.lastName,
+      question.email,
+      question.content
+    );
+    const presentation = await presentationService.findById(
+      messageData.presentationId
+    );
     await presentation.addQuestion(newQuestion);
-    socketIo.to(questionData.presentationId)
+    socketIo
+      .to(questionData.presentationId)
       .emit("sendQuestion", { question: newQuestion });
   });
 

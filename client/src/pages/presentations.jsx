@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import {
   Box,
   Button,
@@ -17,6 +18,7 @@ import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { PropTypes } from "prop-types";
 import axios from "axios";
 import { PRESENTATION_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
@@ -26,7 +28,6 @@ export default function PresentationsPage() {
   const [presentationName, setPresentationName] = useState("");
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
 
   const navigate = useNavigate();
 
@@ -101,6 +102,7 @@ export default function PresentationsPage() {
   };
 
   const handleDeletePresentation = async (id) => {
+    console.log(id);
     const response = await deletePresentation(id);
 
     if (response.status === 200) {
@@ -131,19 +133,68 @@ export default function PresentationsPage() {
     setPresentationName(e.target.value);
   };
 
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   // Use effect
 
   useEffect(() => {
     if (shouldRefetch) handleFetchPresentations({});
   }, [shouldRefetch]);
+
+  // Components
+
+  function PresentationMenu(props) {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const { id } = props;
+
+    const handleMenu = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    return (
+      <>
+        <IconButton
+          size="large"
+          aria-haspopup="true"
+          onClick={(e) => handleMenu(e, id)}
+          color="inherit"
+        >
+          <MoreVertIcon />
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right"
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right"
+          }}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={() => handleManageCollaborators(id)}>
+            Manage Collaborators
+          </MenuItem>
+          <MenuItem onClick={() => handleDeletePresentation(id)}>
+            Delete
+          </MenuItem>
+        </Menu>
+      </>
+    );
+  }
+
+  PresentationMenu.propTypes = {
+    id: PropTypes.string
+  };
+
+  PresentationMenu.defaultProps = {
+    id: null
+  };
 
   return (
     <Box component="main">
@@ -207,35 +258,7 @@ export default function PresentationsPage() {
               </TableCell>
               <TableCell>{new Date(da.updatedAt).toString()}</TableCell>
               <TableCell sx={{ maxWidth: "10px" }}>
-                <IconButton
-                  size="large"
-                  aria-haspopup="true"
-                  onClick={handleMenu}
-                  color="inherit"
-                >
-                  <MoreVertIcon />
-                </IconButton>
-                <Menu
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right"
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right"
-                  }}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                >
-                  <MenuItem onClick={() => handleManageCollaborators(da.id)}>
-                    Manage Collaborators
-                  </MenuItem>
-                  <MenuItem onClick={() => handleDeletePresentation(da.id)}>
-                    Delete
-                  </MenuItem>
-                </Menu>
+                <PresentationMenu id={da.id} />
               </TableCell>
             </TableRow>
           ))}

@@ -105,3 +105,8 @@ exports.updateAddress = (id, address, phone) =>
       },
     }
   );
+
+exports.findByEmailForAdding = (email) =>
+  User.findOne({
+    where: { email: email },
+  });

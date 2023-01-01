@@ -46,3 +46,18 @@ export const PRESENTATION_HEADER = [
     name: "Action"
   }
 ];
+
+export const PRESENTATION_COLLABORATOR_HEADER = [
+  {
+    id: 1,
+    name: "Collaborator"
+  },
+  {
+    id: 2,
+    name: "Role"
+  },
+  {
+    id: 3,
+    name: "Action"
+  }
+];

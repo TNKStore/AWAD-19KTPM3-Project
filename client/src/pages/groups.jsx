@@ -99,7 +99,7 @@ export default function GroupsPage() {
     setGroupName(e.target.value);
   };
 
-  const handleDeleteGroup = (event, id) => {
+  const handleDeleteGroup = (id) => {
     console.log(id);
   };
 
@@ -117,7 +117,6 @@ export default function GroupsPage() {
 
     const handleMenu = (event) => {
       setAnchorEl(event.currentTarget);
-      console.log(id);
     };
 
     const handleClose = () => {
@@ -148,7 +147,7 @@ export default function GroupsPage() {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem onClick={(e) => handleDeleteGroup(e, id)}>Delete</MenuItem>
+          <MenuItem onClick={() => handleDeleteGroup(id)}>Delete</MenuItem>
         </Menu>
       </>
     );

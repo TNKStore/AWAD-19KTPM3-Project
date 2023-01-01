@@ -43,7 +43,9 @@ exports.createPresentation = async (req, res, next) => {
   const option2 = await optionService.create(1);
   const option3 = await optionService.create(2);
   await slide.addOptions([option1, option2, option3]);
-  const result = await presentationService.findPresentationWithCollaborator(presentation.id);
+  const result = await presentationService.findPresentationWithCollaborator(
+    presentation.id
+  );
   res
     .status(200)
     .send({ presentation: result, message: "Create successfully!" });
@@ -56,7 +58,10 @@ exports.deletePresentation = async (req, res, next) => {
   if (!presentation) {
     return res.status(404).send({ message: "Presentation not found" });
   }
-  const collaborator = await collaboratorService.findCollaboratorInPresentation(presentationId, userId);
+  const collaborator = await collaboratorService.findCollaboratorInPresentation(
+    presentationId,
+    userId
+  );
   if (!collaborator) {
     return res.status(404).send({ message: "Collaborator not found" });
   }
@@ -74,7 +79,10 @@ exports.updatePresentation = async (req, res, next) => {
   if (!presentation) {
     return res.status(404).send({ message: "Presentation not found" });
   }
-  const collaborator = await collaboratorService.findCollaboratorInPresentation(presentationId, userId);
+  const collaborator = await collaboratorService.findCollaboratorInPresentation(
+    presentationId,
+    userId
+  );
   if (!collaborator) {
     return res.status(404).send({ message: "Collaborator not found" });
   }
@@ -92,7 +100,8 @@ exports.updatePresentation = async (req, res, next) => {
 
 exports.getCollaboratorOfPresentation = async (req, res, next) => {
   const presentationId = req.params["id"];
-  const presentation = await presentationService.findPresentationWithCollaborator(presentationId);
+  const presentation =
+    await presentationService.findPresentationWithCollaborator(presentationId);
   return res.status(200).send({ presentation: presentation });
 };
 
@@ -103,14 +112,17 @@ exports.addCollaborator = async (req, res, next) => {
   if (!presentation) {
     return res.status(404).send({ message: "Presentation not found" });
   }
-  const collaborator = await collaboratorService.findCollaboratorInPresentation(presentationId, userId);
+  const collaborator = await collaboratorService.findCollaboratorInPresentation(
+    presentationId,
+    userId
+  );
   if (!collaborator) {
     return res.status(404).send({ message: "Collaborator not found" });
   }
   if (!collaborator.role === "Owner") {
     return res.status(400).send({ message: "Cannot add collaborator" });
   }
-  const user = await userService.findByEmail(email);
+  const user = await userService.findByEmailForAdding(email);
   if (!user) {
     return res.status(404).send({ message: "User not found" });
   }
