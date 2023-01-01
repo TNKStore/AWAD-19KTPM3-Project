@@ -20,8 +20,14 @@ const Presentation = require("./app/models/presentation");
 const Slide = require("./app/models/slide");
 const Option = require("./app/models/option");
 const Collaborator = require("./app/models/collaborator");
-const slideService = require("./app/components/slide/slideService");
+const HistoryVote = require("./app/models/historyVote");
+const HistoryChat = require("./app/models/historyChat");
+const Question = require("./app/models/question");
+const presentationService = require("./app/components/presentation/presentationService");
 const optionService = require("./app/components/option/optionService");
+const historyVoteService = require("./app/components/historyVote/historyVoteService");
+const historyChatService = require("./app/components/historyChat/historyChatService");
+const questionService = require("./app/components/question/questionService");
 
 const app = express();
 
@@ -72,9 +78,7 @@ socketIo.on("connection", (socket) => {
 
   socket.on("presentationStart", async function (presentationData) {
     socket.join(presentationData.presentationId);
-    console.log("Joined" + presentationData.presentationId);
-    console.log("Socket" + socket.id);
-
+    console.log("Joined " + presentationData.presentationId);
     const sockets = await socketIo
       .in(presentationData.presentationId)
       .fetchSockets();
@@ -83,11 +87,15 @@ socketIo.on("connection", (socket) => {
     }
   });
 
-  socket.on("changeSlide", function (changeSlideData) {
+  socket.on("changeSlide", async function (changeSlideData) {
+    const historyVote = await historyVoteService.historyVoteOfPresentation(
+      changeSlideData.presentationId
+    );
     socketIo
       .to(changeSlideData.presentationId)
       .emit("sendUpdatedSlidePosition", {
         slidePosition: changeSlideData.currentSlide,
+        historyVote: historyVote,
       });
   });
 
@@ -97,9 +105,11 @@ socketIo.on("connection", (socket) => {
       (q) => q.id === voteData.questionId
     );
     const options = questions[questionIndex].options;
+    let option = "";
     for (let x in options) {
       if (options[x].id === voteData.optionId) {
         options[x].upvote++;
+        option = options[x].content;
       }
     }
 
@@ -112,6 +122,69 @@ socketIo.on("connection", (socket) => {
       .to(voteData.presentationId)
       .emit("sendUpdatedQuestions", { questions });
     await optionService.upvote(voteData.optionId);
+    // const user = voteData.user;
+    // await historyVoteService.create(user.firstName, user.lastName,user.email,
+    //   voteData.presentationId, voteData.questionId, questions[questionIndex].question, option);
+  });
+
+  socket.on("sendMessageClient", async function (messageData) {
+    const message = messageData.message;
+    const presentation = await presentationService.findById(
+      messageData.presentationId
+    );
+    const historyChat = await historyChatService.create(
+      message.firstName,
+      message.lastName,
+      message.email,
+      message.content
+    );
+    await presentation.addHistoryChat(historyChat);
+    socketIo
+      .to(messageData.presentationId)
+      .emit("sendMessageServer", { sender: sender, message: historyChat });
+  });
+
+  socket.on("postQuestion", async function (questionData) {
+    const question = questionData.question;
+    const newQuestion = await questionService.create(
+      question.firstName,
+      question.lastName,
+      question.email,
+      question.content
+    );
+    const presentation = await presentationService.findById(
+      messageData.presentationId
+    );
+    await presentation.addQuestion(newQuestion);
+    socketIo
+      .to(questionData.presentationId)
+      .emit("sendQuestion", { question: newQuestion });
+  });
+
+  socket.on("voteQuestion", async function (voteQuestionData) {
+    const questions = voteQuestionData.questions;
+    for (let x in questions) {
+      if (questions[x].id === voteQuestionData.questionId) {
+        questions[x].upvote++;
+      }
+    }
+    socketIo
+      .to(voteQuestionData.presentationId)
+      .emit("sendUpdatedVoteQuestions", { questions });
+    await questionService.upvote(voteQuestionData.questionId);
+  });
+
+  socket.on("markQuestion", async function (markQuestionData) {
+    const questions = voteQuestionData.questions;
+    for (let x in questions) {
+      if (questions[x].id === voteQuestionData.questionId) {
+        questions[x].isAnswered = !questions[x].isAnswered;
+      }
+    }
+    socketIo
+      .to(voteQuestionData.presentationId)
+      .emit("sendUpdatedVoteQuestions", { questions });
+    await questionService.mark(voteQuestionData.questionId);
   });
 
   socket.on("disconnect", (reason) => {
