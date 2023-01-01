@@ -2,6 +2,9 @@ import {
   Box,
   Button,
   Dialog,
+  IconButton,
+  Menu,
+  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -10,8 +13,8 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -23,6 +26,7 @@ export default function PresentationsPage() {
   const [presentationName, setPresentationName] = useState("");
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const navigate = useNavigate();
 
@@ -109,6 +113,12 @@ export default function PresentationsPage() {
     // navigate(`/presentations/view?id=${id}`);
   };
 
+  const handleManageCollaborators = (id) => {
+    navigate(`/presentations/collaborators/${id}`, {
+      state: { presentationID: id }
+    });
+  };
+
   const handleAddPresentation = () => {
     setIsDialogOpen(true);
   };
@@ -119,6 +129,14 @@ export default function PresentationsPage() {
 
   const handleChangePresentationName = (e) => {
     setPresentationName(e.target.value);
+  };
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   // Use effect
@@ -189,9 +207,35 @@ export default function PresentationsPage() {
               </TableCell>
               <TableCell>{new Date(da.updatedAt).toString()}</TableCell>
               <TableCell sx={{ maxWidth: "10px" }}>
-                <Button onClick={() => handleDeletePresentation(da.id)}>
-                  <DeleteIcon />
-                </Button>
+                <IconButton
+                  size="large"
+                  aria-haspopup="true"
+                  onClick={handleMenu}
+                  color="inherit"
+                >
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right"
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right"
+                  }}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  <MenuItem onClick={() => handleManageCollaborators(da.id)}>
+                    Manage Collaborators
+                  </MenuItem>
+                  <MenuItem onClick={() => handleDeletePresentation(da.id)}>
+                    Delete
+                  </MenuItem>
+                </Menu>
               </TableCell>
             </TableRow>
           ))}

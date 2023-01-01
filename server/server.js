@@ -76,9 +76,15 @@ socketIo.on("connection", (socket) => {
   ///Handle khi có connect từ client tới
   console.log("New client connected" + socket.id);
 
-  socket.on("presentationStart", function (presentationData) {
+  socket.on("presentationStart", async function (presentationData) {
     socket.join(presentationData.presentationId);
-    console.log("Joined" + presentationData.presentationId);
+    console.log("Joined " + presentationData.presentationId);
+    const sockets = await socketIo
+      .in(presentationData.presentationId)
+      .fetchSockets();
+    for (const socket of sockets) {
+      console.log(socket.id);
+    }
   });
 
   socket.on("changeSlide", async function (changeSlideData) {
@@ -104,7 +110,12 @@ socketIo.on("connection", (socket) => {
         option = options[x].content;
       }
     }
-    //console.log(questions[questionIndex].options);
+
+    const sockets = await socketIo.in(voteData.presentationId).fetchSockets();
+    for (const socket of sockets) {
+      console.log(socket.id);
+    }
+
     socketIo
       .to(voteData.presentationId)
       .emit("sendUpdatedQuestions", { questions });
@@ -161,7 +172,7 @@ socketIo.on("connection", (socket) => {
 
   socket.on("disconnect", (reason) => {
     console.log(reason);
-    console.log("Client disconnected"); // Khi client disconnect thì log ra terminal.
+    console.log("Client disconnected " + socket.id); // Khi client disconnect thì log ra terminal.
   });
 });
 

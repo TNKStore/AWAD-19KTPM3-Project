@@ -65,17 +65,6 @@ export default function PresentationDetailPage(props) {
   const token = getLocalStorage("token");
   const { socket } = props;
 
-  // const socketListener = async () => {
-  //   socket.on("sendUpdatedQuestions", function (response) {
-  //     setSlides(response.questions);
-  //     console.log("Receive");
-  //   });
-  //   console.log("Run");
-  // };
-  // socketListener();
-
-  socketListener(socket, setSlides);
-
   // API calls
 
   const fetchSlides = async () => {
@@ -206,25 +195,23 @@ export default function PresentationDetailPage(props) {
     if (location.state !== null) {
       setPresentationID(location.state.presentationID);
     }
-    console.log("PresentationID change");
   }, [presentationID]);
 
   useEffect(() => {
     if (presentationID !== null && shouldRefetch) {
       handleFetchSlides({});
     }
-    console.log("Fetch slide");
   }, [presentationID, shouldRefetch]);
 
   useEffect(() => {
     if (presentationID !== null && slides.length !== 0 && !presentationStart) {
       socket.emit("presentationStart", {
-        presentationId: presentationID,
+        presentationId: String(presentationID),
         questions: slides
       });
+      socketListener(socket, setSlides);
+
       setPresentationStart(true);
-      console.log("PresentationStart");
-      console.log(slides);
     }
   }, [slides]);
 

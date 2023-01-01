@@ -19,6 +19,7 @@ import PresentationRoute from "./routes/presentationRoute";
 import PresentationsPage from "./pages/presentations";
 import PresentationDetailPage from "./pages/presentationDetail";
 import PresentationViewPage from "./pages/presentationView";
+import PresentationCollaboratePage from "./pages/presentationCollaborate";
 import { getLocalStorage } from "./utils/localStorage";
 
 function App() {
@@ -66,6 +67,10 @@ function App() {
             <Route path="/groups" element={<GroupsPage />} />
             <Route path="/groups/:id" element={<GroupDetailPage />} />
             <Route path="/presentations" element={<PresentationsPage />} />
+            <Route
+              path="/presentations/collaborators/:id"
+              element={<PresentationCollaboratePage />}
+            />
           </Route>
           <Route element={<PresentationRoute />}>
             <Route

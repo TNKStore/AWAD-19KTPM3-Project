@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/jsx-props-no-spreading */
@@ -45,7 +46,7 @@ TabPanel.propTypes = {
 
 export const socketListener = async (socket, func) => {
   socket.on("sendUpdatedQuestions", function (response) {
-    func(response.questions);
+    func([...response.questions]);
   });
 };
 
@@ -61,18 +62,8 @@ export default function PresentationViewPage(props) {
 
   const token = getLocalStorage("token");
   const presentationID = searchParams.get("id");
-  console.log(presentationID);
 
   const { socket } = props;
-
-  //   const socketListener = async () => {
-  //     socket.on("sendUpdatedQuestions", function (response) {
-  //       setSlides(response.questions);
-  //     });
-  //   };
-  //   socketListener();
-
-  socketListener(socket, setSlides);
 
   // API calls
 
@@ -128,11 +119,11 @@ export default function PresentationViewPage(props) {
   useEffect(() => {
     if (presentationID !== null && slides.length !== 0 && !presentationStart) {
       socket.emit("presentationStart", {
-        presentationId: presentationID,
+        presentationId: String(presentationID),
         questions: slides
       });
+      socketListener(socket, setSlides);
       setPresentationStart(true);
-      console.log("presentationStart");
     }
   }, [slides]);
 
