@@ -18,7 +18,7 @@ exports.historyVoteOfPresentation = (presentationId)=> HistoryVote.findAll({
         presentationId: presentationId
     },
     order: [
-        [HistoryVote, "created_at", "DESC"]
+        ["createdAt", "DESC"]
     ]
 });
 
