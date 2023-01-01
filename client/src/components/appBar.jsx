@@ -55,10 +55,6 @@ export default function TopBar(props) {
       break;
   }
 
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
   const handleProfile = () => {
     navigate("/profile");
   };
@@ -66,6 +62,10 @@ export default function TopBar(props) {
   const handleLogout = () => {
     dispatch(deleteUser());
     navigate("/login");
+  };
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {

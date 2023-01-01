@@ -1,7 +1,11 @@
+/* eslint-disable react/no-unstable-nested-components */
 import {
   Box,
   Button,
   Dialog,
+  IconButton,
+  Menu,
+  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -10,10 +14,11 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { PropTypes } from "prop-types";
 import axios from "axios";
 import { GROUP_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
@@ -94,8 +99,8 @@ export default function GroupsPage() {
     setGroupName(e.target.value);
   };
 
-  const handleDeleteGroup = () => {
-    console.log();
+  const handleDeleteGroup = (event, id) => {
+    console.log(id);
   };
 
   // Use effect
@@ -103,6 +108,59 @@ export default function GroupsPage() {
   useEffect(() => {
     if (shouldRefetch) handleFetchGroups({});
   }, [shouldRefetch]);
+
+  // Components
+
+  function GroupMenu(props) {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const { id } = props;
+
+    const handleMenu = (event) => {
+      setAnchorEl(event.currentTarget);
+      console.log(id);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    return (
+      <>
+        <IconButton
+          size="large"
+          aria-haspopup="true"
+          onClick={(e) => handleMenu(e, id)}
+          color="inherit"
+        >
+          <MoreVertIcon />
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right"
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right"
+          }}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={(e) => handleDeleteGroup(e, id)}>Delete</MenuItem>
+        </Menu>
+      </>
+    );
+  }
+
+  GroupMenu.propTypes = {
+    id: PropTypes.string
+  };
+
+  GroupMenu.defaultProps = {
+    id: null
+  };
 
   return (
     <Box component="main">
@@ -160,16 +218,16 @@ export default function GroupsPage() {
         </TableHead>
         <TableBody>
           {groups.map((da) => (
-            <TableRow onClick={() => handleChooseGroup(da.id)}>
-              <TableCell>{da.groupName}</TableCell>
+            <TableRow>
+              <TableCell onClick={() => handleChooseGroup(da.id)}>
+                {da.groupName}
+              </TableCell>
               <TableCell>{da.users?.member?.role}</TableCell>
               <TableCell>
                 {`${da.owner?.firstName} ${da.owner?.lastName}`}
               </TableCell>
               <TableCell sx={{ maxWidth: "10px" }}>
-                <Button onClick={() => handleDeleteGroup(da.id)}>
-                  <DeleteIcon />
-                </Button>
+                <GroupMenu id={da.id} />
               </TableCell>
             </TableRow>
           ))}
