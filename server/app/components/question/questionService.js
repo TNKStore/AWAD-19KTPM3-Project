@@ -8,7 +8,7 @@ exports.listQuestionOfPresentation = (presentationId)=> Question.findAll({
         presentationId: presentationId
     },
     order: [
-        [Question, "created_at", "DESC"]
+        ["createdAt", "DESC"]
     ]
 });
 

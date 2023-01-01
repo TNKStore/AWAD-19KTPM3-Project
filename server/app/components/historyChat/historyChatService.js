@@ -15,7 +15,7 @@ exports.historyChatOfPresentation = (presentationId)=> HistoryChat.findAll({
         presentationId: presentationId
     },
     order: [
-        [HistoryChat, "created_at", "DESC"]
+        ["createdAt", "DESC"]
     ]
 });
 
