@@ -1,26 +1,27 @@
 /* eslint-disable jsx-a11y/aria-role */
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { io } from "socket.io-client";
 import "./App.css";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import Root from "./pages/root";
-import LoginPage from "./pages/login";
-import RegisterPage from "./pages/register";
-import PrivateRoute from "./routes/privateRoute";
 import { loadUserFromLocalStorage } from "./features/user/userSlice";
-import GroupsPage from "./pages/groups";
-import GroupDetailPage from "./pages/groupDetail";
-import ProfilePage from "./pages/profile";
 import ActivatePage from "./pages/activate";
+import GroupDetailPage from "./pages/groupDetail";
+import GroupsPage from "./pages/groups";
 import InvitePage from "./pages/invite";
+import LoginPage from "./pages/login";
+import PresentationCollaboratePage from "./pages/presentationCollaborate";
+import PresentationDetailPage from "./pages/presentationDetail";
+import PresentationsPage from "./pages/presentations";
+import PresentationViewPage from "./pages/presentationView";
+import ProfilePage from "./pages/profile";
+import RegisterPage from "./pages/register";
+import Root from "./pages/root";
 import DefaultRoute from "./routes/defaultRoute";
 import PresentationRoute from "./routes/presentationRoute";
-import PresentationsPage from "./pages/presentations";
-import PresentationDetailPage from "./pages/presentationDetail";
-import PresentationViewPage from "./pages/presentationView";
-import PresentationCollaboratePage from "./pages/presentationCollaborate";
+import PrivateRoute from "./routes/privateRoute";
 import { getLocalStorage } from "./utils/localStorage";
+import WebSocketContext from "./utils/webSocketContext";
 
 function App() {
   const [socket, setSocket] = useState(null);
@@ -75,7 +76,11 @@ function App() {
           <Route element={<PresentationRoute />}>
             <Route
               path="/presentations/edit/:id"
-              element={<PresentationDetailPage socket={socket} />}
+              element={
+                <WebSocketContext.Provider value={socket}>
+                  <PresentationDetailPage socket={socket} />
+                </WebSocketContext.Provider>
+              }
             />
             <Route
               path="/presentations/view"

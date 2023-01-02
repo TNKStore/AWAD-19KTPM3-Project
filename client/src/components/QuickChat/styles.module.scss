@@ -67,31 +67,27 @@ $primary-color: #0084ff;
     left: 0;
     width: 100%;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    border-top: 1px solid #ccc;
+    padding-top: 8px;
     
-    textarea {
+    input {
         font-family: inherit;
         width: 100%;
         border: none;
         outline: none;
-        background: rgba(0, 0, 0, 0.06);
         font-size: 16px;
         resize: none;
         appearance: none;
         padding: 10px;
-        border-bottom-left-radius: 12px;
-        border-bottom-right-radius: 12px;
         overflow-y: hidden;
-        height: 60px;
     }
 }
 
 .msgInputIcon {
     color: $primary-color;
     cursor: pointer;
-    position: absolute;
-    right: 2%;
-    bottom: 10px;
+    margin-right: 10px;
 }
 
 .chatContainer {
@@ -99,20 +95,20 @@ $primary-color: #0084ff;
 }
 
 .chatContent {
-    max-height: 535px;
+    max-height: 550px;
     overflow-y: auto;
+    padding-bottom: 12px;
+    padding-right: 8px;
 }
 
 .msgContent {
     display: flex;
-    align-items: flex-end;
-    
-    img {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        margin-right: 10px;
+    flex-direction: column;
+
+    span {
+        font-weight: 700;
     }
+
 
     p {
         margin-top: 8px;
@@ -128,18 +124,13 @@ $primary-color: #0084ff;
     text-align: left;
 
     p {
-        background: #ccc;
+        background: rgba(204, 204, 204, 0.65);
     }
 }
 
 .owner {
     text-align: right;
-    flex-direction: row-reverse;
-
-    img {
-        margin-right: 0;
-        margin-left: 10px;
-    }
+    align-items: flex-end;
     
     p {
         background: $primary-color;
@@ -164,5 +155,25 @@ $primary-color: #0084ff;
 
     & > div{
         width: 100%;
+    }
+}
+
+.questionDetail {
+    span {
+        font-weight: bold;
+    }
+}
+
+.voteQuestion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    input {
+        display: block;
+        margin-right: 12px;
+        height: 20px;
+        width: 20px;
+        cursor: pointer;
     }
 }

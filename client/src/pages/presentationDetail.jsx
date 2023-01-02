@@ -17,8 +17,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getLocalStorage } from "../utils/localStorage";
 import OptionsBarChart from "../components/barChart";
 import QuizForm from "../components/quizForm";
-import QuickChat from "../components/QuickChat";
 import { socketListener } from "./presentationView";
+import QuickChat from "../components/quickChat";
 import ResultList from "../components/resultView";
 
 function TabPanel(props) {
@@ -68,6 +68,7 @@ export default function PresentationDetailPage(props) {
   const [slideValue, setSlideValue] = useState(0);
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [presentationStart, setPresentationStart] = useState(false);
+  const [presentationData, setPresentationData] = useState({});
   const [isPresenting, setIsPresenting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -139,11 +140,14 @@ export default function PresentationDetailPage(props) {
     const response = await fetchSlides();
 
     if (response.status === 200) {
+      const { slideList, historyChat, questions } = response.data;
+      setSlides(slideList);
       const slidesData = response.data.slideList;
       const historyData = response.data.historyVote;
       setSlides(slidesData);
       setVoteHistory(historyData);
       setShouldRefetch(false);
+      setPresentationData({ historyChat, questions });
     }
   };
 
@@ -386,7 +390,11 @@ export default function PresentationDetailPage(props) {
           </TabPanel>
         ))}
       </Box>
-      <QuickChat />
+      <QuickChat
+        msgData={presentationData.historyChat}
+        questionData={presentationData.questions}
+        presentationId={presentationID}
+      />
     </Box>
   );
 }

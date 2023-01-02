@@ -3,11 +3,11 @@ const User = require("../../models/user");
 
 exports.findById = (id) => HistoryVote.findByPk(id);
 
-exports.create = (firstName, lastName, email, message) => HistoryChat.create({
+exports.create = (firstName, lastName, email, content) => HistoryChat.create({
     firstName: firstName,
     lastName: lastName,
     email: email, 
-    message: message,
+    content: content,
 });
 
 exports.historyChatOfPresentation = (presentationId)=> HistoryChat.findAll({
@@ -15,7 +15,7 @@ exports.historyChatOfPresentation = (presentationId)=> HistoryChat.findAll({
         presentationId: presentationId
     },
     order: [
-        ["createdAt", "DESC"]
+        ["createdAt", "ASC"]
     ]
 });
 
