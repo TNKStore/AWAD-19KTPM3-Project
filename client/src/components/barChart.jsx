@@ -23,15 +23,13 @@ export default function OptionsBarChart(props) {
     item.upvote = 0;
   });
 
-  console.log(options);
-
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart
         width="100%"
         height="100%"
         title={question}
-        data={editorMode || shouldShowResult ? options : options}
+        data={editorMode || shouldShowResult ? options : fakeOptions}
         margin={{
           top: padding,
           right: padding,

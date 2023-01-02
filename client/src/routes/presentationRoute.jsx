@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable camelcase */
 /* eslint-disable no-else-return */
@@ -6,7 +7,6 @@ import PropTypes from "prop-types";
 
 import { Outlet } from "react-router";
 import { Box, CssBaseline } from "@mui/material";
-import TopBar from "../components/appBar";
 
 function PresentationRoute(props) {
   const { socket } = props;
@@ -14,7 +14,6 @@ function PresentationRoute(props) {
   return (
     <Box sx={{ marginTop: "64px" }}>
       <CssBaseline />
-      <TopBar socket={socket} />
       <Outlet />
     </Box>
   );
