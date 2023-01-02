@@ -395,7 +395,7 @@ export default function PresentationDetailPage(props) {
         questionData={presentationData.questions}
         presentationId={presentationID}
       />
-    </Box>
+    </div>
   );
 }
 

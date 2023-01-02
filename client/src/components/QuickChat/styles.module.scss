@@ -148,14 +148,11 @@ $primary-color: #0084ff;
     width: 100%;
 }
 
-.questionSelect {
-    h3 {
-        margin-bottom: 0;
-    }
-
-    & > div{
-        width: 100%;
-    }
+.questionDetailBox {
+    max-height: 550px;
+    overflow-y: auto;
+    padding-bottom: 12px;
+    padding-left: 12px;
 }
 
 .questionDetail {

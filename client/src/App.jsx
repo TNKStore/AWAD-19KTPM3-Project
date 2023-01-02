@@ -84,7 +84,11 @@ function App() {
             />
             <Route
               path="/presentations/view"
-              element={<PresentationViewPage socket={socket} />}
+              element={
+                <WebSocketContext.Provider value={socket}>
+                  <PresentationViewPage socket={socket} />
+                </WebSocketContext.Provider>
+              }
             />
           </Route>
         </Route>

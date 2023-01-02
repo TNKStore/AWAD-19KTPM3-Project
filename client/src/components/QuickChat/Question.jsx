@@ -10,18 +10,8 @@ function Question(props) {
   const { data, user, presentationId } = props;
 
   const socket = useContext(WebSocketContext);
-
   const [questionInput, setQuestionInput] = useState();
   const [questionData, setQuestionData] = useState(data);
-  const [question, setQuestion] = useState(questionData ? questionData[0] : {});
-
-  const handleChangeQuestion = (e) => {
-    const { value } = e.target;
-    if (value) {
-      const questionFind = questionData.find((v) => v.id === Number(value));
-      setQuestion(questionFind);
-    }
-  };
 
   const handleInputQuestionChange = (msg) => {
     setQuestionInput(msg);
@@ -56,7 +46,6 @@ function Question(props) {
     });
     socket.on("sendUpdatedVoteQuestions", (res) => {
       setQuestionData(res.questions);
-      setQuestion(res.question);
     });
   };
 
@@ -68,43 +57,34 @@ function Question(props) {
     <div className={styles.questionContainer}>
       <div className={styles.questionContent}>
         {questionData ? (
-          <>
-            <div className={styles.questionSelect}>
-              <h3>Question</h3>
-              <NativeSelect
-                defaultValue={question.id}
-                onChange={handleChangeQuestion}
-                label="questionId"
-              >
-                {questionData.map((value) => (
-                  <option key={value.id} value={value.id}>
-                    {value.content}
-                  </option>
-                ))}
-              </NativeSelect>
-            </div>
-            <div className={styles.questionDetail}>
-              <p>
-                <span>Total Vote</span>: {question.upvote}
-              </p>
-              <p>
-                <span>Time Asked</span>:{" "}
-                {new Date(question.updatedAt).toUTCString()}
-              </p>
-              <p>
-                <span>Status</span>:{" "}
-                {question.isAnswered ? "ANSWERED" : "UN_ANSWER"}
-              </p>
-              <div className={styles.voteQuestion}>
-                <Button
-                  variant="contained"
-                  onClick={() => handleVoteQuestion(question.id)}
-                >
-                  Vote
-                </Button>
+          <div className={styles.questionDetailBox}>
+            {questionData.map(question => (
+              <div className={styles.questionDetail}>
+                <p>
+                  <span>Question</span>: {question.content}
+                </p>
+                <p>
+                  <span>Total Vote</span>: {question.upvote}
+                </p>
+                <p>
+                  <span>Time Asked</span>:{" "}
+                  {new Date(question.updatedAt).toUTCString()}
+                </p>
+                <p>
+                  <span>Status</span>:{" "}
+                  {question.isAnswered ? "ANSWERED" : "UN_ANSWER"}
+                </p>
+                <div className={styles.voteQuestion}>
+                  <Button
+                    variant="contained"
+                    onClick={() => handleVoteQuestion(question.id)}
+                  >
+                    Vote
+                  </Button>
+                </div>
               </div>
-            </div>
-          </>
+            ))}
+          </div>
         ) : (
           <div>No question</div>
         )}
