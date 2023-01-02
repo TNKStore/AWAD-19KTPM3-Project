@@ -165,23 +165,22 @@ socketIo.on("connection", (socket) => {
       }
     }
     await questionService.upvote(voteQuestionData.questionId);
-    const question = await questionService.findById(voteQuestionData.questionId)
     socketIo
-      .to(voteQuestionData.presentationId)
-      .emit("sendUpdatedVoteQuestions", { questions, question });
+    .to(voteQuestionData.presentationId)
+    .emit("sendUpdatedVoteQuestions", { questions });
   });
 
   socket.on("markQuestion", async function (markQuestionData) {
-    const questions = voteQuestionData.questions;
+    const questions = markQuestionData.questions;
     for (let x in questions) {
-      if (questions[x].id === voteQuestionData.questionId) {
+      if (questions[x].id === markQuestionData.questionId) {
         questions[x].isAnswered = !questions[x].isAnswered;
       }
     }
+    await questionService.mark(markQuestionData.questionId);
     socketIo
-      .to(voteQuestionData.presentationId)
-      .emit("sendUpdatedVoteQuestions", { questions });
-    await questionService.mark(voteQuestionData.questionId);
+      .to(markQuestionData.presentationId)
+      .emit("sendUpdatedMarkQuestions", { questions });
   });
 
   socket.on("disconnect", (reason) => {

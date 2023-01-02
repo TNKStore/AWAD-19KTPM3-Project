@@ -48,8 +48,6 @@ function ChatMsg(props) {
   const initData = data.concat(msgSession);
   const msgDataResult = chunks(initData, 20);
 
-  console.log(msgDataResult);
-
   const handleInputMsgChange = (msg) => {
     setMessage(msg);
   };
