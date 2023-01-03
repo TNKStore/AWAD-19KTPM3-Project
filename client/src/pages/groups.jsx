@@ -63,6 +63,18 @@ export default function GroupsPage() {
     return response;
   };
 
+  const deleteGroup = async (id) => {
+    const headers = {
+      "x-access-token": token
+    };
+
+    const response = await axios
+      .delete(`${process.env.REACT_APP_DOMAIN}/group/${id}`, { headers })
+      .catch((error) => console.error("There was an error!", error));
+
+    return response;
+  };
+
   // Handle functions
 
   const handleFetchGroups = async () => {
@@ -83,6 +95,14 @@ export default function GroupsPage() {
     }
   };
 
+  const handleDeleteGroup = async (id) => {
+    const response = await deleteGroup(id);
+
+    if (response.status === 200) {
+      setShouldRefetch(true);
+    }
+  };
+
   const handleChooseGroup = (id) => {
     navigate(`/groups/${id}`, { state: { groupID: id } });
   };
@@ -97,10 +117,6 @@ export default function GroupsPage() {
 
   const handleChangeGroupName = (e) => {
     setGroupName(e.target.value);
-  };
-
-  const handleDeleteGroup = (id) => {
-    console.log(id);
   };
 
   // Use effect
