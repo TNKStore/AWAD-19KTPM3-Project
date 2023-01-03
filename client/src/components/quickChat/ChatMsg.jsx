@@ -28,23 +28,13 @@ function ChatContent(props) {
 function ChatMsg(props) {
   const { data, presentationId, user } = props;
 
-  const chunks = (list, chunkSize) => {
-    const newList = list.sort((a, b) => b.id - a.id);
-    return [...Array(Math.ceil(list.length / chunkSize))].map(() =>
-      newList.splice(0, chunkSize)
-    );
-  };
-
   const QUICK_CHAT_MSG = `QUICK_CHAT_MSG_${presentationId}`;
   const msgSession = JSON.parse(getSessionStorage(QUICK_CHAT_MSG)) || [];
 
   const messagesEndRef = useRef(null);
   const socket = useContext(WebSocketContext);
-  const [chatData, setChatData] = useState([]);
+  const [chatData, setChatData] = useState(data);
   const [message, setMessage] = useState();
-  const [msgIndex, setMsgIndex] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [initData, setInitData] = useState(chunks(data, 20))
 
   const handleInputMsgChange = (msg) => {
     setMessage(msg);
@@ -91,41 +81,28 @@ function ChatMsg(props) {
     }
   };
 
-  const initChatData = () => {
-    let msgChatData = [];
+  const setSessionData = () => {
     if (msgSession.length > 0) {
-      msgSession.forEach(msg => {
-        const isExist = data.find(e => e.id === msg.id)
+      msgSession.forEach(question => {
+        const isExist = chatData.find(e => e.id === question.id);
+
         if (!isExist) {
-          msgChatData.push(msg)
+          setChatData(prev => [...prev, question]);
         }
-      })
-      
-      const chatMsg = chunks(msgChatData, 20)
-      if (msgChatData.length > 0) {
-        setInitData(chatMsg)
-      }
-      console.log({msgChatData, data, msgSession, chatMsg});
-      setChatData(chatMsg[0]);
+      });
     }
   }
-
   useEffect(() => {
     handleEventListener();
-    initChatData()
+    setSessionData()
   }, []);
 
   useEffect(() => {
     scrollToBottom();
   }, [chatData]);
 
-  console.log(chatData);
-
   return (
     <div className={styles.chatContainer}>
-      {isLoading ? (
-        <Loading />
-      ) : (
         <div
           className={styles.chatContent}
           ref={messagesEndRef}
@@ -142,8 +119,6 @@ function ChatMsg(props) {
               />
             ))}
         </div>
-      )}
-
       <InputMsg
         handleInputMsgChange={handleInputMsgChange}
         handleSendMsg={handleSendMsg}
