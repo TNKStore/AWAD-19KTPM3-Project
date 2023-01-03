@@ -12,7 +12,15 @@ import Question from "./Question";
 import styles from "./styles.module.scss";
 
 function ChatBox(props) {
-  const { isShow, onClose, msgData, questionData, presentationId } = props;
+  const { 
+    isShow, 
+    onClose, 
+    msgData, 
+    questionData, 
+    presentationId, 
+    isView, 
+    isDetail
+  } = props;
 
   const user = getLocalStorage("user");
 
@@ -47,6 +55,8 @@ function ChatBox(props) {
                 user={user}
                 data={questionData}
                 presentationId={presentationId}
+                isView={isView}
+                isDetail={isDetail}
               />
             </TabPanel>
           </TabContext>
@@ -61,7 +71,9 @@ ChatBox.propTypes = {
   onClose: PropTypes.func.isRequired,
   msgData: PropTypes.instanceOf(Array).isRequired,
   questionData: PropTypes.instanceOf(Array).isRequired,
-  presentationId: PropTypes.number.isRequired
+  presentationId: PropTypes.number.isRequired,
+  isView: PropTypes.bool,
+  isDetail: PropTypes.bool
 };
 
 export default ChatBox;

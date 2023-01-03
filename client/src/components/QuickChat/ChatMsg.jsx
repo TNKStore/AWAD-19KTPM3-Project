@@ -28,6 +28,13 @@ function ChatContent(props) {
 function ChatMsg(props) {
   const { data, presentationId, user } = props;
 
+  const chunks = (list, chunkSize) => {
+    const newList = list.sort((a, b) => b.id - a.id);
+    return [...Array(Math.ceil(list.length / chunkSize))].map(() =>
+      newList.splice(0, chunkSize)
+    );
+  };
+
   const QUICK_CHAT_MSG = "QUICK_CHAT_MSG";
   const msgSession = JSON.parse(getSessionStorage(QUICK_CHAT_MSG)) || [];
 
@@ -37,23 +44,16 @@ function ChatMsg(props) {
   const [message, setMessage] = useState();
   const [msgIndex, setMsgIndex] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-
-  const chunks = (list, chunkSize) => {
-    const newList = list.sort((a, b) => b.id - a.id);
-    return [...Array(Math.ceil(list.length / chunkSize))].map(() =>
-      newList.splice(0, chunkSize)
-    );
-  };
-
-  const initData = data.concat(msgSession);
-  const msgDataResult = chunks(initData, 20);
+  const [initData, setInitData] = useState(chunks(data, 20))
 
   const handleInputMsgChange = (msg) => {
     setMessage(msg);
   };
 
   const scrollToBottom = () => {
-    messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
   };
 
   const handleSendMsg = () => {
@@ -75,7 +75,6 @@ function ChatMsg(props) {
   const handleEventListener = () => {
     socket.on("sendMessageServer", (res) => {
       setChatData((prev) => [...prev, { ...res.message }]);
-
       msgSession.push({ ...res.message });
       setSessionStorage(QUICK_CHAT_MSG, JSON.stringify(msgSession));
     });
@@ -84,22 +83,43 @@ function ChatMsg(props) {
   const handleScrollChat = async () => {
     const { scrollTop } = messagesEndRef.current;
 
-    if (scrollTop === 0 && msgIndex < msgDataResult.length) {
+    if (scrollTop === 0 && msgIndex < initData.length) {
       setIsLoading(true);
-      await setChatData((prev) => [...prev, ...msgDataResult[msgIndex]]);
+      await setChatData((prev) => [...prev, ...initData[msgIndex]]);
       setMsgIndex(msgIndex + 1);
       setIsLoading(false);
     }
   };
 
+  const initChatData = () => {
+    let msgChatData = [];
+    if (msgSession.length > 0) {
+      msgSession.forEach(msg => {
+        const isExist = data.find(e => e.id === msg.id)
+        if (!isExist) {
+          msgChatData.push(msg)
+        }
+      })
+      
+      const chatMsg = chunks(msgChatData, 20)
+      if (msgChatData.length > 0) {
+        setInitData(chatMsg)
+      }
+      console.log({msgChatData, data, msgSession, chatMsg});
+      setChatData(chatMsg[0]);
+    }
+  }
+
   useEffect(() => {
     handleEventListener();
-    setChatData(msgDataResult[0]);
+    initChatData()
   }, []);
 
   useEffect(() => {
     scrollToBottom();
   }, [chatData]);
+
+  console.log(chatData);
 
   return (
     <div className={styles.chatContainer}>
@@ -111,7 +131,7 @@ function ChatMsg(props) {
           ref={messagesEndRef}
           onScroll={() => handleScrollChat()}
         >
-          {chatData
+          {chatData && chatData
             .sort((a, b) => a.id - b.id)
             .map((value) => (
               <ChatContent
@@ -136,7 +156,7 @@ function ChatMsg(props) {
 
 ChatMsg.propTypes = {
   data: PropTypes.instanceOf(Array).isRequired,
-  presentationId: PropTypes.string.isRequired,
+  presentationId: PropTypes.number.isRequired,
   user: PropTypes.oneOfType([PropTypes.object]).isRequired
 };
 
@@ -144,6 +164,10 @@ ChatContent.propTypes = {
   isOwner: PropTypes.bool.isRequired,
   owner: PropTypes.string.isRequired,
   content: PropTypes.string
+};
+
+ChatMsg.defaultProps = {
+  data: []
 };
 
 ChatContent.defaultProps = {

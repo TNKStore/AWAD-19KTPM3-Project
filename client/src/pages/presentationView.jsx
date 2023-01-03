@@ -177,7 +177,7 @@ export default function PresentationViewPage(props) {
   }
 
   return (
-    <div>
+    <>
       <PresentationBar />
       <Box
         sx={{
@@ -218,7 +218,13 @@ export default function PresentationViewPage(props) {
           </TabPanel>
         </Box>
       </Box>
-    </div>
+      <QuickChat
+        msgData={presentationData.historyChat}
+        presentationId={presentationID}
+        questionData={presentationData.questions}
+        isView
+      />
+    </>
   );
 }
 

@@ -11,7 +11,7 @@ import {
 } from "../../utils/sessionStorage";
 
 function Question(props) {
-  const { data, user, presentationId } = props;
+  const { data, user, presentationId, isDetail, isView } = props;
 
   const QUICK_CHAT_QUESTION = "QUICK_CHAT_QUESTION";
   const questionSession = JSON.parse(getSessionStorage(QUICK_CHAT_QUESTION)) || [];
@@ -19,10 +19,12 @@ function Question(props) {
   const messagesEndRef = useRef(null);
   const socket = useContext(WebSocketContext);
   const [questionInput, setQuestionInput] = useState();
-  const [questionData, setQuestionData] = useState(data.concat(questionSession));
+  const [questionData, setQuestionData] = useState(data);
 
   const scrollToBottom = () => {
-    messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
   };
 
   const handleInputQuestionChange = (msg) => {
@@ -76,19 +78,32 @@ function Question(props) {
     });
   };
 
+  const setSessionData = () => {
+    if (questionSession.length > 0) {
+      questionSession.forEach(question => {
+        const isExist = questionData.find(e => e.id === question.id);
+
+        if (!isExist) {
+          setQuestionData(prev => [...prev, question]);
+        }
+      });
+    }
+  }
+
   useEffect(() => {
     handleEventListener();
+    setSessionData();
   }, []);
 
   useEffect(() => {
-    scrollToBottom()
+    scrollToBottom();
   }, [questionData])
 
   return (
     <div className={styles.questionContainer}>
       <div className={styles.questionContent}>
-        {questionData ? (
-          <div className={styles.questionDetailBox} ref={messagesEndRef}>
+        {questionData.length > 0 ? (
+          <div className={`${styles.questionDetailBox} ${isDetail && styles.questionView}`} ref={messagesEndRef}>
             {questionData.map(question => (
               <div className={styles.questionDetail}>
                 <p>
@@ -104,19 +119,25 @@ function Question(props) {
                 <div className={styles.questionStatus}>
                   <span>Status: </span>
                   {question.isAnswered ? "ANSWERED" : "UN_ANSWER"}
-                  <input 
-                    type="checkbox" 
-                    onClick={() => handleUpdateStatusQuestion(question.id)} 
-                    checked={question.isAnswered}
-                  />
+                  {
+                    isDetail && 
+                    <input 
+                      type="checkbox" 
+                      onClick={() => handleUpdateStatusQuestion(question.id)} 
+                      checked={question.isAnswered}
+                    />
+                  }
                 </div>
                 <div className={styles.voteQuestion}>
-                  <Button
-                    variant="contained"
-                    onClick={() => handleVoteQuestion(question.id)}
-                  >
-                    Vote
-                  </Button>
+                  {
+                    isView && 
+                    <Button
+                      variant="contained"
+                      onClick={() => handleVoteQuestion(question.id)}
+                    >
+                      Vote
+                    </Button>
+                  }
                 </div>
               </div>
             ))}
@@ -125,12 +146,15 @@ function Question(props) {
           <div>No question</div>
         )}
       </div>
-      <InputQuestion
-        handleInputMsgChange={handleInputQuestionChange}
-        handleSendMsg={handleSendQuestion}
-        value={questionInput}
-        placeholder="Make your question ..."
-      />
+      {
+        isView && 
+        <InputQuestion
+          handleInputMsgChange={handleInputQuestionChange}
+          handleSendMsg={handleSendQuestion}
+          value={questionInput}
+          placeholder="Make your question ..."
+        />
+      }
     </div>
   );
 }
@@ -138,7 +162,14 @@ function Question(props) {
 Question.propTypes = {
   data: PropTypes.instanceOf(Array).isRequired,
   user: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  presentationId: PropTypes.number.isRequired
+  presentationId: PropTypes.number.isRequired,
+  isView: PropTypes.bool,
+  isDetail: PropTypes.bool
 };
+
+Question.defaultProps = {
+  data: [],
+};
+
 
 export default Question;

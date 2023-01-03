@@ -394,6 +394,7 @@ export default function PresentationDetailPage(props) {
         msgData={presentationData.historyChat}
         questionData={presentationData.questions}
         presentationId={presentationID}
+        isDetail
       />
     </div>
   );

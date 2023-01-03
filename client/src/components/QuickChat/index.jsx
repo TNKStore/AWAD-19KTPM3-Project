@@ -8,7 +8,7 @@ import ChatButton from "./ChatButton";
 import "./overwrite.scss";
 
 function QuickChat(props) {
-  const { msgData, questionData, presentationId } = props;
+  const { msgData, questionData, presentationId, isView, isDetail } = props;
 
   const [isShowChatBox, setIsShowChatBox] = useState(false);
 
@@ -29,6 +29,8 @@ function QuickChat(props) {
         msgData={msgData}
         questionData={questionData}
         presentationId={presentationId}
+        isView={isView}
+        isDetail={isDetail}
       />
     </div>
   );
@@ -37,7 +39,9 @@ function QuickChat(props) {
 QuickChat.propTypes = {
   msgData: PropTypes.instanceOf(Array).isRequired,
   questionData: PropTypes.instanceOf(Array).isRequired,
-  presentationId: PropTypes.number.isRequired
+  presentationId: PropTypes.number.isRequired,
+  isView: PropTypes.bool,
+  isDetail: PropTypes.bool
 };
 
 export default QuickChat;
