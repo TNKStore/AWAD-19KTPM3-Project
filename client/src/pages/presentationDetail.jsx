@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/jsx-props-no-spreading */
@@ -17,6 +18,7 @@ import { getLocalStorage } from "../utils/localStorage";
 import OptionsBarChart from "../components/barChart";
 import QuizForm from "../components/quizForm";
 import { socketListener } from "./presentationView";
+import ResultList from "../components/resultView";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -66,11 +68,14 @@ export default function PresentationDetailPage(props) {
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [presentationStart, setPresentationStart] = useState(false);
   const [isPresenting, setIsPresenting] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
   const token = getLocalStorage("token");
   const { socket } = props;
+
+  console.log(voteHistory);
 
   // API calls
 
@@ -171,7 +176,7 @@ export default function PresentationDetailPage(props) {
   };
 
   const handleDeleteSlide = async (e, id, position) => {
-    if (position === 0) return;
+    if (position === 0 || isPresenting) return;
 
     const response = await deleteSlide(id);
 
@@ -213,6 +218,14 @@ export default function PresentationDetailPage(props) {
       presentationId: String(presentationID),
       currentSlide: 0
     });
+  };
+
+  const handleViewResult = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseResult = () => {
+    setIsDialogOpen(false);
   };
 
   const reloadData = () => {
@@ -284,6 +297,12 @@ export default function PresentationDetailPage(props) {
   return (
     <div>
       <PresentationBar />
+      <ResultList
+        isDialogOpen={isDialogOpen}
+        handleCloseResult={handleCloseResult}
+        history={voteHistory}
+        slideID={slides[slideValue]?.id}
+      />
       <Box
         sx={{
           display: "flex",
@@ -369,6 +388,7 @@ export default function PresentationDetailPage(props) {
                 question={slide.question}
                 options={slide.options}
                 callback={reloadData}
+                viewResult={handleViewResult}
               />
             </TabPanel>
           ))}

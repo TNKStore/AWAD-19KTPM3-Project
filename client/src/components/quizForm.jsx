@@ -23,7 +23,8 @@ export default function QuizForm(props) {
     position,
     question,
     options,
-    callback
+    callback,
+    viewResult
   } = props;
   const token = getLocalStorage("token");
   const navigate = useNavigate();
@@ -114,15 +115,13 @@ export default function QuizForm(props) {
     }
   };
 
+  // Temp
   const submitData = async () => {
     navigate(`/presentations/view?id=${presentationID}`);
   };
 
-  const submitVote = async () => {
-    socket.emit("presentationStart", {
-      presentationId: presentationID,
-      questions: slides
-    });
+  const handleViewResult = async () => {
+    viewResult();
   };
 
   // use initially
@@ -157,7 +156,10 @@ export default function QuizForm(props) {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Your question
         </Typography>
-        <input {...register("question", { required: "Required" })} />
+        <input
+          type="textarea"
+          {...register("question", { required: "Required" })}
+        />
         {errors.question && <span>{errors.question.message}</span>}
         <Typography
           variant="h6"
@@ -172,7 +174,6 @@ export default function QuizForm(props) {
             return (
               <div display="flex" key={item.id}>
                 <input
-                  type="textarea"
                   {...register(`options.${index}.content`, { required: true })}
                 />
                 <button type="button" onClick={() => remove(index)}>
@@ -203,7 +204,7 @@ export default function QuizForm(props) {
           type="button"
           className="child"
           value="Submit"
-          onClick={submitVote}
+          onClick={handleViewResult}
         />
       </form>
     </Box>
@@ -218,7 +219,8 @@ QuizForm.propTypes = {
   position: PropTypes.number,
   question: PropTypes.string,
   options: PropTypes.array,
-  callback: PropTypes.func
+  callback: PropTypes.func,
+  viewResult: PropTypes.func
 };
 
 QuizForm.defaultProps = {
@@ -229,5 +231,6 @@ QuizForm.defaultProps = {
   position: 0,
   question: "",
   options: [],
-  callback: () => {}
+  callback: () => {},
+  viewResult: () => {}
 };

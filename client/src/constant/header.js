@@ -61,3 +61,18 @@ export const PRESENTATION_COLLABORATOR_HEADER = [
     name: "Action"
   }
 ];
+
+export const RESULT_LIST_HEADER = [
+  {
+    id: 1,
+    name: "Email"
+  },
+  {
+    id: 2,
+    name: "Name"
+  },
+  {
+    id: 3,
+    name: "Option"
+  }
+];
