@@ -35,7 +35,7 @@ function ChatMsg(props) {
     );
   };
 
-  const QUICK_CHAT_MSG = "QUICK_CHAT_MSG";
+  const QUICK_CHAT_MSG = `QUICK_CHAT_MSG_${presentationId}`;
   const msgSession = JSON.parse(getSessionStorage(QUICK_CHAT_MSG)) || [];
 
   const messagesEndRef = useRef(null);
