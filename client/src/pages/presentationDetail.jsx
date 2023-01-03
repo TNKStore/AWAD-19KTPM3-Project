@@ -260,7 +260,9 @@ export default function PresentationDetailPage(props) {
 
   // Components
   function PresentationBar() {
-    const content = isPresenting ? "Presenting..." : "";
+    const content = isPresenting
+      ? "Presenting..."
+      : `Viewer link: http://localhost:3000/presentations/view?id=${presentationID}`;
 
     const handleBack = () => {
       navigate(-1);
@@ -344,7 +346,11 @@ export default function PresentationDetailPage(props) {
                     width="300px"
                     height="200px"
                   >
-                    <OptionsBarChart padding={32} options={slide.options} />
+                    <OptionsBarChart
+                      padding={32}
+                      options={slide.options}
+                      editorMode
+                    />
                   </Box>
                 }
                 icon={

@@ -49,6 +49,7 @@ export default function ResultList(props) {
                 <TableCell>{da.email}</TableCell>
                 <TableCell>{`${da.firstName} ${da.lastName}`}</TableCell>
                 <TableCell>{da.option}</TableCell>
+                <TableCell>{new Date(da.createdAt).toString()}</TableCell>
               </TableRow>
             ))}
           </TableBody>

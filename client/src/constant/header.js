@@ -74,5 +74,9 @@ export const RESULT_LIST_HEADER = [
   {
     id: 3,
     name: "Option"
+  },
+  {
+    id: 4,
+    name: "Time"
   }
 ];

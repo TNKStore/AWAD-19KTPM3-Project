@@ -4,7 +4,7 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { PropTypes } from "prop-types";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
@@ -176,37 +176,21 @@ export default function QuizForm(props) {
                 <input
                   {...register(`options.${index}.content`, { required: true })}
                 />
-                <button type="button" onClick={() => remove(index)}>
-                  Delete
-                </button>
               </div>
             );
           })}
         </div>
-        <section>
-          <button
-            type="button"
-            onClick={() => {
-              append({ content: "" });
-            }}
-          >
-            append
-          </button>
-        </section>
         <input type="submit" className="child" value="Save" />
-        <input
-          type="button"
-          className="child"
-          value="Submit"
-          onClick={submitData}
-        />
-        <input
-          type="button"
-          className="child"
-          value="Submit"
-          onClick={handleViewResult}
-        />
       </form>
+      <Button
+        variant="outlined"
+        size="large"
+        color="success"
+        sx={{ margin: 3, marginTop: 24 }}
+        onClick={handleViewResult}
+      >
+        View Result
+      </Button>
     </Box>
   );
 }
