@@ -42,7 +42,6 @@ export default function PresentationCollaboratePage() {
       "x-access-token": token
     };
 
-    console.log(presentationID);
     const response = await axios
       .get(
         `${process.env.REACT_APP_DOMAIN}/presentation/${presentationID}/collaborator`,
@@ -88,8 +87,6 @@ export default function PresentationCollaboratePage() {
       collaboratorId: id
     };
 
-    console.log(data);
-
     const response = await axios
       .post(`${process.env.REACT_APP_DOMAIN}/collaborator/remove`, data, {
         headers
@@ -106,7 +103,6 @@ export default function PresentationCollaboratePage() {
 
     if (response.status === 200) {
       const resData = response.data.presentation;
-      console.log(response.data);
       setCollaborators(resData.users);
       setPresentationCode(resData.code);
       setShouldRefetch(false);

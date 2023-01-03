@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable react/no-unstable-nested-components */
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
@@ -8,7 +9,10 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { Close, PostAdd } from "@mui/icons-material";
 import axios from "axios";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
+import { AppBar, IconButton, Toolbar, Typography } from "@mui/material";
+import PresentToAllIcon from "@mui/icons-material/PresentToAll";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getLocalStorage } from "../utils/localStorage";
 import OptionsBarChart from "../components/barChart";
 import QuizForm from "../components/quizForm";
@@ -57,11 +61,14 @@ function a11yProps(index) {
 export default function PresentationDetailPage(props) {
   const [presentationID, setPresentationID] = useState(null);
   const [slides, setSlides] = useState([]);
+  const [voteHistory, setVoteHistory] = useState([]);
   const [slideValue, setSlideValue] = useState(0);
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [presentationStart, setPresentationStart] = useState(false);
+  const [isPresenting, setIsPresenting] = useState(false);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const token = getLocalStorage("token");
   const { socket } = props;
 
@@ -126,8 +133,10 @@ export default function PresentationDetailPage(props) {
     const response = await fetchSlides();
 
     if (response.status === 200) {
-      const data = response.data.slideList;
-      setSlides(data);
+      const slidesData = response.data.slideList;
+      const historyData = response.data.historyVote;
+      setSlides(slidesData);
+      setVoteHistory(historyData);
       setShouldRefetch(false);
     }
   };
@@ -142,10 +151,22 @@ export default function PresentationDetailPage(props) {
   };
 
   const handleChangeTab = (event, value) => {
-    if (value === "add") {
-      handleCreateSlide();
-    } else {
-      setSlideValue(value);
+    if (isPresenting) {
+      if (value === "add") {
+        // Do nothing
+      } else {
+        socket.emit("changeSlide", {
+          presentationId: String(presentationID),
+          currentSlide: value
+        });
+      }
+    }
+    if (!isPresenting) {
+      if (value === "add") {
+        handleCreateSlide();
+      } else {
+        setSlideValue(value);
+      }
     }
   };
 
@@ -185,6 +206,15 @@ export default function PresentationDetailPage(props) {
     }
   };
 
+  const handlePresent = () => {
+    setIsPresenting(!isPresenting);
+    setSlideValue(0);
+    socket.emit("changeSlide", {
+      presentationId: String(presentationID),
+      currentSlide: 0
+    });
+  };
+
   const reloadData = () => {
     setShouldRefetch(true);
   };
@@ -209,103 +239,142 @@ export default function PresentationDetailPage(props) {
         presentationId: String(presentationID),
         questions: slides
       });
-      socketListener(socket, setSlides);
+      socketListener(socket, setSlides, setVoteHistory, setSlideValue);
 
       setPresentationStart(true);
     }
   }, [slides]);
 
+  // Components
+  function PresentationBar() {
+    const content = isPresenting ? "Presenting..." : "";
+
+    const handleBack = () => {
+      navigate(-1);
+    };
+
+    return (
+      <AppBar
+        position="fixed"
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, height: "64px" }}
+      >
+        <Toolbar display="flex">
+          <ArrowBackIcon onClick={handleBack} />
+          <Box sx={{ width: 256 }} />
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            {content}
+          </Typography>
+          <div>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handlePresent}
+              color="inherit"
+            >
+              <PresentToAllIcon />
+            </IconButton>
+          </div>
+        </Toolbar>
+      </AppBar>
+    );
+  }
+
   return (
-    <Box
-      sx={{
-        display: "flex",
-        width: "100%",
-        height: "calc(100vh - 64px)",
-        alignItems: "start",
-        justifyContent: "space-between"
-      }}
-    >
+    <div>
+      <PresentationBar />
       <Box
         sx={{
           display: "flex",
-          flexDirection: "row",
+          width: "100%",
           height: "calc(100vh - 64px)",
-          overflow: "hidden",
-          overflowY: "auto",
-          width: "20%",
-          borderRight: 1,
-          borderColor: "divider"
+          alignItems: "start",
+          justifyContent: "space-between"
         }}
       >
-        <Tabs
-          orientation="vertical"
-          variant="scrollable"
-          value={slideValue}
-          onChange={handleChangeTab}
-          aria-label="Vertical tabs example"
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            height: "calc(100vh - 64px)",
+            overflow: "hidden",
+            overflowY: "auto",
+            width: "20%",
+            borderRight: 1,
+            borderColor: "divider"
+          }}
+        >
+          <Tabs
+            orientation="vertical"
+            variant="scrollable"
+            value={slideValue}
+            onChange={handleChangeTab}
+            aria-label="Vertical tabs example"
+          >
+            {slides.map((slide) => (
+              <Tab
+                key={slide.position.toString()}
+                value={slide.position}
+                label={
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    flexDirection="column"
+                    width="300px"
+                    height="200px"
+                  >
+                    <OptionsBarChart padding={32} options={slide.options} />
+                  </Box>
+                }
+                icon={
+                  <Close
+                    id={slide.position}
+                    onClick={(e) =>
+                      handleDeleteSlide(e, slide.id, slide.position)
+                    }
+                  />
+                }
+                {...a11yProps(slide.position)}
+                className="mytab"
+              />
+            ))}
+            <Tab icon={<PostAdd />} value="add" />
+          </Tabs>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            width: "80%",
+            height: "calc(100vh - 64px)",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
         >
           {slides.map((slide) => (
-            <Tab
-              key={slide.position.toString()}
-              value={slide.position}
-              label={
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  flexDirection="column"
-                  width="300px"
-                  height="200px"
-                >
-                  <OptionsBarChart padding={32} options={slide.options} />
-                </Box>
-              }
-              icon={
-                <Close
-                  id={slide.position}
-                  onClick={(e) =>
-                    handleDeleteSlide(e, slide.id, slide.position)
-                  }
-                />
-              }
-              {...a11yProps(slide.position)}
-              className="mytab"
-            />
+            <TabPanel value={slideValue} index={slide.position}>
+              <OptionsBarChart
+                padding={64}
+                question={slide.question}
+                options={slide.options}
+                editorMode
+              />
+              <QuizForm
+                socket={socket}
+                presentationID={presentationID}
+                slides={slides}
+                slideID={slide.id}
+                position={slide.position}
+                question={slide.question}
+                options={slide.options}
+                callback={reloadData}
+              />
+            </TabPanel>
           ))}
-          <Tab icon={<PostAdd />} value="add" />
-        </Tabs>
+        </Box>
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          width: "80%",
-          height: "calc(100vh - 64px)",
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        {slides.map((slide) => (
-          <TabPanel value={slideValue} index={slide.position}>
-            <OptionsBarChart
-              padding={64}
-              question={slide.question}
-              options={slide.options}
-              editorMode
-            />
-            <QuizForm
-              socket={socket}
-              presentationID={presentationID}
-              slides={slides}
-              slideID={slide.id}
-              position={slide.position}
-              question={slide.question}
-              options={slide.options}
-              callback={reloadData}
-            />
-          </TabPanel>
-        ))}
-      </Box>
-    </Box>
+    </div>
   );
 }
 

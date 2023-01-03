@@ -124,9 +124,16 @@ socketIo.on("connection", (socket) => {
       .to(voteData.presentationId)
       .emit("sendUpdatedQuestions", { questions });
     await optionService.upvote(voteData.optionId);
-    // const user = voteData.user;
-    // await historyVoteService.create(user.firstName, user.lastName,user.email,
-    //   voteData.presentationId, voteData.questionId, questions[questionIndex].question, option);
+    const user = voteData.user;
+    await historyVoteService.create(
+      user.firstName,
+      user.lastName,
+      user.email,
+      voteData.presentationId,
+      voteData.questionId,
+      questions[questionIndex].question,
+      option
+    );
   });
 
   socket.on("sendMessageClient", async function (messageData) {

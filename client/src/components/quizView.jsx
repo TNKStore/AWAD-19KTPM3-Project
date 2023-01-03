@@ -6,7 +6,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { PropTypes } from "prop-types";
-import axios from "axios";
 import { getLocalStorage } from "../utils/localStorage";
 
 export default function QuizView(props) {
@@ -24,7 +23,8 @@ export default function QuizView(props) {
     optionsClickable,
     callback
   } = props;
-  const token = getLocalStorage("token");
+
+  const user = getLocalStorage("user");
 
   const handleFetchData = () => {
     setQuizID(slideID);
@@ -37,7 +37,8 @@ export default function QuizView(props) {
       presentationId: presentationID,
       questions: slides,
       questionId: slideID,
-      optionId: id
+      optionId: id,
+      user
     });
 
     callback();
