@@ -86,6 +86,26 @@ export default function GroupDetail() {
     return response;
   };
 
+  const changeRole = async (id, role) => {
+    const headers = {
+      "x-access-token": token
+    };
+
+    const data = {
+      groupId: groupID,
+      memberId: id,
+      role
+    };
+
+    const response = await axios
+      .post(`${process.env.REACT_APP_DOMAIN}/member/update-role`, data, {
+        headers
+      })
+      .catch((error) => console.error("There was an error!", error));
+
+    return response;
+  };
+
   const deleteUser = async (id) => {
     const headers = {
       "x-access-token": token
@@ -134,6 +154,27 @@ export default function GroupDetail() {
     }
   };
 
+  const handleChangeRole = async (id, role) => {
+    let desireRole = null;
+
+    switch (role) {
+      case "Co-owner":
+        desireRole = "Member";
+        break;
+      case "Member":
+        desireRole = "Co-owner";
+        break;
+      default:
+        break;
+    }
+
+    const response = await changeRole(id, desireRole);
+
+    if (response.status === 200) {
+      setShouldRefetch(true);
+    }
+  };
+
   const handleDeleteUser = async (id) => {
     const response = await deleteUser(id);
 
@@ -177,7 +218,7 @@ export default function GroupDetail() {
 
   function GroupDetailMenu(props) {
     const [anchorEl, setAnchorEl] = useState(null);
-    const { id } = props;
+    const { id, role } = props;
 
     const handleMenu = (event) => {
       setAnchorEl(event.currentTarget);
@@ -211,6 +252,9 @@ export default function GroupDetail() {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
+          <MenuItem onClick={() => handleChangeRole(id, role)}>
+            Change Role
+          </MenuItem>
           <MenuItem onClick={() => handleDeleteUser(id)}>Delete</MenuItem>
         </Menu>
       </>
@@ -218,11 +262,13 @@ export default function GroupDetail() {
   }
 
   GroupDetailMenu.propTypes = {
-    id: PropTypes.string
+    id: PropTypes.string,
+    role: PropTypes.string
   };
 
   GroupDetailMenu.defaultProps = {
-    id: null
+    id: null,
+    role: null
   };
 
   return (
@@ -307,7 +353,7 @@ export default function GroupDetail() {
                 </TableCell>
                 <TableCell>{da.member.role}</TableCell>
                 <TableCell sx={{ maxWidth: "10px" }}>
-                  <GroupDetailMenu id={da.id} />
+                  <GroupDetailMenu id={da.id} role={da.member.role} />
                 </TableCell>
               </TableRow>
             ))}
