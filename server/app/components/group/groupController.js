@@ -43,7 +43,7 @@ exports.deleteGroup = async (req, res, next) => {
   if (!member) {
     return res.status(404).send({ message: "Member not found" });
   }
-  if (!member.role === "Owner") {
+  if (!(member.role === "Owner")) {
     return res.status(400).send({ message: "Cannot delete group" });
   }
   await groupService.delete(groupId);

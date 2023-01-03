@@ -22,7 +22,7 @@ exports.updateOption = async (req, res, next) => {
   }
   for (let x in optionList) {
     const option = await optionService.findById(optionList[x].id);
-    if (!option || !await slide.hasOption(option)) {
+    if (!option || !(await slide.hasOption(option))) {
       return res.status(404).send({ message: "Option not found" });
     }
     await optionService.update(optionList[x].id, optionList[x].content, optionList[x].isCorrect, optionList[x].position);
@@ -39,7 +39,7 @@ exports.deleteOption = async (req, res, next) => {
   }
   const optionId = req.params["optionId"];
   const option = await optionService.findById(optionId);
-  if (!option || !await slide.hasOption(option)) {
+  if (!option || !(await slide.hasOption(option))) {
     return res.status(404).send({ message: "Option not found" });
   }
   await slideService.delete(slideId);

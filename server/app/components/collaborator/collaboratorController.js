@@ -17,10 +17,10 @@ exports.removeCollaborator = async (req, res, next) => {
   if (!collaborator || !remover) {
     return res.status(404).send({ message: "Collaborator not found" });
   }
-  if (!collaborator.role === "Owner") {
+  if (remover.role !== "Owner" || userId === collaboratorId) {
     return res
       .status(400)
-      .send({ message: "Cannot kick selected collaborator" });
+      .send({ message: "Cannot remove selected collaborator" });
   }
 
   await collaboratorService.removeCollaborator(presentationId, collaboratorId);
