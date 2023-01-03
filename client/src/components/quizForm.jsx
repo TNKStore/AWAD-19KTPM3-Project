@@ -4,7 +4,7 @@
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { PropTypes } from "prop-types";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
@@ -23,7 +23,8 @@ export default function QuizForm(props) {
     position,
     question,
     options,
-    callback
+    callback,
+    viewResult
   } = props;
   const token = getLocalStorage("token");
   const navigate = useNavigate();
@@ -114,15 +115,13 @@ export default function QuizForm(props) {
     }
   };
 
+  // Temp
   const submitData = async () => {
     navigate(`/presentations/view?id=${presentationID}`);
   };
 
-  const submitVote = async () => {
-    socket.emit("presentationStart", {
-      presentationId: presentationID,
-      questions: slides
-    });
+  const handleViewResult = async () => {
+    viewResult();
   };
 
   // use initially
@@ -157,7 +156,10 @@ export default function QuizForm(props) {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Your question
         </Typography>
-        <input {...register("question", { required: "Required" })} />
+        <input
+          type="textarea"
+          {...register("question", { required: "Required" })}
+        />
         {errors.question && <span>{errors.question.message}</span>}
         <Typography
           variant="h6"
@@ -172,40 +174,23 @@ export default function QuizForm(props) {
             return (
               <div display="flex" key={item.id}>
                 <input
-                  type="textarea"
                   {...register(`options.${index}.content`, { required: true })}
                 />
-                <button type="button" onClick={() => remove(index)}>
-                  Delete
-                </button>
               </div>
             );
           })}
         </div>
-        <section>
-          <button
-            type="button"
-            onClick={() => {
-              append({ content: "" });
-            }}
-          >
-            append
-          </button>
-        </section>
         <input type="submit" className="child" value="Save" />
-        <input
-          type="button"
-          className="child"
-          value="Submit"
-          onClick={submitData}
-        />
-        <input
-          type="button"
-          className="child"
-          value="Submit"
-          onClick={submitVote}
-        />
       </form>
+      <Button
+        variant="outlined"
+        size="large"
+        color="success"
+        sx={{ margin: 3, marginTop: 24 }}
+        onClick={handleViewResult}
+      >
+        View Result
+      </Button>
     </Box>
   );
 }
@@ -218,7 +203,8 @@ QuizForm.propTypes = {
   position: PropTypes.number,
   question: PropTypes.string,
   options: PropTypes.array,
-  callback: PropTypes.func
+  callback: PropTypes.func,
+  viewResult: PropTypes.func
 };
 
 QuizForm.defaultProps = {
@@ -229,5 +215,6 @@ QuizForm.defaultProps = {
   position: 0,
   question: "",
   options: [],
-  callback: () => {}
+  callback: () => {},
+  viewResult: () => {}
 };

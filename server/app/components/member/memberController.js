@@ -22,7 +22,7 @@ exports.updateMember = async (req, res, next) => {
     if (!member || !setter) {
         return res.status(404).send({ message: "Member is not found in group" });
     }
-    if (getRolePriority(setter.role) < getRolePriority(member.role) || getRolePriority(setter.role) < getRolePriority(role)) {
+    if (getRolePriority(setter.role) < getRolePriority(member.role) || getRolePriority(setter.role) < getRolePriority(role) || setter === member) {
         return res.status(400).send({ message: "Cannot set role" });
     }
     if (setter.role === "Owner" && getRolePriority(setter.role) === getRolePriority(role)) {
@@ -45,7 +45,7 @@ exports.kickMember = async (req, res, next) => {
     if (!member || !kicker) {
         return res.status(404).send({ message: "Member is not found in group" });
     }
-    if (getRolePriority(kicker.role) < getRolePriority(member.role) || kicker.role === "Member") {
+    if (getRolePriority(kicker.role) < getRolePriority(member.role) || kicker.role === "Member" || userId === memberId) {
         return res.status(400).send({ message: "Cannot kick selected member" });
     }
     

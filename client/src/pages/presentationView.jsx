@@ -55,6 +55,7 @@ export const socketListener = async (
 ) => {
   socket.on("sendUpdatedQuestions", function (response) {
     setSlides([...response.questions]);
+    setVoteHistory(response.historyVote);
   });
 
   socket.on("sendUpdatedSlidePosition", function (response) {
@@ -115,8 +116,8 @@ export default function PresentationViewPage(props) {
   };
 
   const handleSubmit = () => {
-    setOptionsClickable(false);
-    setShouldShowResult(true);
+    // setOptionsClickable(false);
+    // setShouldShowResult(true);
   };
 
   // Use effects
