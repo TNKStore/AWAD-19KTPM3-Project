@@ -263,7 +263,10 @@ export default function GroupsPage() {
         <TableBody>
           {groups.map((da) => (
             <TableRow>
-              <TableCell onClick={() => handleChooseGroup(da.id)}>
+              <TableCell
+                style={{ cursor: "pointer" }}
+                onClick={() => handleChooseGroup(da.id)}
+              >
                 {da.groupName}
               </TableCell>
               <TableCell>{da.users?.member?.role}</TableCell>

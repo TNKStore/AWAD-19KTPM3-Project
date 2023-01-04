@@ -365,7 +365,11 @@ export default function PresentationDetailPage(props) {
                     width="300px"
                     height="200px"
                   >
-                    <OptionsBarChart padding={32} options={slide.options} />
+                    <OptionsBarChart
+                      padding={32}
+                      options={slide.options}
+                      editorMode
+                    />
                   </Box>
                 }
                 icon={
