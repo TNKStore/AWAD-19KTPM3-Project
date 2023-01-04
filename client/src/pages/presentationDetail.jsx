@@ -262,6 +262,22 @@ export default function PresentationDetailPage(props) {
     }
   }, [slides]);
 
+  useEffect(() => {
+    if (presentationID !== null && slides.length !== 0 && !presentationStart) {
+      socket.on("sendMessageServer", (res) => {
+        const newHistoryChat = presentationData.historyChat;
+        newHistoryChat.push({ ...res.message });
+        setPresentationData((prev) => ({
+          ...prev,
+          historyChat: newHistoryChat
+        }));
+        console.log(presentationData);
+      });
+    }
+  }, [presentationData]);
+
+  console.log(presentationData);
+
   // Components
   function PresentationBar() {
     const content = isPresenting

@@ -20,6 +20,8 @@ function QuickChat(props) {
     setIsShowChatBox(false);
   };
 
+  console.log(msgData);
+
   return (
     <div className={styles.container}>
       <ChatButton onClick={handleClickChatBtn} />

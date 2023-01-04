@@ -122,6 +122,14 @@ export default function PresentationViewPage(props) {
     // setShouldShowResult(true);
   };
 
+  // const handleEventListener = () => {
+  //   console.log(socket);
+  //   socket.on("sendMessageServer", (res) => {
+  //     console.log(11111111);
+  //     presentationData.historyChat.push({ ...res.message });
+  //   });
+  // };
+
   // Use effects
 
   useEffect(() => {
@@ -156,6 +164,15 @@ export default function PresentationViewPage(props) {
       }
     }
   }, [voteHistory, slideValue]);
+
+  useEffect(() => {
+    if (presentationID !== null && slides.length !== 0 && !presentationStart) {
+      socket.on("sendMessageServer", (res) => {
+        presentationData.historyChat.push({ ...res.message });
+        console.log(presentationData);
+      });
+    }
+  }, [presentationData]);
 
   // Components
   function PresentationBar() {
