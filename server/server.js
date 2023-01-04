@@ -153,8 +153,9 @@ socketIo.on("connection", (socket) => {
     const newQuestion = await questionService.create(question.firstName, question.lastName, question.email, question.content);
     const presentation = await presentationService.findById(questionData.presentationId);
     await presentation.addQuestion(newQuestion);
+    const questions = await questionService.listQuestionOfPresentation(questionData.presentationId)
     socketIo.to(questionData.presentationId)
-      .emit("sendQuestion", { question: newQuestion });
+      .emit("sendQuestion", { questions });
   });
 
   socket.on("voteQuestion", async function (voteQuestionData) {

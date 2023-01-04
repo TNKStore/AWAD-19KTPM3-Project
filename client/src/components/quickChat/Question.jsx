@@ -13,7 +13,7 @@ import {
 function Question(props) {
   const { data, user, presentationId, isDetail, isView } = props;
 
-  const QUICK_CHAT_QUESTION = "QUICK_CHAT_QUESTION";
+  const QUICK_CHAT_QUESTION = `QUICK_CHAT_QUESTION_${presentationId}`;
   const questionSession = JSON.parse(getSessionStorage(QUICK_CHAT_QUESTION)) || [];
 
   const messagesEndRef = useRef(null);
@@ -65,28 +65,23 @@ function Question(props) {
 
   const handleEventListener = () => {
     socket.on("sendQuestion", (res) => {
-      setQuestionData((prev) => [...prev, { ...res.question }]);
-
-      questionSession.push({ ...res.question });
-      setSessionStorage(QUICK_CHAT_QUESTION, JSON.stringify(questionSession));
+      setQuestionData(res.questions);
+      setSessionStorage(QUICK_CHAT_QUESTION, JSON.stringify(res.questions));
     });
     socket.on("sendUpdatedVoteQuestions", (res) => {
+      console.log(res.questions);
       setQuestionData(res.questions);
+      setSessionStorage(QUICK_CHAT_QUESTION, JSON.stringify(res.questions));
     });
     socket.on("sendUpdatedMarkQuestions", (res) => {
       setQuestionData(res.questions);
+      setSessionStorage(QUICK_CHAT_QUESTION, JSON.stringify(res.questions));
     });
   };
 
   const setSessionData = () => {
     if (questionSession.length > 0) {
-      questionSession.forEach(question => {
-        const isExist = questionData.find(e => e.id === question.id);
-
-        if (!isExist) {
-          setQuestionData(prev => [...prev, question]);
-        }
-      });
+      setQuestionData(questionSession)
     }
   }
 
