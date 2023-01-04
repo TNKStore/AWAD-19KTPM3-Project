@@ -16,10 +16,11 @@ import {
 } from "@mui/material";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PropTypes } from "prop-types";
-import axios from "axios";
+
 import { PRESENTATION_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
 
@@ -253,7 +254,10 @@ export default function PresentationsPage() {
         <TableBody>
           {presentations.map((da) => (
             <TableRow>
-              <TableCell onClick={() => handleChoosePresentation(da.id)}>
+              <TableCell
+                style={{ cursor: "pointer" }}
+                onClick={() => handleChoosePresentation(da.id)}
+              >
                 {da.presentationName}
               </TableCell>
               <TableCell>{new Date(da.updatedAt).toString()}</TableCell>

@@ -29,8 +29,8 @@ exports.upvote = (questionId) => Question.increment('upvote',
 
 
 exports.mark = (questionId) => Question.update({
-    isAnswered: Sequelize.literal('NOT is_answered'),
-    where: {
+    isAnswered: Sequelize.literal('NOT is_answered')},
+    { where: {
         id: questionId
     }
 });

@@ -13,6 +13,7 @@ const memberRouter = require("./app/components/member");
 const userRouter = require("./app/components/user");
 const presentationRouter = require("./app/components/presentation");
 const slideRouter = require("./app/components/slide");
+const collaboratorRouter = require("./app/components/collaborator");
 const User = require("./app/models/user");
 const Group = require("./app/models/group");
 const Member = require("./app/models/member");
@@ -28,7 +29,6 @@ const optionService = require("./app/components/option/optionService");
 const historyVoteService = require("./app/components/historyVote/historyVoteService");
 const historyChatService = require("./app/components/historyChat/historyChatService");
 const questionService = require("./app/components/question/questionService");
-const collaboratorRouter = require("./app/components/collaborator");
 
 const app = express();
 
@@ -90,14 +90,12 @@ socketIo.on("connection", (socket) => {
   });
 
   socket.on("changeSlide", async function (changeSlideData) {
-    const historyVote = await historyVoteService.historyVoteOfPresentation(
-      changeSlideData.presentationId
-    );
+    const historyVote = await historyVoteService.historyVoteOfPresentation(changeSlideData.presentationId);
     socketIo
       .to(changeSlideData.presentationId)
       .emit("sendUpdatedSlidePosition", {
         slidePosition: changeSlideData.currentSlide,
-        historyVote: historyVote,
+        historyVote: historyVote
       });
   });
 
@@ -141,36 +139,21 @@ socketIo.on("connection", (socket) => {
 
   socket.on("sendMessageClient", async function (messageData) {
     const message = messageData.message;
-    const presentation = await presentationService.findById(
-      messageData.presentationId
-    );
-    const historyChat = await historyChatService.create(
-      message.firstName,
-      message.lastName,
-      message.email,
-      message.content
-    );
-    await presentation.addHistoryChat(historyChat);
-    socketIo
-      .to(messageData.presentationId)
-      .emit("sendMessageServer", { sender: sender, message: historyChat });
+    const presentation = await presentationService.findById(messageData.presentationId);
+    const historyChat = await historyChatService.create(message.firstName, message.lastName, message.email, message.content);
+    await presentation.addHistory_chat(historyChat);
+    socketIo.to(messageData.presentationId)
+      .emit("sendMessageServer", { message: historyChat });    
   });
 
   socket.on("postQuestion", async function (questionData) {
     const question = questionData.question;
-    const newQuestion = await questionService.create(
-      question.firstName,
-      question.lastName,
-      question.email,
-      question.content
-    );
-    const presentation = await presentationService.findById(
-      messageData.presentationId
-    );
+    const newQuestion = await questionService.create(question.firstName, question.lastName, question.email, question.content);
+    const presentation = await presentationService.findById(questionData.presentationId);
     await presentation.addQuestion(newQuestion);
-    socketIo
-      .to(questionData.presentationId)
-      .emit("sendQuestion", { question: newQuestion });
+    const questions = await questionService.listQuestionOfPresentation(questionData.presentationId)
+    socketIo.to(questionData.presentationId)
+      .emit("sendQuestion", { questions });
   });
 
   socket.on("voteQuestion", async function (voteQuestionData) {
@@ -180,23 +163,23 @@ socketIo.on("connection", (socket) => {
         questions[x].upvote++;
       }
     }
-    socketIo
-      .to(voteQuestionData.presentationId)
-      .emit("sendUpdatedVoteQuestions", { questions });
     await questionService.upvote(voteQuestionData.questionId);
+    socketIo
+    .to(voteQuestionData.presentationId)
+    .emit("sendUpdatedVoteQuestions", { questions });
   });
 
   socket.on("markQuestion", async function (markQuestionData) {
-    const questions = voteQuestionData.questions;
+    const questions = markQuestionData.questions;
     for (let x in questions) {
-      if (questions[x].id === voteQuestionData.questionId) {
+      if (questions[x].id === markQuestionData.questionId) {
         questions[x].isAnswered = !questions[x].isAnswered;
       }
     }
+    await questionService.mark(markQuestionData.questionId);
     socketIo
-      .to(voteQuestionData.presentationId)
-      .emit("sendUpdatedVoteQuestions", { questions });
-    await questionService.mark(voteQuestionData.questionId);
+      .to(markQuestionData.presentationId)
+      .emit("sendUpdatedMarkQuestions", { questions });
   });
 
   socket.on("disconnect", (reason) => {
