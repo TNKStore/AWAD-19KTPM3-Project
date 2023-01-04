@@ -25,7 +25,7 @@ exports.createPresentation = async (req, res, next) => {
     let index = Math.floor(Math.random() * 10);
     code[i] = number[index];
   }
-  while (allCode.indexOf(code.join("")) != -1) {
+  while (allCode.indexOf(code.join("")) !== -1) {
     for (let i = 0; i < 6; i++) {
       let index = Math.floor(Math.random() * 10);
       code[i] = number[index];
@@ -65,7 +65,7 @@ exports.deletePresentation = async (req, res, next) => {
   if (!collaborator) {
     return res.status(404).send({ message: "Collaborator not found" });
   }
-  if (!collaborator.role === "Owner") {
+  if (collaborator.role !== "Owner") {
     return res.status(400).send({ message: "Cannot delete presentation" });
   }
   await presentationService.delete(presentationId);
@@ -119,7 +119,7 @@ exports.addCollaborator = async (req, res, next) => {
   if (!collaborator) {
     return res.status(404).send({ message: "Collaborator not found" });
   }
-  if (!collaborator.role === "Owner") {
+  if (collaborator.role !== "Owner") {
     return res.status(400).send({ message: "Cannot add collaborator" });
   }
   const user = await userService.findByEmailForAdding(email);

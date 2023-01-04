@@ -88,7 +88,7 @@ exports.inviteToGroup = async (req, res, next) => {
   //send invitation link
   const msg = {
     to: user.email, // Change to your recipient
-    from: "ptvkhue19@clc.fitus.edu.vn", // Change to your verified sender
+    from: "tdhtrung19@clc.fitus.edu.vn", // Change to your verified sender
     subject: "Group invitation",
     text: `Thanks for joining ${group.groupName} group!`,
     html: `<h1>Thanks for joining ${group.groupName} group!</h1>
