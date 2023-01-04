@@ -18,6 +18,7 @@ import { getLocalStorage } from "../utils/localStorage";
 import OptionsBarChart from "../components/barChart";
 import QuizForm from "../components/quizForm";
 import { socketListener } from "./presentationView";
+import QuickChat from "../components/quickChat";
 import ResultList from "../components/resultView";
 import ErrorView from "../components/errorView";
 
@@ -68,6 +69,7 @@ export default function PresentationDetailPage(props) {
   const [slideValue, setSlideValue] = useState(0);
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [presentationStart, setPresentationStart] = useState(false);
+  const [presentationData, setPresentationData] = useState({});
   const [isPresenting, setIsPresenting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isErrorViewShow, setIsErrorViewShow] = useState(false);
@@ -140,10 +142,12 @@ export default function PresentationDetailPage(props) {
     const response = await fetchSlides();
 
     if (response.status === 200) {
+      const { historyChat, questions } = response.data;
       const slidesData = response.data.slideList;
       const historyData = response.data.historyVote;
       setSlides(slidesData);
       setVoteHistory(historyData);
+      setPresentationData({ historyChat, questions });
       setShouldRefetch(false);
     }
   };
@@ -361,11 +365,7 @@ export default function PresentationDetailPage(props) {
                     width="300px"
                     height="200px"
                   >
-                    <OptionsBarChart
-                      padding={32}
-                      options={slide.options}
-                      editorMode
-                    />
+                    <OptionsBarChart padding={32} options={slide.options} />
                   </Box>
                 }
                 icon={
@@ -415,6 +415,12 @@ export default function PresentationDetailPage(props) {
           ))}
         </Box>
       </Box>
+      <QuickChat
+        msgData={presentationData.historyChat}
+        questionData={presentationData.questions}
+        presentationId={presentationID}
+        isDetail
+      />
     </div>
   );
 }

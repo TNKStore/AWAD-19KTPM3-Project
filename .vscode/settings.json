@@ -3,5 +3,9 @@
         "activityBar.background": "#332E10",
         "titleBar.activeBackground": "#474016",
         "titleBar.activeForeground": "#FBFAF4"
+    },
+    // Quick fix prettier
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
     }
 }
