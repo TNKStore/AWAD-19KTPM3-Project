@@ -1,7 +1,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable react/jsx-props-no-spreading */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,7 +11,13 @@ import { saveUser } from "../features/user/userSlice";
 import useFetch from "../hooks/useFetch";
 
 export default function LoginPage() {
-  const { register, handleSubmit } = useForm();
+  const [isSuccess, setIsSuccess] = useState(true);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -55,10 +61,14 @@ export default function LoginPage() {
   const handleLogin = async (data) => {
     const response = await login(data);
 
-    if (response.data?.token && response.data?.user) {
+    if (
+      response?.data?.token &&
+      response?.data?.user &&
+      response?.status === 200
+    ) {
       dispatch(saveUser(response?.data));
       navigate("/", { state: response.data });
-    }
+    } else setIsSuccess(false);
   };
 
   return (
@@ -84,6 +94,7 @@ export default function LoginPage() {
             Username
           </Typography>
           <input {...register("email", { required: "Required" })} />
+          {errors.email && <span>{errors.email.message}</span>}
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Password
           </Typography>
@@ -91,7 +102,19 @@ export default function LoginPage() {
             type="password"
             {...register("password", { required: "Required" })}
           />
+          {errors.password && <span>{errors.password.message}</span>}
           <input type="submit" />
+          {!isSuccess && (
+            <Typography
+              variant="h8"
+              component="div"
+              color="red"
+              align="center"
+              sx={{ flexGrow: 1 }}
+            >
+              Login failed - Please check your input again
+            </Typography>
+          )}
           <div
             style={{
               display: "flex",

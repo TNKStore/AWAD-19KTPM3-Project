@@ -22,12 +22,15 @@ import { PropTypes } from "prop-types";
 import axios from "axios";
 import { GROUP_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
+import ErrorView from "../components/errorView";
 
 export default function GroupsPage() {
   const [groups, setGroups] = useState([]);
   const [groupName, setGroupName] = useState("");
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isErrorStringShow, setIsErrorStringShow] = useState(false);
+  const [isErrorViewShow, setIsErrorViewShow] = useState(false);
 
   const navigate = useNavigate();
 
@@ -89,18 +92,18 @@ export default function GroupsPage() {
   const handleCreateGroup = async () => {
     const response = await createGroup();
 
-    if (response.status === 200) {
+    if (response?.status === 200) {
       setIsDialogOpen(false);
       setShouldRefetch(true);
-    }
+    } else setIsErrorStringShow(true);
   };
 
   const handleDeleteGroup = async (id) => {
     const response = await deleteGroup(id);
 
-    if (response.status === 200) {
+    if (response?.status === 200) {
       setShouldRefetch(true);
-    }
+    } else setIsErrorViewShow(true);
   };
 
   const handleChooseGroup = (id) => {
@@ -108,6 +111,7 @@ export default function GroupsPage() {
   };
 
   const handleAddGroup = () => {
+    setIsErrorStringShow(false);
     setIsDialogOpen(true);
   };
 
@@ -117,6 +121,10 @@ export default function GroupsPage() {
 
   const handleChangeGroupName = (e) => {
     setGroupName(e.target.value);
+  };
+
+  const handleCloseError = () => {
+    setIsErrorViewShow(false);
   };
 
   // Use effect
@@ -179,13 +187,18 @@ export default function GroupsPage() {
 
   return (
     <Box component="main">
-      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+      <ErrorView
+        isErrorShow={isErrorViewShow}
+        handleCloseError={handleCloseError}
+        errorMessage="You do not have authorities to delete this group"
+      />
+      <Dialog maxWidth="100%" open={isDialogOpen} onClose={handleCloseDialog}>
         <Box
           display="flex"
           alignItems="center"
           justifyContent="center"
           flexDirection="column"
-          width="500px"
+          width="1000px"
           height="300px"
         >
           <Typography
@@ -194,7 +207,10 @@ export default function GroupsPage() {
           >
             Choose a name for your group
           </Typography>
-          <TextField onChange={handleChangeGroupName} />
+          <TextField
+            sx={{ m: 1, width: "50ch" }}
+            onChange={handleChangeGroupName}
+          />
           <Button
             sx={{ marginTop: "20px" }}
             onClick={handleCreateGroup}
@@ -202,6 +218,19 @@ export default function GroupsPage() {
           >
             Create
           </Button>
+          {isErrorStringShow && (
+            <Typography>
+              <Typography
+                variant="h8"
+                component="div"
+                color="red"
+                align="center"
+                sx={{ flexGrow: 1 }}
+              >
+                Something wrong happens, please try again later
+              </Typography>
+            </Typography>
+          )}
         </Box>
       </Dialog>
       <Box
@@ -234,7 +263,10 @@ export default function GroupsPage() {
         <TableBody>
           {groups.map((da) => (
             <TableRow>
-              <TableCell onClick={() => handleChooseGroup(da.id)}>
+              <TableCell
+                style={{ cursor: "pointer" }}
+                onClick={() => handleChooseGroup(da.id)}
+              >
                 {da.groupName}
               </TableCell>
               <TableCell>{da.users?.member?.role}</TableCell>

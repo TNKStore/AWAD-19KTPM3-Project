@@ -13,6 +13,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getLocalStorage } from "../utils/localStorage";
 import OptionsBarChart from "../components/barChart";
 import QuizView from "../components/quizView";
+import ErrorView from "../components/errorView";
 import QuickChat from "../components/quickChat";
 
 function TabPanel(props) {
@@ -73,6 +74,7 @@ export default function PresentationViewPage(props) {
   const [presentationStart, setPresentationStart] = useState(false);
   const [shouldShowResult, setShouldShowResult] = useState(false);
   const [optionsClickable, setOptionsClickable] = useState(true);
+  const [isErrorViewShow, setIsErrorViewShow] = useState(false);
   const [presentationData, setPresentationData] = useState({});
 
   const [searchParams] = useSearchParams();
@@ -122,6 +124,10 @@ export default function PresentationViewPage(props) {
     // setShouldShowResult(true);
   };
 
+  const handleCloseError = () => {
+    setIsErrorViewShow(false);
+  };
+
   // Use effects
 
   useEffect(() => {
@@ -150,9 +156,11 @@ export default function PresentationViewPage(props) {
       if (itemHistory !== -1) {
         setOptionsClickable(false);
         setShouldShowResult(true);
+        setIsErrorViewShow(true);
       } else {
         setOptionsClickable(true);
         setShouldShowResult(false);
+        setIsErrorViewShow(false);
       }
     }
   }, [voteHistory, slideValue]);
@@ -178,6 +186,11 @@ export default function PresentationViewPage(props) {
 
   return (
     <>
+      <ErrorView
+        isErrorShow={isErrorViewShow}
+        handleCloseError={handleCloseError}
+        errorMessage="You have already submitted your vote, please wait for the host to change slide."
+      />
       <PresentationBar />
       <Box
         sx={{

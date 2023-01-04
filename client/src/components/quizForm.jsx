@@ -174,23 +174,41 @@ export default function QuizForm(props) {
             return (
               <div display="flex" key={item.id}>
                 <input
-                  {...register(`options.${index}.content`, { required: true })}
+                  {...register(`options.${index}.content`, {
+                    required: "Required"
+                  })}
                 />
+                {errors.options?.[index]?.content && (
+                  <span className="error">
+                    {errors.options?.[index]?.content.message}
+                  </span>
+                )}
               </div>
             );
           })}
         </div>
         <input type="submit" className="child" value="Save" />
       </form>
-      <Button
-        variant="outlined"
-        size="large"
-        color="success"
-        sx={{ margin: 3, marginTop: 24 }}
-        onClick={handleViewResult}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          height: "100%",
+          justifyContent: "end",
+          border: 0
+        }}
       >
-        View Result
-      </Button>
+        <Button
+          variant="outlined"
+          size="large"
+          color="success"
+          sx={{ margin: 3, marginTop: 13 }}
+          onClick={handleViewResult}
+        >
+          View Result
+        </Button>
+      </Box>
     </Box>
   );
 }

@@ -7,6 +7,7 @@ import axios from "axios";
 import { getLocalStorage, saveLocalStorage } from "../utils/localStorage";
 
 export default function ProfilePage() {
+  const [isSuccess, setIsSuccess] = useState(true);
   const [shouldRefetch, setShouldRefetch] = useState(true);
 
   const {
@@ -48,7 +49,7 @@ export default function ProfilePage() {
     if (response.status === 200) {
       saveLocalStorage("user", response.data.user);
       setShouldRefetch(!shouldRefetch);
-    }
+    } else setIsSuccess(false);
   };
 
   useEffect(() => {}, [shouldRefetch]);
@@ -90,6 +91,17 @@ export default function ProfilePage() {
         />
         {errors.lastName && <span>{errors.lastName.message}</span>}
         <input type="submit" className="child" value="Save" />
+        {!isSuccess && (
+          <Typography
+            variant="h8"
+            component="div"
+            color="red"
+            align="center"
+            sx={{ flexGrow: 1 }}
+          >
+            Login failed - Please check your input again
+          </Typography>
+        )}
       </form>
     </Box>
   );

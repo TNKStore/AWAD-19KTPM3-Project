@@ -23,12 +23,15 @@ import { PropTypes } from "prop-types";
 
 import { PRESENTATION_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
+import ErrorView from "../components/errorView";
 
 export default function PresentationsPage() {
   const [presentations, setPresentations] = useState([]);
   const [presentationName, setPresentationName] = useState("");
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isErrorStringShow, setIsErrorStringShow] = useState(false);
+  const [isErrorViewShow, setIsErrorViewShow] = useState(false);
 
   const navigate = useNavigate();
 
@@ -96,19 +99,18 @@ export default function PresentationsPage() {
   const handleCreatePresentation = async () => {
     const response = await createPresentation();
 
-    if (response.status === 200) {
+    if (response?.status === 200) {
       setIsDialogOpen(false);
       setShouldRefetch(true);
-    }
+    } else setIsErrorStringShow(true);
   };
 
   const handleDeletePresentation = async (id) => {
-    console.log(id);
     const response = await deletePresentation(id);
 
-    if (response.status === 200) {
+    if (response?.status === 200) {
       setShouldRefetch(true);
-    }
+    } else setIsErrorViewShow(true);
   };
 
   const handleChoosePresentation = (id) => {
@@ -123,6 +125,7 @@ export default function PresentationsPage() {
   };
 
   const handleAddPresentation = () => {
+    setIsErrorStringShow(false);
     setIsDialogOpen(true);
   };
 
@@ -132,6 +135,10 @@ export default function PresentationsPage() {
 
   const handleChangePresentationName = (e) => {
     setPresentationName(e.target.value);
+  };
+
+  const handleCloseError = () => {
+    setIsErrorViewShow(false);
   };
 
   // Use effect
@@ -199,13 +206,18 @@ export default function PresentationsPage() {
 
   return (
     <Box component="main">
-      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+      <ErrorView
+        isErrorShow={isErrorViewShow}
+        handleCloseError={handleCloseError}
+        errorMessage="You do not have authorities to do this action"
+      />
+      <Dialog maxWidth="100%" open={isDialogOpen} onClose={handleCloseDialog}>
         <Box
           display="flex"
           alignItems="center"
           justifyContent="center"
           flexDirection="column"
-          width="500px"
+          width="1000px"
           height="300px"
         >
           <Typography
@@ -214,7 +226,10 @@ export default function PresentationsPage() {
           >
             Choose a name for your presentation
           </Typography>
-          <TextField onChange={handleChangePresentationName} />
+          <TextField
+            sx={{ m: 1, width: "50ch" }}
+            onChange={handleChangePresentationName}
+          />
           <Button
             sx={{ marginTop: "20px" }}
             onClick={handleCreatePresentation}
@@ -222,6 +237,19 @@ export default function PresentationsPage() {
           >
             Create
           </Button>
+          {isErrorStringShow && (
+            <Typography>
+              <Typography
+                variant="span"
+                component="div"
+                color="red"
+                align="center"
+                sx={{ flexGrow: 1 }}
+              >
+                Something wrong happens, please try again later
+              </Typography>
+            </Typography>
+          )}
         </Box>
       </Dialog>
       <Box

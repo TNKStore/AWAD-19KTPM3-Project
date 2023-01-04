@@ -101,3 +101,8 @@ div[role="tabpanel"] {
   width: 100%;
   margin: auto;
 }
+
+span[className="error"] {
+  font-size: 10px;
+  color: red;
+}
