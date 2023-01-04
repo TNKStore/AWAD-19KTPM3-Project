@@ -21,10 +21,6 @@ export default function ProfilePage() {
   const token = getLocalStorage("token");
   const user = getLocalStorage("user");
 
-  setValue("email", user?.email);
-  setValue("firstName", user?.firstName);
-  setValue("lastName", user?.lastName);
-
   const updateProfile = async (data) => {
     const headers = {
       "x-access-token": token
@@ -51,6 +47,12 @@ export default function ProfilePage() {
       setShouldRefetch(!shouldRefetch);
     } else setIsSuccess(false);
   };
+
+  useEffect(() => {
+    setValue("email", user?.email);
+    setValue("firstName", user?.firstName);
+    setValue("lastName", user?.lastName);
+  }, [shouldRefetch]);
 
   useEffect(() => {}, [shouldRefetch]);
 

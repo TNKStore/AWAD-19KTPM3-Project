@@ -56,6 +56,7 @@ export default function TopBar(props) {
   }
 
   const handleProfile = () => {
+    setAnchorEl(null);
     navigate("/profile");
   };
 
