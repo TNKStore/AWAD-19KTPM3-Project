@@ -140,14 +140,13 @@ export default function PresentationDetailPage(props) {
     const response = await fetchSlides();
 
     if (response.status === 200) {
-      const { slideList, historyChat, questions } = response.data;
-      setSlides(slideList);
+      const { historyChat, questions } = response.data;
       const slidesData = response.data.slideList;
       const historyData = response.data.historyVote;
       setSlides(slidesData);
       setVoteHistory(historyData);
-      setShouldRefetch(false);
       setPresentationData({ historyChat, questions });
+      setShouldRefetch(false);
     }
   };
 
@@ -313,82 +312,93 @@ export default function PresentationDetailPage(props) {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "row",
+          width: "100%",
           height: "calc(100vh - 64px)",
-          overflow: "hidden",
-          overflowY: "auto",
-          width: "20%",
-          borderRight: 1,
-          borderColor: "divider"
+          alignItems: "start",
+          justifyContent: "space-between"
         }}
       >
-        <Tabs
-          orientation="vertical"
-          variant="scrollable"
-          value={slideValue}
-          onChange={handleChangeTab}
-          aria-label="Vertical tabs example"
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            height: "calc(100vh - 64px)",
+            overflow: "hidden",
+            overflowY: "auto",
+            width: "20%",
+            borderRight: 1,
+            borderColor: "divider"
+          }}
+        >
+          <Tabs
+            orientation="vertical"
+            variant="scrollable"
+            value={slideValue}
+            onChange={handleChangeTab}
+            aria-label="Vertical tabs example"
+          >
+            {slides.map((slide) => (
+              <Tab
+                key={slide.position.toString()}
+                value={slide.position}
+                label={
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    flexDirection="column"
+                    width="300px"
+                    height="200px"
+                  >
+                    <OptionsBarChart padding={32} options={slide.options} />
+                  </Box>
+                }
+                icon={
+                  <Close
+                    id={slide.position}
+                    onClick={(e) =>
+                      handleDeleteSlide(e, slide.id, slide.position)
+                    }
+                  />
+                }
+                {...a11yProps(slide.position)}
+                className="mytab"
+              />
+            ))}
+            <Tab icon={<PostAdd />} value="add" />
+          </Tabs>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            width: "80%",
+            height: "calc(100vh - 64px)",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
         >
           {slides.map((slide) => (
-            <Tab
-              key={slide.position.toString()}
-              value={slide.position}
-              label={
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  flexDirection="column"
-                  width="300px"
-                  height="200px"
-                >
-                  <OptionsBarChart padding={32} options={slide.options} />
-                </Box>
-              }
-              icon={
-                <Close
-                  id={slide.position}
-                  onClick={(e) =>
-                    handleDeleteSlide(e, slide.id, slide.position)
-                  }
-                />
-              }
-              {...a11yProps(slide.position)}
-              className="mytab"
-            />
+            <TabPanel value={slideValue} index={slide.position}>
+              <OptionsBarChart
+                padding={64}
+                question={slide.question}
+                options={slide.options}
+                editorMode
+              />
+              <QuizForm
+                socket={socket}
+                presentationID={presentationID}
+                slides={slides}
+                slideID={slide.id}
+                position={slide.position}
+                question={slide.question}
+                options={slide.options}
+                callback={reloadData}
+                viewResult={handleViewResult}
+              />
+            </TabPanel>
           ))}
-          <Tab icon={<PostAdd />} value="add" />
-        </Tabs>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          width: "80%",
-          height: "calc(100vh - 64px)",
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        {slides.map((slide) => (
-          <TabPanel value={slideValue} index={slide.position}>
-            <OptionsBarChart
-              padding={64}
-              question={slide.question}
-              options={slide.options}
-              editorMode
-            />
-            <QuizForm
-              socket={socket}
-              presentationID={presentationID}
-              slides={slides}
-              slideID={slide.id}
-              position={slide.position}
-              question={slide.question}
-              options={slide.options}
-              callback={reloadData}
-            />
-          </TabPanel>
-        ))}
+        </Box>
       </Box>
       <QuickChat
         msgData={presentationData.historyChat}
