@@ -13,6 +13,7 @@ const memberRouter = require("./app/components/member");
 const userRouter = require("./app/components/user");
 const presentationRouter = require("./app/components/presentation");
 const slideRouter = require("./app/components/slide");
+const collaboratorRouter = require("./app/components/collaborator");
 const User = require("./app/models/user");
 const Group = require("./app/models/group");
 const Member = require("./app/models/member");
@@ -66,6 +67,7 @@ app.use("/member", memberRouter);
 app.use("/user", userRouter);
 app.use("/presentation", presentationRouter);
 app.use("/slide", slideRouter);
+app.use("/collaborator", collaboratorRouter);
 
 //socket
 const server = http.createServer(app);
@@ -133,14 +135,10 @@ socketIo.on("connection", (socket) => {
       .to(voteData.presentationId)
       .emit("sendUpdatedQuestions", { questions, historyVote });
     await optionService.upvote(voteData.optionId);
-    // const user = voteData.user;
-    // await historyVoteService.create(user.firstName, user.lastName,user.email, 
-    //   voteData.presentationId, voteData.questionId, questions[questionIndex].question, option);
   });
 
-  socket.on("sendMessageClient", async function(messageData) {
+  socket.on("sendMessageClient", async function (messageData) {
     const message = messageData.message;
-    console.log(messageData);
     const presentation = await presentationService.findById(messageData.presentationId);
     const historyChat = await historyChatService.create(message.firstName, message.lastName, message.email, message.content);
     await presentation.addHistory_chat(historyChat);
@@ -148,7 +146,7 @@ socketIo.on("connection", (socket) => {
       .emit("sendMessageServer", { message: historyChat });    
   });
 
-  socket.on("postQuestion", async function(questionData) {
+  socket.on("postQuestion", async function (questionData) {
     const question = questionData.question;
     const newQuestion = await questionService.create(question.firstName, question.lastName, question.email, question.content);
     const presentation = await presentationService.findById(questionData.presentationId);
