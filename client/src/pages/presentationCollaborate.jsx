@@ -22,6 +22,7 @@ import { PropTypes } from "prop-types";
 import axios from "axios";
 import { PRESENTATION_COLLABORATOR_HEADER } from "../constant/header";
 import { getLocalStorage } from "../utils/localStorage";
+import ErrorView from "../components/errorView";
 
 export default function PresentationCollaboratePage() {
   const [presentationID, setPresentationID] = useState(null);
@@ -30,6 +31,8 @@ export default function PresentationCollaboratePage() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [shouldRefetch, setShouldRefetch] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isErrorStringShow, setIsErrorStringShow] = useState(false);
+  const [isErrorViewShow, setIsErrorViewShow] = useState(false);
 
   const location = useLocation();
 
@@ -112,18 +115,18 @@ export default function PresentationCollaboratePage() {
   const handleSendInvitationEmail = async () => {
     const response = await sendInvitationEmail();
 
-    if (response.status === 200) {
+    if (response?.status === 200) {
       setIsDialogOpen(false);
       setShouldRefetch(true);
-    }
+    } else setIsErrorStringShow(true);
   };
 
   const handleDeleteCollaborator = async (id) => {
     const response = await deleteCollaborator(id);
 
-    if (response.status === 200) {
+    if (response?.status === 200) {
       setShouldRefetch(true);
-    }
+    } else setIsErrorViewShow(true);
   };
 
   const handleChooseDetail = (id) => {
@@ -131,6 +134,7 @@ export default function PresentationCollaboratePage() {
   };
 
   const handleAddMember = () => {
+    setIsErrorStringShow(false);
     setIsDialogOpen(true);
   };
 
@@ -140,6 +144,10 @@ export default function PresentationCollaboratePage() {
 
   const handleChangeInviteEmail = (e) => {
     setInviteEmail(e.target.value);
+  };
+
+  const handleCloseError = () => {
+    setIsErrorViewShow(false);
   };
 
   // Use effect
@@ -212,7 +220,12 @@ export default function PresentationCollaboratePage() {
 
   return (
     <Box component="main">
-      <Dialog maxWidth="1000px" open={isDialogOpen} onClose={handleCloseDialog}>
+      <ErrorView
+        isErrorShow={isErrorViewShow}
+        handleCloseError={handleCloseError}
+        errorMessage="You do not have authorities to do this action"
+      />
+      <Dialog maxWidth="100%" open={isDialogOpen} onClose={handleCloseDialog}>
         <Box
           display="flex"
           alignItems="center"
@@ -238,6 +251,19 @@ export default function PresentationCollaboratePage() {
           >
             Send
           </Button>
+          {isErrorStringShow && (
+            <Typography>
+              <Typography
+                variant="span"
+                component="div"
+                color="red"
+                align="center"
+                sx={{ flexGrow: 1 }}
+              >
+                User not found
+              </Typography>
+            </Typography>
+          )}
         </Box>
       </Dialog>
       <Box

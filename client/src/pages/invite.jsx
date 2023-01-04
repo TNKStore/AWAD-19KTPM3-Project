@@ -1,11 +1,14 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { getLocalStorage } from "../utils/localStorage";
+import ErrorView from "../components/errorView";
 
 export default function InvitePage() {
+  const [isErrorViewShow, setIsErrorViewShow] = useState(false);
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -33,8 +36,13 @@ export default function InvitePage() {
   const handleInviteUser = async () => {
     const response = await inviteUser();
 
-    if (response.status === 200)
+    if (response?.status === 200)
       navigate(`/groups/${group}`, { state: { groupID: group } });
+    else setIsErrorViewShow(true);
+  };
+
+  const handleCloseError = () => {
+    // Do nothing
   };
 
   useEffect(() => {
@@ -43,6 +51,11 @@ export default function InvitePage() {
 
   return (
     <Box sx={{ maxWidth: "xs" }}>
+      <ErrorView
+        isErrorShow={isErrorViewShow}
+        handleCloseError={handleCloseError}
+        errorMessage="Something is wrong with the verification stage, please try again later."
+      />
       <Typography
         variant="h3"
         component="div"

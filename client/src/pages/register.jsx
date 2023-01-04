@@ -1,12 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
-import React from "react";
+import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function RegisterPage() {
+  const [isSuccess, setIsSuccess] = useState(true);
+
   const {
     register,
     handleSubmit,
@@ -34,7 +36,8 @@ export default function RegisterPage() {
 
   const handleRegisterAccount = async (data) => {
     const response = await registerAccount(data);
-    if (response.status === 200) navigate("/login");
+    if (response?.status === 200) navigate("/login");
+    else setIsSuccess(false);
   };
 
   return (
@@ -100,6 +103,17 @@ export default function RegisterPage() {
             <span>{errors.passwordRetyped.message}</span>
           )}
           <input type="submit" />
+          {!isSuccess && (
+            <Typography
+              variant="h8"
+              component="div"
+              color="red"
+              align="center"
+              sx={{ flexGrow: 1 }}
+            >
+              Register failed - Your credentials are used by another user
+            </Typography>
+          )}
         </form>
       </div>
     </Box>

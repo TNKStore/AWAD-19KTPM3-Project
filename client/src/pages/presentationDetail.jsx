@@ -19,6 +19,7 @@ import OptionsBarChart from "../components/barChart";
 import QuizForm from "../components/quizForm";
 import { socketListener } from "./presentationView";
 import ResultList from "../components/resultView";
+import ErrorView from "../components/errorView";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -69,6 +70,7 @@ export default function PresentationDetailPage(props) {
   const [presentationStart, setPresentationStart] = useState(false);
   const [isPresenting, setIsPresenting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isErrorViewShow, setIsErrorViewShow] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -158,7 +160,7 @@ export default function PresentationDetailPage(props) {
   const handleChangeTab = (event, value) => {
     if (isPresenting) {
       if (value === "add") {
-        // Do nothing
+        setIsErrorViewShow(true);
       } else {
         socket.emit("changeSlide", {
           presentationId: String(presentationID),
@@ -176,7 +178,11 @@ export default function PresentationDetailPage(props) {
   };
 
   const handleDeleteSlide = async (e, id, position) => {
-    if (position === 0 || isPresenting) return;
+    if (isPresenting) {
+      setIsErrorViewShow(true);
+      return;
+    }
+    if (position === 0) return;
 
     const response = await deleteSlide(id);
 
@@ -226,6 +232,10 @@ export default function PresentationDetailPage(props) {
 
   const handleCloseResult = () => {
     setIsDialogOpen(false);
+  };
+
+  const handleCloseError = () => {
+    setIsErrorViewShow(false);
   };
 
   const reloadData = () => {
@@ -298,6 +308,11 @@ export default function PresentationDetailPage(props) {
 
   return (
     <div>
+      <ErrorView
+        isErrorShow={isErrorViewShow}
+        handleCloseError={handleCloseError}
+        errorMessage="You can not do this action while presenting"
+      />
       <PresentationBar />
       <ResultList
         isDialogOpen={isDialogOpen}
