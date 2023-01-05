@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    image: mysql:latest
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
+      - MYSQL_DATABASE=$DB_NAME
+    ports:
+      - $DB_LOCAL_PORT:$DB_DOCKER_PORT  
+    volumes:
+      # Mysql
+      - db:/var/lib/mysql
+
+  server:
+    depends_on:
+      - mysqldb
+    container_name: nodejs_server
+    build: ./server
+    volumes:
+      - ./server:/app
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - DB_HOST=mysqldb
+      - DB_USER=$DB_USER
+      - DB_PASSWORD=$DB_PASSWORD
+      - DB_NAME=$DB_NAME
+      - DB_PORT=$DB_DOCKER_PORT
+      - DOMAIN=$DOMAIN
+      - GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+      - JWT_SECRET=$JWT_SECRET
+      - SENDGRID_API_KEY=$SENDGRID_API_KEY
+    ports: 
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    stdin_open: true
+    tty: true
+
+  client:
+    depends_on:
+      - server
+    build: ./client
+    volumes:
+      - ./client:/app
+    env_file: ./.env
+    environment:
+      - REACT_APP_GOOGLE_CLIENT_ID=$REACT_APP_GOOGLE_CLIENT_ID
+      - REACT_APP_DOMAIN=$REACT_APP_DOMAIN
+    ports:
+      - $REACT_LOCAL_PORT:$REACT_DOCKER_PORT
+    stdin_open: true
+    tty: true
+
+volumes:
+  db:
