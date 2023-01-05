@@ -8,10 +8,21 @@ const questionService = require("../question/questionService");
 exports.listSlide = async (req, res, next) => {
   const presentationId = req.query["presentationId"];
   const slideList = await slideService.listSlideOfPresentation(presentationId);
-  const historyVote = await historyVoteService.historyVoteOfPresentation(presentationId);
-  const historyChat = await historyChatService.historyChatOfPresentation(presentationId);
-  const questions = await questionService.listQuestionOfPresentation(presentationId);
-  return res.status(200).send({ slideList: slideList, historyVote: historyVote, historyChat: historyChat, questions: questions });
+  const historyVote = await historyVoteService.historyVoteOfPresentation(
+    presentationId
+  );
+  const historyChat = await historyChatService.historyChatOfPresentation(
+    presentationId
+  );
+  const questions = await questionService.listQuestionOfPresentation(
+    presentationId
+  );
+  return res.status(200).send({
+    slideList: slideList,
+    historyVote: historyVote,
+    historyChat: historyChat,
+    questions: questions,
+  });
 };
 
 exports.createSlide = async (req, res, next) => {
